@@ -1,6 +1,7 @@
 export interface IPrayerRequest {
     prayerRequestID?:number;
-    prayerTitle:string;
+    prayerTile:string;
+    prayerTitle?:string;
     prayerDetail:string;
     personId:string;
     churchId:number;

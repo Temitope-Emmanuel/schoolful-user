@@ -194,7 +194,7 @@ const Home = () => {
                          className={classes.prayerContainer}>
                             {churchPrayer.map((item,idx) => (
                                 <DetailCard isLoaded={Boolean(item.prayerRequestID)}
-                                    title={item.prayerTitle} key={idx} 
+                                    title={item.prayerTile} key={idx} 
                                     subtitle={"Prayer For Help"} timing="2d"
                                     image="https://bit.ly/ryan-florence" 
                                     body={item.prayerDetail}

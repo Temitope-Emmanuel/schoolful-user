@@ -2,10 +2,11 @@ import axios, { AxiosRequestConfig } from "axios";
 import { IResponse } from "core/models/Response";
 import { IPrayer } from "core/models/Prayer";
 import { IPrayerRequest } from "core/models/PrayerRequest";
-import { ITestimony } from "core/models/Testimony";
+import { ITestimony,ICommentTestimony } from "core/models/Testimony";
 import { Testimony } from "core/enums/Testimony";
 
 const baseUrl = `${process.env.REACT_APP_SERVER_URL}/Prayer`;
+const config:AxiosRequestConfig = {headers:{"Content-Type":"application/json-patch+json"}}
 
 export const getPrayer = async (
   denominationId: number
@@ -62,7 +63,7 @@ export const prayerForPrayerRequest = async (
   prayerRequestId: number,
   personId: string
 ): Promise<IResponse<null>> => {
-  const url = `${baseUrl}/prayerRequetId=${prayerRequestId}&personId=${personId}`;
+  const url = `${baseUrl}/PrayPrayerRequest?prayerRequetId=${prayerRequestId}&personId=${personId}`;
   try {
     const response = await axios.get(url);
     return response.data;
@@ -110,7 +111,7 @@ export const addTestimony = async (
 ): Promise<IResponse<ITestimony>> => {
   const url = `${baseUrl}/AddTestimony`;
   try {
-    const response = await axios.post(url);
+    const response = await axios.post(url,addTestmony,config);
     return response.data;
   } catch (err) {
     throw err;
@@ -154,23 +155,14 @@ export const getTestimony = async (
   }
 };
 
-interface ICommentTestimony {
-  testimonyId: number;
-  comment: {
-    status: "Approved" | "Pending" | "Discard";
-    reason?: string;
-  };
-  personId: string;
-}
-
 export const CommentOnTestimony = async (
   arg: ICommentTestimony
-): Promise<IResponse<null>> => {
+): Promise<IResponse<ITestimony>> => {
   const url = `${baseUrl}/CommentOnTestimony?testimonyId=${
     arg.testimonyId
   }&comment=${JSON.stringify(arg.comment)}&personId=${arg.personId}`;
   try {
-    const response = await axios.get(url);
+    const response = await axios.post(url);
     return response.data;
   } catch (err) {
     throw err;
