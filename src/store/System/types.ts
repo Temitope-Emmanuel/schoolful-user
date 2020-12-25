@@ -4,6 +4,7 @@ import {IChurch} from "core/models/Church"
 export interface SystemState {
     isAuthenticated:boolean;
     isLoading:boolean;
+    authLoading:boolean;
     pageTitle:string;
     currentUser:LoggedInUser;
     currentChurch:IChurch
@@ -13,6 +14,8 @@ export interface SystemState {
 export enum ActionTypes {
     SHOW_SPINNER = "[System] Show_Spinner",
     HIDE_SPINNER = "[System] Hide_Spinner",
+    SHOW_AUTH_SPINNER = "[System] Show_Auth_Spinner",
+    HIDE_AUTH_SPINNER = "[System] Hide_Auth_Spinner",
     LOGIN = "[System] Login",
     SETCURRENTUSER = "[System] SetCurrentUser",
     SET_CURRENT_CHURCH = "[System] SetCurrentChurch",
@@ -29,6 +32,12 @@ export interface ShowSpinnerAction {
 export interface HideSpinnerAction {
     type:ActionTypes.HIDE_SPINNER
 }
+export interface ShowAuthSpinnerAction {
+    type:ActionTypes.SHOW_AUTH_SPINNER
+}
+export interface HideAuthSpinnerAction {
+    type:ActionTypes.HIDE_AUTH_SPINNER
+}
 export interface SetTitleAction {
     type:ActionTypes.SET_PAGE_TITLE,
     payload:string
@@ -42,5 +51,5 @@ export interface SetCurrentUserAction {
     payload: any
 } 
 
-export type Action = HideSpinnerAction  | LoginAction | SetCurrentUserAction |
- SetChurchAction | ShowSpinnerAction | HideSpinnerAction | SetTitleAction
+export type Action = HideSpinnerAction  | LoginAction | SetCurrentUserAction | SetChurchAction 
+| ShowSpinnerAction | HideSpinnerAction | SetTitleAction | ShowAuthSpinnerAction |HideAuthSpinnerAction

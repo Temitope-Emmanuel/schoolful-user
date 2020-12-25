@@ -83,6 +83,16 @@ export function hideLoading(){
         type:ActionTypes.HIDE_SPINNER
     }
 }
+export function showAuthLoading(){
+    return{
+        type:ActionTypes.HIDE_AUTH_SPINNER
+    }
+}
+export function hideAuthLoading(){
+    return{
+        type:ActionTypes.HIDE_AUTH_SPINNER
+    }
+}
 export function setPageTitle(newTitle:string):SetTitleAction{
     return{
         payload:newTitle,

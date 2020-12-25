@@ -10,7 +10,6 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { BiStar } from "react-icons/bi";
-import useParams from "utils/Params"
 import useToast from "utils/Toast"
 import { IoIosArrowDown } from "react-icons/io"
 import { ICurrentActivity} from "core/models/Activity"
@@ -20,7 +19,8 @@ import DatePicker from "react-date-picker"
 import { tertiary } from 'theme/chakraTheme/palette'
 import { AppState } from "store";
 import {updateActivity,updateEvent} from "store/Activity/actions"
-import { useSelector } from "react-redux";
+import {showLoading} from "store/System/actions"
+import { useSelector,useDispatch } from "react-redux";
 import useScroll from "utils/Scroll"
 
 
@@ -121,6 +121,7 @@ interface IChurchActivityCardProps {
 const ChurchActivityCard: React.FC<IChurchActivityCardProps> = ({ id, image, title, description,
   recurringInfo, addToCalendar, time,disableInterested }) => {
   const classes = activityCardStyles()
+  const isLoading = useSelector((state:AppState) => state.system.isLoading)
   return (
     <VStack key={id} className={classes.activityContainer}>
       <VStack height="25vh" backgroundColor={image ? "transparent" : "primary"}>
@@ -142,9 +143,9 @@ const ChurchActivityCard: React.FC<IChurchActivityCardProps> = ({ id, image, tit
           </Text>
         }
         <HStack mt={5} width="100%" justify="space-between">
-          <Button colorScheme="primary" disabled={disableInterested} onClick={addToCalendar} bgColor="primary">
+          <Button colorScheme="primary" disabled={disableInterested || isLoading } onClick={addToCalendar} bgColor="primary">
             <Icon as={BiStar} />
-                Interested
+               {disableInterested ? "Attending" : "Interested"}
               </Button>
           <Button colorScheme="#FF0000" bgColor="#FF0000">
             Live
@@ -170,7 +171,7 @@ const Activity = () => {
   todayDate.setUTCMinutes(0)
   todayDate.setUTCSeconds(0)
   todayDate.setUTCMilliseconds(0)
-  const currentUser = useSelector((state: AppState) => state.system.currentUser)
+  const dispatch = useDispatch()
   const churchActivity = useSelector((state:AppState) => state.activity.activities)
   const churchEvent = useSelector((state:AppState) => state.activity.events)
   const [currentWeek, setCurrentWeek] = React.useState<ICurrentWeek[]>([]);
@@ -214,6 +215,7 @@ const Activity = () => {
   }
 
   const addToCalendar = (idx: number, eventName: "activity" | "event") => async () => {
+    dispatch(showLoading())
     const addEventToCalendar = () => {
     const isActivity = eventName === "activity"
     const foundActivity = isActivity ? currentActivity[idx] : currentChurchEvent[idx]
@@ -248,6 +250,7 @@ const Activity = () => {
       })
     };
 
+
     gapi.client.calendar.events.insert({
       'calendarId': 'primary',
       resource: event
@@ -259,10 +262,10 @@ const Activity = () => {
       })
       // Update The Activity to show the attendee
       if (isActivity) {
-        updateActivity(foundActivity as ICurrentActivity,toast)
+        dispatch(updateActivity(foundActivity as ICurrentActivity,toast))
         } else {
         // Update the Event to show the attendee
-        updateEvent(foundActivity as ICurrentEvent,toast)
+        dispatch(updateEvent(foundActivity as ICurrentEvent,toast))
         }
     }).catch((err: any) => {
       toast({
@@ -300,7 +303,6 @@ const Activity = () => {
       // Find the next Day value add the amount of seconds in a day to the current active day
       const nextDay = new Date(activeIndex.getTime() + 86400000)
       const currentChurchActivity: ICurrentActivity[] = []
-
       for (let i = 0; i < churchActivity.length; i++) {
         if (churchActivity[i].recurringRule.between(activeIndex, nextDay, true).length > 0) {
           const activity = churchActivity[i]
@@ -355,7 +357,8 @@ const Activity = () => {
     setCurrentDate((e as Date));
   };
 
-  
+  console.log(currentActivity)
+  console.log(currentChurchEvent)
   return (
     <VStack className={classes.root} maxW="lg">
       <VStack bgColor={scrolling.scrolling ? "primary" : "#0000001A"}>

@@ -3,7 +3,8 @@ import isEmpty from "lodash/isEmpty"
 
 const initialState: SystemState = {
     isAuthenticated: false,
-    isLoading:true,
+    isLoading:false,
+    authLoading:true,
     pageTitle:"",
     currentUser: {
         id: "",
@@ -56,6 +57,16 @@ export function systemReducer(state = initialState, action: Action): SystemState
             return {
                 ...state,
                 isLoading:false
+            }
+        case ActionTypes.SHOW_AUTH_SPINNER:
+            return {
+                ...state,
+                authLoading:true
+            }
+        case ActionTypes.HIDE_AUTH_SPINNER:
+            return {
+                ...state,
+                authLoading:false
             }
         case ActionTypes.SET_PAGE_TITLE:
             return {

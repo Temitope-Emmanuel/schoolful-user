@@ -72,6 +72,7 @@
     "@types/react-swipeable-views-utils": "^0.13.2",
     "@types/redux-devtools-extension": "^2.13.2",
     "@types/redux-logger": "^3.0.8",
-    "@types/yup": "^0.29.9"
+    "@types/yup": "^0.29.9",
+    "redux-logger": "^3.0.6"
   }
 }

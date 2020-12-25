@@ -6,7 +6,7 @@ import {AppState} from "store"
 
 const PublicRoute = ({component:Component,...rest}:any) => {
     const isAuthenticated = useSelector<AppState>((state) => state.system.isAuthenticated)
-    const isLoading = useSelector<AppState>((state) => state.system.isLoading)
+    const isLoading = useSelector<AppState>((state) => state.system.authLoading)
 
     return(
         <Route

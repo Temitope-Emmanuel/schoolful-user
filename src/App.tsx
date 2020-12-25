@@ -4,7 +4,7 @@ import {Router} from "react-router-dom"
 import MainRouter from "./MainRouter"
 import './App.css';
 import {useDispatch} from "react-redux"
-import {logout,setCurrentUser,hideLoading} from "store/System/actions"
+import {logout,setCurrentUser,hideAuthLoading} from "store/System/actions"
 import * as userService from "core/services/user.service"
 import * as authManager from "utils/auth"
 import useToast from "utils/Toast"
@@ -20,7 +20,7 @@ const App = () => {
 
   React.useEffect(() => {
     if(!token || !userDetail){
-      dispatch(hideLoading())
+      dispatch(hideAuthLoading())
       logout()
     }else{
       userService.verifyToken(token).then(payload => {
@@ -34,9 +34,9 @@ const App = () => {
         authManager.saveUserDetail(JSON.stringify(newUserDetail))
         const savedUserDetail = JSON.parse(authManager.getUserDetail() as string)
         dispatch(setCurrentUser(savedUserDetail))
-        dispatch(hideLoading())
+        dispatch(hideAuthLoading())
       }).catch((err) => {
-        dispatch(hideLoading())
+        dispatch(hideAuthLoading())
         toast({
           title:"Please Login Again",
           subtitle:`Error: ${err}`,
