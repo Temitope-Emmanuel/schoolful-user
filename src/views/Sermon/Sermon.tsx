@@ -219,17 +219,17 @@ const Sermon = () => {
                     </HStack>
                 </VStack>
                 }
-                <Zoom ref={flexRef} in={Boolean(currentMedia.mediaType)} >
+                <Zoom ref={flexRef} in={Boolean(currentMedia.sermonID)} >
                     <Flex ref={flexRef} >
-                        {/* {
-                            currentMedia.featureVidAudio && */}
+                        {
+                            currentMedia.sermonID &&
                             <MediaPlayer setMedia={setMedia}
                                 prevVideo={setPreviousVideoSermon}
                                 nextVideo={setNextVideoSermon}
                                 prevAudio={setPreviousAudioSermon}
                                 nextAudio={setNextAudioSermon}
                                 currentMedia={currentMedia} /> 
-                        {/* } */}
+                        }
                     </Flex>
                 </Zoom>
             </VStack>

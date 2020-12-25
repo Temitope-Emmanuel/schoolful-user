@@ -56,7 +56,6 @@ interface IProfileForm {
     dateOfbirth:Date;
 }
 const Profile = () => {
-    // de88e476-d679-4507-abfb-29ebb653de94
     const defaultChurch:IChurch = {
         address:"",
         cityID:0,
@@ -68,9 +67,12 @@ const Profile = () => {
     const defaultProfileDetail:IProfileDetail = {
         church:defaultChurch,
         email:"",
+        username:"",
+        phoneNumber:0,
         firstname:"",
         lastname:"",
         password:"",
+        dateOfBirth:new Date()
     }
     const classes = useStyles()
     const dispatch = useDispatch()
@@ -83,10 +85,10 @@ const Profile = () => {
 
     React.useEffect(() => {
         const getUserProfile = async () => {
-            getUserChurchInfo("de88e476-d679-4507-abfb-29ebb653de94").then(payload => {
+            getUserChurchInfo(currentUser.id).then(payload => {
                 const newProfileDetail = {
                     ...payload.data[0],
-                    dateOfbirth:payload.data[0].dateOfbirth
+                    dateOfBirth:payload.data[0].dateOfbirth
                 }
                 setProfile(newProfileDetail)
                 setSubmitting(false)
@@ -105,7 +107,7 @@ const Profile = () => {
     const initialValues = {
         ...profile,
         church:profile.church.name,
-        dateOfbirth:new Date(profile.dateOfbirth!) || new Date(2000,0,0)
+        dateOfbirth:new Date(profile.dateOfBirth!) || new Date(2000,0,0)
     }
    
     const FormValidation = () => (
@@ -117,8 +119,6 @@ const Profile = () => {
     
     const handleSubmit = async (values:IProfileForm, {...actions}: any) => {
         actions.setSubmitting(true)
-        console.log("calling")
-        console.log(values)
         const updateChurchMemberDetail = {
             ...profile,
             ...values

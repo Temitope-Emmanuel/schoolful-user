@@ -10,9 +10,9 @@ export interface IRole {
 
 export interface IChurchMember {
     id?:string;
-    username?: string;
+    username: string;
     password: string;
-    phoneNumber?: number | null;
+    phoneNumber: number | null;
     email: string;
     firstname: string;
     lastname: string;
@@ -22,7 +22,7 @@ export interface IChurchMember {
     stateID?: number;
     cityID?: number;
     personTypeID?: number;
-    dateOfbirth?: Date;
+    dateOfBirth?: Date | string;
     contact_address?: string;
     home_address?: string;
     role?:string[] | string;
