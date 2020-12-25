@@ -167,7 +167,7 @@ const AdvertLayout = ({ children }: any) => {
                             <Text opacity={.8} >
                                 {currentChurchActivity[0]?.title}
                             </Text>
-                            <Text fontWeight={600} maxW="1xs" isTruncated>
+                            <Text fontWeight={600} maxW="xs" isTruncated>
                                 {currentChurchActivity[0]?.description}
                             </Text>
                         </VStack>
@@ -175,7 +175,7 @@ const AdvertLayout = ({ children }: any) => {
                             <Text opacity={.8} >
                                 { currentEvent[0]?.title || currentChurchActivity[1]?.title}
                             </Text>
-                            <Text fontWeight={600} maxW="1xs" isTruncated >
+                            <Text fontWeight={600} maxW="xs" isTruncated >
                                 { currentEvent[0]?.description || currentChurchActivity[1]?.description}
                             </Text>
                         </VStack>

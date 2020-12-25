@@ -1,3 +1,4 @@
+import {MediaType} from "core/enums/MediaType"
 
 export interface ISermon {
     sermonID?:string;
@@ -9,4 +10,11 @@ export interface ISermon {
     featureDateTo:Date;
     sermonContent:string;
     churchId:number;
+    featureVidAudio?:string;
+    mediaType?:MediaType;
+}   
+export interface IMediaSermon extends ISermon {
+    next:boolean;
+    previous:boolean;
+    currentTime?:number;
 }

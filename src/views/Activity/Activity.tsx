@@ -21,6 +21,7 @@ import { tertiary } from 'theme/chakraTheme/palette'
 import { AppState } from "store";
 import {updateActivity,updateEvent} from "store/Activity/actions"
 import { useSelector } from "react-redux";
+import useScroll from "utils/Scroll"
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -178,6 +179,7 @@ const Activity = () => {
   const [currentActivity, setCurrentActivity] = React.useState<ICurrentActivity[]>([])
   const [currentChurchEvent, setCurrentChurchEvent] = React.useState<ICurrentEvent[]>([])
   const toast = useToast()
+  const scrolling = useScroll()
   
 
   const handleActive = (arg: Date) => () => {
@@ -353,30 +355,10 @@ const Activity = () => {
     setCurrentDate((e as Date));
   };
 
-  const [scrolling, setScrolling] = React.useState({
-    scrolling: false,
-    scrollTop: 0
-  })
-
-  const onScroll = (e: any) => {
-    setScrolling(curSt => ({
-      scrollTop: e.target.documentElement.scrollTop,
-      scrolling: e.target.documentElement.scrollTop > 0
-    }))
-  }
-
-  const loader = React.useRef<HTMLDivElement>(null)
-
-  React.useEffect(() => {
-    window.addEventListener("scroll", onScroll)
-    return function () {
-      window.removeEventListener("scroll", onScroll)
-    }
-  }, [])
-
+  
   return (
     <VStack className={classes.root} maxW="lg">
-      <VStack bgColor={scrolling.scrolling ? "primary" : "#0000001A"} ref={loader}>
+      <VStack bgColor={scrolling.scrolling ? "primary" : "#0000001A"}>
         <DatePicker minDetail="month" minDate={todayDate}
           className={classes.dateContainer} onChange={handleCurrentDate}
           calendarIcon={<IoIosArrowDown />} format="MMMM y"

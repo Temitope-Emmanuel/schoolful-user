@@ -12,6 +12,7 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
         paddingBottom:".5rem",
         height:"35vh",
         boxShadow:"0px 3px 6px #0000000D",
+        cursor:"pointer",
         borderRadius:"4px",
         width:"100%",
         alignItems:"flex-start", 
@@ -46,14 +47,15 @@ interface IProps {
     isLoaded:boolean;
     icon?:any;
     link?:string;
+    onClick?:any
 }
 
 
-const PlayListCard:React.FC<IProps> = ({icon,isLoaded,image,title,subtitle,link}) => {
+const PlayListCard:React.FC<IProps> = ({icon,isLoaded,onClick,image,title,subtitle,link}) => {
     const classes = useStyles()
     return(
         // <Skeleton isLoaded={isLoaded}>
-            <VStack className={classes.root}>
+            <VStack className={classes.root} onClick={onClick ? onClick : null} >
                 <AspectRatio width="100%" ratio={7/5} position="relative" >
                     <>
                     <Image src={image} />

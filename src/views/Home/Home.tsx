@@ -1,5 +1,5 @@
 import React from "react"
-import {VStack,Heading,Button,
+import {VStack,Heading,Button,Skeleton,
         Text,AspectRatio,Image, Avatar,
         AvatarGroup, HStack, Icon} from "@chakra-ui/react"
 import {DetailCard} from "components/Card"
@@ -55,8 +55,9 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
         margin:theme.spacing(3,0),
         backgroundColor:"white",
         paddingBottom:".5rem",
-        height:"30vh",
+        height:"35vh",
         boxShadow:"0px 3px 6px #0000000D",
+        width:"100%",
         borderRadius:"4px", 
         "& > div:first-child":{
             minHeight:"55%"
@@ -174,22 +175,24 @@ const Home = () => {
                     <HStack>
                         <Carousel/>
                     </HStack>
-                    <VStack className={classes.verseContainer}>
-                        <AspectRatio width="100%" ratio={7/5}>
-                            <Image src={Scripture} />
-                        </AspectRatio>
-                        <VStack align={["center","flex-start"]} >
-                            <Text>
-                                Today Verse&nbsp;
-                            </Text>
-                            <Text>
-                                {dailyReading[0].verse}
-                            </Text>
-                            <Text noOfLines={4} mb={5}>
-                            {dailyReading[0].content}
-                            </Text>
+                    <Skeleton width="100%" isLoaded={dailyReading[0].verse.length > 2} >
+                        <VStack className={classes.verseContainer}>
+                            <AspectRatio width="100%" ratio={7/5}>
+                                <Image src={Scripture} />
+                            </AspectRatio>
+                            <VStack align={["center","flex-start"]} >
+                                <Text>
+                                    Today Verse&nbsp;
+                                </Text>
+                                <Text>
+                                    {dailyReading[0].verse}
+                                </Text>
+                                <Text noOfLines={4} mb={5}>
+                                {dailyReading[0].content}
+                                </Text>
+                            </VStack>
                         </VStack>
-                    </VStack>
+                    </Skeleton>
                         <VStack spacing={4} width="100%"
                          className={classes.prayerContainer}>
                             {churchPrayer.map((item,idx) => (
