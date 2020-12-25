@@ -8,6 +8,8 @@ import {HStack,VStack,Text} from "@chakra-ui/react"
 import {Button} from "components/Button"
 import {Pyramid,Couple} from "assets/images"
 
+
+
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 const tutorialSteps = [
@@ -36,10 +38,14 @@ const tutorialSteps = [
   },
 ];
 
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    width:"100%",
+    width:"50%",
+    "& > div":{
+      width:"100%"
+    },
     "& .MuiMobileStepper-positionStatic": {
       justifyContent: "center"
     },

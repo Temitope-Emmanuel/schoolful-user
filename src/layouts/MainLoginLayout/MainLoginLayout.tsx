@@ -1,7 +1,9 @@
 import React from "react"
-import {Flex,Box} from "@chakra-ui/react"
+import {useHistory} from "react-router-dom"
+import {Flex,Box, Icon, IconButton} from "@chakra-ui/react"
 import {BibleImage2x} from "assets/images"
 import {Logo} from "components/Logo"
+import { CgCloseO } from "react-icons/cg"
 
 interface IProps {
     children:any;
@@ -9,6 +11,10 @@ interface IProps {
 }
 
 const MainLoginLayout:React.FC<IProps> = ({children,showLogo}) => {
+    const history = useHistory()
+    const goBack = () => {
+        history.goBack()
+    }
     
     return(
         <Flex height="100vh" width="100vw">
@@ -20,6 +26,10 @@ const MainLoginLayout:React.FC<IProps> = ({children,showLogo}) => {
             <Flex position="relative" flex={[1,3]} pr={{sm:"5", md:"24"}}
              pt={{sm:"5", md:"16"}} ml={[0,"2","32"]} flexDirection={["column","row-reverse"]}
             >   
+            <IconButton aria-label="close-btn" bgColor="transparent" onClick={goBack} icon={
+                <Icon as={CgCloseO} color="#383838"
+                 opacity={.5} boxSize="2rem"  />
+            } />
                 {
                     showLogo && 
                 <Box position="absolute" display={["none","block"]} left="0" top="7.5em" >

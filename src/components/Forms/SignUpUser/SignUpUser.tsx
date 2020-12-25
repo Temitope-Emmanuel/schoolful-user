@@ -1,5 +1,4 @@
 import React from "react"
-import {useHistory} from "react-router-dom"
 import {
     Box, Flex,Heading, Text, Skeleton, SimpleGrid,
     AspectRatio, Image, VStack, ModalFooter,Avatar,
@@ -32,6 +31,7 @@ import {BiLeftArrowCircle} from "react-icons/bi"
 import {buttonBackground} from "theme/chakraTheme/palette"
 import {ChurchImage} from "assets/images"
 import {login} from "store/System/actions"
+import {useDispatch} from "react-redux"
 
 
 
@@ -238,11 +238,7 @@ const VerifyChurchDialog: React.FC<IVerifyChurchDialog> = ({ handleClose, handle
 interface IProps {
     churchDetail:IChurch
 }
-const ShowSuccess:React.FC<IProps> = ({churchDetail}) => {
-    const history = useHistory()
-    setTimeout(() => {
-        history.push(`/church/${churchDetail.churchID}/dashboard`)
-    },2500)
+const ShowSuccess:React.FC<IProps> = () => {
     return(
         <ModalContent>
             <ModalBody my="10" >
@@ -277,6 +273,7 @@ const Signup = () => {
     const [churchSelect, setChurchSelect] = React.useState<IChurch[]>(new Array(10).fill(defaultChurch))
     const [showChurchSelect,setShowChurchSelect] = React.useState<IChurch[]>([])
     const currentDate = new Date()
+    const dispatch = useDispatch()
     const minDate = new Date()
     minDate.setFullYear(1900,0,0,)
     currentDate.setFullYear(2000,0,0)
@@ -324,6 +321,9 @@ const Signup = () => {
 
         getStateLocation()
         getDenomination()
+        return () => {
+            setShowDialog(false)
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -386,6 +386,11 @@ const Signup = () => {
         setCurrentChurch(church)
         handleDialogToggle()
     }
+    // Show Success Dialog 
+    const handleShowSuccess = () => {
+        setShowSuccess(true)
+        setShowDialog(true)
+    }
     // Show the birthday form and clears the current church
     const showBirthdayForm = () => {
         setCurrentChurch(defaultChurch)
@@ -436,13 +441,13 @@ const Signup = () => {
                     societyPosition: []
                 }
                 await accountService.createChurchMember(newUser).then(payload => {
+                    handleShowSuccess()
+                    dispatch(login(newUser.phoneNumber as number,newUser.password,toast))
                     toast({
                         title: "Success",
                         subtitle: "New User Created",
                         messageType: MessageType.SUCCESS
                     })
-
-                    login(newUser.phoneNumber as number,newUser.password,toast)
                 }).catch(err => {
                     actions.setSubmitting(false)
                     toast({
@@ -594,16 +599,18 @@ const Signup = () => {
                                                 :
                                                 <Fade timeout={150} in={!open}>
                                                     <Box >
-                                                            <HStack>
-                                                                <GoBack func={handleToggle} />
-                                                                <SearchInput className={classes.input} value={inputValue} setValue={handleInputChange} />
-                                                            </HStack>
                                                             <Text>
                                                                 If you can't find your church&nbsp;
                                                                 <Text as="b" onClick={showBirthdayForm} >
                                                                         Click Here
                                                                 </Text>
                                                             </Text>
+                                                            <HStack my={6}>
+                                                                <GoBack func={handleToggle} />
+                                                                <SearchInput className={classes.input}
+                                                                 value={inputValue} width={["100%","50%"]}
+                                                                  setValue={handleInputChange} />
+                                                            </HStack>
                                                             <SimpleGrid minChildWidth="12.5rem" gridGap=".5rem"
                                                                 spacing="40px">
                                                                 {showChurchSelect.length > 0 ? 

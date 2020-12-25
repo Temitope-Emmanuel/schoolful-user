@@ -14,7 +14,7 @@ import {Groups} from "views/Groups"
 
 
 const DashboardRoute = () => {
-    const {url,path} = useRouteMatch()
+    const {path} = useRouteMatch()
 
     return(
         <DashboardLayout>

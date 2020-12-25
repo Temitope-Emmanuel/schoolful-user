@@ -1,10 +1,10 @@
-import { InputGroup, Icon, Input,Flex, InputLeftElement } from "@chakra-ui/react"
+import { InputGroup, Icon,FlexProps, Input,Flex, InputLeftElement } from "@chakra-ui/react"
 import React from "react"
 import { RiSearchLine } from "react-icons/ri"
 import {makeStyles,createStyles,Theme} from "@material-ui/core/styles"
 import {tertiary} from "theme/chakraTheme/palette"
 
-interface IProps {
+interface IProps extends FlexProps {
     value:string;
     setValue:any;
     [key:string]:any
@@ -12,6 +12,7 @@ interface IProps {
 
 const useStyles = makeStyles((theme:Theme) => createStyles({
     root:{
+        width:"100%",
         border:`1px solid rgb(21, 28, 77,.5)`,
         borderRadius:"4px",
         "& input":{

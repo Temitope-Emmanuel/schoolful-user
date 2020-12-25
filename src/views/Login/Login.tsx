@@ -1,6 +1,6 @@
 import React from "react"
 import {Link,useLocation} from "react-router-dom"
-import {Flex,Text} from "@chakra-ui/react"
+import {Flex,HStack,Text} from "@chakra-ui/react"
 import {MainLoginLayout} from "layouts/MainLoginLayout"
 import {Login as LoginComponent,ResetPassword} from "components/Forms"
 
@@ -22,16 +22,18 @@ const Login = () => {
                 }
                 {
                     isLogin ?
-                        <Text whiteSpace="nowrap" >Don't have an account? &nbsp;
-                            <a href="localhost:3000/signup/member">
-                                <Text color="primary">
-                                    Sign Up here
-                                </Text>
-                            </a>
+                    <HStack>
+                        <Text whiteSpace="nowrap" >Don't have an account?
                         </Text>
+                            <Text color="primary" textDecoration="underline">
+                                <Link to="/signup/member">
+                                        Sign Up here
+                                </Link>
+                            </Text>
+                    </HStack>
                         :
                         <Text textStyle="h6" >Already have an account? &nbsp;
-                    <Link to="localhost:3001/login">
+                    <Link to="/login">
                         Login here
                     </Link>
                         </Text>
