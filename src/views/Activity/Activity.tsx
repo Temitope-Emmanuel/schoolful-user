@@ -359,6 +359,7 @@ const Activity = () => {
 
   console.log(currentActivity)
   console.log(currentChurchEvent)
+  
   return (
     <VStack className={classes.root} maxW="lg">
       <VStack bgColor={scrolling.scrolling ? "primary" : "#0000001A"}>
