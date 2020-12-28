@@ -6,6 +6,7 @@ export interface LoggedInUser {
     email: string;
     expirationTime: number;
     personType: number;
+    picture_url:string;
     callingCode:number;
     churchId: number;
     role:string[]
