@@ -1,0 +1,1 @@
+export {default as MainLoginLayout} from "./MainLoginLayout"

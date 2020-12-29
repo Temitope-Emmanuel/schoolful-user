@@ -1,0 +1,1 @@
+export {default as MaterialTheme} from "./material-ui"
