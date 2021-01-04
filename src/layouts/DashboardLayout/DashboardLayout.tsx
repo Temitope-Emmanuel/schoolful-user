@@ -144,7 +144,7 @@ const DashboardLayout:React.FC<IProps> = (props) => {
   const drawer = (
     <>
       <div className={classes.toolbar} />
-      <Stack className={classes.optionContainer} spacing={2}>
+      <Stack className={classes.optionContainer} spacing={4}>
         {dashboardMenu.map((item, idx) => (
           <Link key={idx} to={`/church/${params.churchId}${item.link}`} >
             <Flex align="center"

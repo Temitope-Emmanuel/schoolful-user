@@ -77,7 +77,8 @@ const useStyles = makeStyles((theme) => ({
       fontWeight:"600"
     },
     "& p:nth-child(2)":{
-      fontSize:"0.85rem"
+      fontSize:"0.85rem",
+      fontStyle:"italic"
     }
   }
 }));

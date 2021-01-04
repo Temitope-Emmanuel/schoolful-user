@@ -5,7 +5,7 @@ import {
     InputGroup,InputRightElement
   } from "@chakra-ui/react";
 import {Field,FieldProps} from "formik"
-import {makeStyles,createStyles} from "@material-ui/core/styles"
+import {makeStyles,createStyles} from "@material-ui/styles"
 import {AiFillEyeInvisible} from "react-icons/ai" 
 import {BiShow} from "react-icons/bi"
 
@@ -44,7 +44,7 @@ const NormalInput:React.FC<IProps> = ({placeholder,showErrors = true,icon,label,
         {({ field, form }:FieldProps) => {
           return(
             <FormControl my={["2"]}  {...props}
-            isInvalid={Boolean(form.touched[name]) && Boolean(form.errors[name])}>
+              isInvalid={Boolean(form.touched[name]) && Boolean(form.errors[name])}>
               { label  && <FormLabel fontWeight="500" color="primary">{label}</FormLabel>}
               {
                 // if type is a password
@@ -67,7 +67,7 @@ const NormalInput:React.FC<IProps> = ({placeholder,showErrors = true,icon,label,
                   <InputGroup size="md">
                   <Input sx={styles} className={classes.input}
                       pr="4.5rem" {...field}
-                      type="text"
+                      type="text" id={name}
                       placeholder={placeholder}
                   />
                   <InputRightElement width="4.5rem">
@@ -78,12 +78,12 @@ const NormalInput:React.FC<IProps> = ({placeholder,showErrors = true,icon,label,
               </InputGroup>
                 :
                 // A normal input
-                <Input sx={styles} type={type || "text"} {...field} id="name"
+                <Input sx={styles} type={type || "text"} {...field} id={name}
                  placeholder={placeholder} />
               }
                 { form.touched[name]  && 
-                form.errors[name] &&
-                  <FormErrorMessage>{form.errors[name]}</FormErrorMessage>
+                  form.errors[name] &&
+                  <FormErrorMessage fontFamily="Bahnschrift" >{form.errors[name]}</FormErrorMessage>
                 }
             </FormControl>
           )

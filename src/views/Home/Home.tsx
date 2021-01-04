@@ -1,8 +1,9 @@
 import React from "react"
-import {VStack,Heading,Button,Skeleton,
+import {VStack,Heading,Skeleton,
         Text,AspectRatio,Image, Avatar,
         AvatarGroup, HStack, Icon} from "@chakra-ui/react"
 import {DetailCard} from "components/Card"
+import {Button} from "components/Button"
 import {createStyles,makeStyles,Theme} from "@material-ui/core/styles"
 import {Carousel} from "components/Carousel"
 import { FaPrayingHands } from "react-icons/fa"
@@ -37,7 +38,7 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
         "& > h3":{
             fontWeight:400,
             fontSize:"1.5rem",
-            opacity:.4
+            opacity:.75
         },
         "& > h2":{
             lineHeight:'1.15',
@@ -163,12 +164,12 @@ const Home = () => {
                 <Heading as="h3" color="tertiary">
                     {todayDate}
                 </Heading>
-                <Heading color="tertiary">
+                <Heading fontFamily='MulishExtraBold' color="tertiary">
                     Welcome,<br/>{currentUser.fullname}
                 </Heading>
             </VStack>
             <VStack>
-                <Button colorScheme="buttonColor" bgColor="buttonColor">
+                <Button bgColor="buttonColor" fontFamily='MulishExtraBold'>
                     Add Bookings / Request
                 </Button>
                 <VStack>
