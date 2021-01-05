@@ -144,20 +144,16 @@ const Bible = () => {
             })
         }
         getBibleBookChapter()
-    },[currentChapter,currentBook])
+    },[currentChapter,currentBibleBook,bibleVersion])
 
-
-
-
-    console.log(bibleChapter)
-
+    
     return(
         <VStack className={classes.root}>
             <VStack width={"95%"} alignSelf="flex-end"
                 align="flex-end"
                 divider={<StackDivider my={10} borderColor="gray.200" />}>
                 <HStack>
-                    <HStack>
+                    <HStack width="57%">
                         <Select onClick={handleCurrentBookBible} color="tertiary" >
                             {bible.map((item,idx) => (
                                 <option value={item.number} key={item.number || idx} >
@@ -165,7 +161,7 @@ const Bible = () => {
                                 </option>
                             ))}
                         </Select>
-                        <Select onClick={handleBibleVersion} color="tertiary">
+                        <Select w="45%" onClick={handleBibleVersion} color="tertiary">
                             {bibleVersionList.map((item,idx) => (
                                 <option value={item} key={idx} >
                                     {item}
@@ -173,7 +169,7 @@ const Bible = () => {
                             ))}
                         </Select>
                     </HStack>
-                    <Select onClick={handleCurrentChapter}>
+                    <Select width="15%" onClick={handleCurrentChapter}>
                         {bibleChapter.map((item,idx) => (
                             <option value={item.chapter} key={item.chapter || idx} >
                                 {item.chapter}
