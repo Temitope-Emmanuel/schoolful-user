@@ -1,25 +1,33 @@
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig, CancelTokenSource } from "axios";
 import { IResponse } from "core/models/Response";
 import { IPrayer } from "core/models/Prayer";
 import { IPrayerRequest } from "core/models/PrayerRequest";
-import { ITestimony,ICommentTestimony } from "core/models/Testimony";
+import { ITestimony, ICommentTestimony } from "core/models/Testimony";
 import { Testimony } from "core/enums/Testimony";
+import { IBibleBook, IBibleChapter, IBibleVerses } from "core/models/Bible";
 
 const baseUrl = `${process.env.REACT_APP_SERVER_URL}/Prayer`;
-const config:AxiosRequestConfig = {headers:{"Content-Type":"application/json-patch+json"}}
+const config: AxiosRequestConfig = {
+  headers: { "Content-Type": "application/json-patch+json" },
+};
 
 export const getPrayer = async (
-  denominationId: number
+  denominationId: number,
+  cancelToken: CancelTokenSource
 ): Promise<IResponse<IPrayer[]>> => {
   try {
     const url = `${baseUrl}/GetPrayer?denomination=${denominationId}`;
-    const response = await axios.get(url);
+    const response = await axios.get(url, {
+      cancelToken: cancelToken.token,
+    });
     return response.data;
   } catch (err) {
     throw err;
   }
 };
-export const getDailyReading = async (): Promise<IResponse<any>> => {
+export const getDailyReading = async (
+  cancelToken: CancelTokenSource
+): Promise<IResponse<any>> => {
   const currentDate = new Date().toLocaleDateString().split("/");
   const padString = (str: string) => {
     return str.length >= 2 ? str : `0${str}`;
@@ -31,7 +39,9 @@ export const getDailyReading = async (): Promise<IResponse<any>> => {
 
   try {
     const url = `${baseUrl}/GetDailyReading?date=${formatDate}`;
-    const response = await axios.get(url);
+    const response = await axios.get(url, {
+      cancelToken: cancelToken.token,
+    });
     return response.data;
   } catch (err) {
     throw err;
@@ -49,11 +59,14 @@ export const getPreviousDailyReading = async (
   }
 };
 export const getPrayerRequest = async (
-  churchId: number
+  churchId: number,
+  cancelToken: CancelTokenSource
 ): Promise<IResponse<IPrayerRequest[]>> => {
   const url = `${baseUrl}/GetPrayerRequest?churchId=${churchId}`;
   try {
-    const response = await axios.get(url);
+    const response = await axios.get(url, {
+      cancelToken: cancelToken.token,
+    });
     return response.data;
   } catch (err) {
     throw err;
@@ -111,7 +124,7 @@ export const addTestimony = async (
 ): Promise<IResponse<ITestimony>> => {
   const url = `${baseUrl}/AddTestimony`;
   try {
-    const response = await axios.post(url,addTestmony,config);
+    const response = await axios.post(url, addTestmony, config);
     return response.data;
   } catch (err) {
     throw err;
@@ -144,11 +157,14 @@ interface IGetTestimony {
   testimonyType: Testimony;
 }
 export const getTestimony = async (
-  arg: IGetTestimony
+  arg: IGetTestimony,
+  cancelToken: CancelTokenSource
 ): Promise<IResponse<ITestimony[]>> => {
   const url = `${baseUrl}/GetTestimony?churchId=${arg.churchId}&testimonyType=${arg.testimonyType}`;
   try {
-    const response = await axios.get(url);
+    const response = await axios.get(url, {
+      cancelToken: cancelToken.token,
+    });
     return response.data;
   } catch (err) {
     throw err;
@@ -168,3 +184,52 @@ export const CommentOnTestimony = async (
     throw err;
   }
 };
+
+// Bible API
+export const GetBibleByVersion = async (
+  version: string,
+  cancelToken:CancelTokenSource
+): Promise<IResponse<IBibleBook[]>> => {
+  const url = `${baseUrl}/GetBibleVerseBook?version=${version}`
+  try{
+    const response = await axios.get(url,{
+      cancelToken:cancelToken.token
+    })
+    return response.data
+  }catch(err){
+    throw err
+  }
+};
+
+export const GetBibleBookChapters = async (
+  bookid:number,
+  version:string,
+  cancelToken:CancelTokenSource
+): Promise<IResponse<IBibleChapter[]>> => {
+  const url = `${baseUrl}//GetBibleVerseChapterByBook?bookid=${bookid}&version=${version}`
+  try{
+    const response = await axios.get(url,{
+      cancelToken:cancelToken.token
+    })
+    return response.data
+  }catch(err){
+    throw err
+  }
+}
+
+export const GetBibleVerses = async (
+  bookid:number,
+  chapter:number,
+  version:string,
+  cancelToken:CancelTokenSource
+):Promise<IResponse<IBibleVerses>> => {
+  const url = `${baseUrl}/GetBibleVerses?bookid=${bookid}&chapter=${chapter}&version=${version}`
+  try{
+    const respone = await axios.get(url,{
+      cancelToken:cancelToken.token
+    })
+    return respone.data
+  }catch(err){
+    throw err
+  }
+}

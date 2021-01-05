@@ -7,8 +7,8 @@ import {IDailyReading} from "core/models/dailyReading"
 import {IoMdArrowDropdown} from 'react-icons/io'
 import {MessageType} from "core/enums/MessageType"
 import useToast from "utils/Toast"
-
-import * as prayerService from "core/services/prayer.service"
+import axios from "axios"
+import {getDailyReading} from "core/services/prayer.service"
 
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -47,8 +47,9 @@ const Reflection = () => {
     const newDate = new Intl.DateTimeFormat('en-US', options).format(new Date())
     
     React.useEffect(() => {
-        const getDailyReading = async () => {
-            await prayerService.getDailyReading().then(payload => {
+        const token = axios.CancelToken.source()
+        const getDailyReadingApi = async () => {
+            await getDailyReading(token).then(payload => {
                 const newReading:IDailyReading[] = payload.data.readings.map((item:IDailyReading,idx:number) => ({
                     ...item,
                     content:item.content.replace(/[1-9][0-9]*/g,(text:string) => (
@@ -64,7 +65,10 @@ const Reflection = () => {
                 })
             })
         }
-       getDailyReading() 
+       getDailyReadingApi() 
+       return () => {
+           token.cancel()
+       }
     },[])
     
     return (
