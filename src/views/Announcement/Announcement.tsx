@@ -5,7 +5,7 @@ import useParams from "utils/Params"
 import useToast from "utils/Toast"
 import * as announcementService from "core/services/announcement.service"
 import {IAnnouncement} from "core/models/Announcement"
-
+import axios from "axios"
 
 
 const useStyles = makeStyles((theme:Theme) => createStyles({
@@ -37,30 +37,36 @@ const Announcement = () => {
     const classes = useStyles()
     const params = useParams()
     const toast = useToast()
-    const [churchAnnouncement,setChurchAnnouncement] = React.useState<IAnnouncement[]>(new Array(10).fill(defaultAnnouncement))
+    const [churchAnnouncement,setChurchAnnouncement] = React.useState<IAnnouncement[]>(new Array(5).fill(defaultAnnouncement))
 
 
     React.useEffect(() => {
+        const cancelToken = axios.CancelToken.source()
         const getAnnouncementByChurch = async() => {
-            await announcementService.getAnnouncementByChurch(params.churchId).then(payload => {
+            await announcementService.getAnnouncementByChurch(params.churchId,cancelToken).then(payload => {
                 setChurchAnnouncement(payload.data)
             }).catch(err => {
-                toast({
-                    title:"Unable To get Church Announcement",
-                    subtitle:`Error: ${err}`,
-                    messageType:"error"
-                })
+                if(axios.isCancel(err)){
+                    toast({
+                        title:"Unable To get Church Announcement",
+                        subtitle:`Error: ${err}`,
+                        messageType:"error"
+                    })
+                }
             })
         }
 
         getAnnouncementByChurch()
+        return () => {
+            cancelToken.cancel()
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
     return(
         <VStack spacing={3} className={classes.root} maxW="md" >
             {churchAnnouncement.map((item,idx) =>(
-                <Skeleton key={item.announcementID || idx} isLoaded={Boolean(item.announcementID)} >
+                <Skeleton w="100%" h="100%" key={item.announcementID || idx} isLoaded={Boolean(item.announcementID)} >
                     <VStack key={idx} className={classes.announcementContainer}>
                         <Heading color="primary" fontSize="1rem" fontWeight={600} >
                             {item.title}

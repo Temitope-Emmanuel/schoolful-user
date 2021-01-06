@@ -32,7 +32,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         }
     },
     textMainContainer:{
-        lineHeight:"1.4"
+        lineHeight:"1.4",
+        width:"100%"
     }
 }))
 
@@ -58,11 +59,13 @@ const Reflection = () => {
                 })) 
                 setDailyReading(newReading)
             }).catch(err => {
-                toast({
-                    title:"Unable to get Daily Reading",
-                    subtitle:`Error:${err}`,
-                    messageType:MessageType.ERROR
-                })
+                if(!axios.isCancel(err)){
+                    toast({
+                        title:"Unable to get Daily Reading",
+                        subtitle:`Error:${err}`,
+                        messageType:MessageType.ERROR
+                    })
+                }
             })
         }
        getDailyReadingApi() 
@@ -110,12 +113,13 @@ const Reflection = () => {
                     </HStack>
                 </HStack>
                 <VStack className={classes.textMainContainer}>
-                    <SkeletonText startColor="pink.500" endColor="orange.500"  noOfLines={14} spacing="1" 
-                        isLoaded={Boolean(dailyReading[0]?.name)}>
+                    <SkeletonText w="100%" startColor="gray.100" endColor="gray.500" noOfLines={14} spacing="1" 
+                        isLoaded={Boolean(dailyReading[0]?.name.length > 2)}>
                      <Text fontWeight={600} color="tertiary" 
                       dangerouslySetInnerHTML={{__html: dailyReading.length > 0 ? dailyReading[1].content : ""}} />   
                     </SkeletonText>
-                    <SkeletonText startColor="pink.500" endColor="orange.500"  noOfLines={14} spacing="1" isLoaded={Boolean(dailyReading[0]?.name)}>
+                    <SkeletonText w="100%" startColor="gray.100" endColor="gray.500" noOfLines={14}
+                     spacing="1" isLoaded={Boolean(dailyReading[0]?.name.length > 2)}>
                         <Text color="tertiary" 
                           dangerouslySetInnerHTML={{__html: dailyReading.length > 1 ? dailyReading[0].content : ""}} />
                     </SkeletonText>

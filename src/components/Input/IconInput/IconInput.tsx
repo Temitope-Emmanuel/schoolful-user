@@ -18,7 +18,8 @@ const useStyles = makeStyles(theme =>(
             marginRight:"1rem"
         },
         "& label":{
-            marginBottom:"0 !important"
+            marginBottom:"0 !important",
+            opacity:.85
         },
         "& input":{
             minWidth:"15rem"

@@ -16,6 +16,7 @@ import {LoadActivitiesForChurch,LoadEventsForChurch} from "store/Activity/action
 import {AdvertLayout} from "layouts/AdvertLayout"
 import { MdDashboard } from "react-icons/md"
 import { FaPrayingHands, FaHandHoldingHeart, FaUserAlt, FaBible } from "react-icons/fa"
+import {GiPublicSpeaker} from "react-icons/gi"
 import { FiActivity } from "react-icons/fi"
 import { TiGroup } from "react-icons/ti"
 import {FiLogOut} from "react-icons/fi"
@@ -105,7 +106,7 @@ const dashboardMenu = [
   { icon: MdDashboard, name: "Home", link: "/home" },
   { icon: FaPrayingHands, name: "Prayer Wall", link: "/prayer" },
   { icon: FaBible, name: "Bible", link: "/bible" },
-  { icon: GiPodiumWinner, name: "Sermon", link: "/sermon" },
+  { icon: GiPublicSpeaker, name: "Sermon", link: "/sermon" },
   { icon: FaUserAlt, name: "Profile", link: "/profile" },
   { icon: FaHandHoldingHeart, name: "Giving", link: "/giving" },
   { icon: FiActivity, name: "Church Activity", link: "/activity" },

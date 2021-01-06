@@ -6,6 +6,7 @@ import {GetBibleBookChapters,GetBibleVerses,GetBibleByVersion} from "core/servic
 import axios from "axios"
 import useToast from "utils/Toast"
 import {MessageType} from "core/enums/MessageType"
+import {tertiary} from "theme/chakraTheme/palette"
 
 const useStyles = makeStyles((theme:Theme) => createStyles({
     root:{
@@ -17,7 +18,8 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
             letterSpacing:0
         },
         "& p":{
-            fontSize:"1.3rem"
+            fontSize:"1.3rem",
+            color:tertiary
         },
         "& > select:first-child":{
             marginRight:theme.spacing(8)
@@ -27,15 +29,21 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
             "& > div:first-child":{
                 width:"100%",
                 justifyContent:"space-around"
-            },
-        },
+            }
+        }
+    },
+    chapterContainer:{
+        "& p":{
+            fontSize:"1rem",
+            letterSpacing:"0px"
+        }
     }
 }))
 
 
 const Bible = () => {
     const bibleVersionList = [
-        "kjv","akjv","asv","ylt","web"
+        "KJV","AKJV","ASV","YLT","WEB"
     ]
     const defaultBook:IBibleBook = {
         abbreviation:"",
@@ -89,9 +97,10 @@ const Bible = () => {
         }
     },[])
 
+
     React.useEffect(() => {
         const GetBibleBookChapterApi = () => {
-            GetBibleBookChapters(currentBook.book_nr,bibleVersion,cancelToken).then(payload => {
+            GetBibleBookChapters(currentBook.book_nr,bibleVersion.toLowerCase(),cancelToken).then(payload => {
                 setBibleChapter(payload.data)
             }).catch(err => {
                 if(!axios.isCancel(err)){
@@ -108,7 +117,7 @@ const Bible = () => {
 
     React.useEffect(() => {
         const getChurchBook = () => {
-            GetBibleByVersion(bibleVersion,cancelToken).then(payload => {
+            GetBibleByVersion(bibleVersion.toLowerCase(),cancelToken).then(payload => {
                 const newBibleBook = payload.data.map(item => ({
                     abbreviation:item.abbreviation,
                     number:item.number,
@@ -131,7 +140,7 @@ const Bible = () => {
 
     React.useEffect(() => {
         const getBibleBookChapter = () => {
-            GetBibleVerses(currentBibleBook.number,currentChapter,bibleVersion,cancelToken).then(payload => {
+            GetBibleVerses(currentBibleBook.number,currentChapter,bibleVersion.toLowerCase(),cancelToken).then(payload => {
                 setCurrentBook(payload.data)
             }).catch(err => {
                 if(!axios.isCancel(err)){
@@ -146,11 +155,11 @@ const Bible = () => {
         getBibleBookChapter()
     },[currentChapter,currentBibleBook,bibleVersion])
 
-    
+
     return(
         <VStack className={classes.root}>
             <VStack width={"95%"} alignSelf="flex-end"
-                align="flex-end"
+                align="center"
                 divider={<StackDivider my={10} borderColor="gray.200" />}>
                 <HStack>
                     <HStack width="57%">
@@ -177,11 +186,9 @@ const Bible = () => {
                         ))}
                     </Select>
                 </HStack>
-            <VStack>
+            <VStack maxW="xl" align="flex-start" className={classes.chapterContainer} >
                 {currentBook.verses.map((item,idx) => (
-                    <Text key={idx}>
-                        {`${item.verse}. ${item.text}`}
-                    </Text>
+                    <Text key={idx} dangerouslySetInnerHTML={{__html:`${item.verse}. ${item.text}`}} />
                 ))}
             </VStack>
             </VStack>

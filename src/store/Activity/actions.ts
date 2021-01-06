@@ -20,6 +20,7 @@ export function LoadActivitiesForChurch (churchId:string,toast:ToastFunc){
             return await activityService.getChurchActivity(churchId).then(payload => {
                 const newChurchActivity = payload.data.map((item) => {
                       const schedule = JSON.parse(item.schedule!)
+                    console.log(schedule)
                       const recurringRule = rrulestr(schedule.recurrence)
                       return ({
                         ...item,
