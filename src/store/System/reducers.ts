@@ -12,6 +12,7 @@ const initialState: SystemState = {
         fullname: "",
         phoneNumber: 0,
         email: "",
+        picture_url:"",
         expirationTime: 0,
         personType: 0,
         callingCode: 0,

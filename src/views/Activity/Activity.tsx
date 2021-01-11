@@ -19,7 +19,7 @@ import DatePicker from "react-date-picker"
 import { tertiary } from 'theme/chakraTheme/palette'
 import { AppState } from "store";
 import {updateActivity,updateEvent} from "store/Activity/actions"
-import {showLoading} from "store/System/actions"
+import {showLoading,hideLoading} from "store/System/actions"
 import { useSelector,useDispatch } from "react-redux";
 import useScroll from "utils/Scroll"
 
@@ -268,6 +268,7 @@ const Activity = () => {
         dispatch(updateEvent(foundActivity as ICurrentEvent,toast))
         }
     }).catch((err: any) => {
+      dispatch(hideLoading())
       toast({
         title: "Unable to add new Google Event",
         subtitle: `Error:${err.result.error.message}`,
@@ -357,8 +358,6 @@ const Activity = () => {
     setCurrentDate((e as Date));
   };
 
-  console.log(currentActivity)
-  console.log(currentChurchEvent)
   return (
     <VStack className={classes.root} maxW="lg">
       <VStack bgColor={scrolling.scrolling ? "primary" : "#0000001A"}>

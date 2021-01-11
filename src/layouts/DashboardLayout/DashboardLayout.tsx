@@ -11,7 +11,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { CgBell,CgProfile } from 'react-icons/cg'
 import { Logo } from "components/Logo"
 import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
-import {useDispatch} from "react-redux"
+import {useDispatch, useSelector} from "react-redux"
 import {LoadActivitiesForChurch,LoadEventsForChurch} from "store/Activity/actions"
 import {AdvertLayout} from "layouts/AdvertLayout"
 import { MdDashboard } from "react-icons/md"
@@ -24,9 +24,10 @@ import { GiPodiumWinner,GiHamburgerMenu } from "react-icons/gi"
 import {getChurch,logout} from "store/System/actions"
 import useToast from "utils/Toast"
 import useParams from "utils/Params"
+import { AppState } from 'store';
 
 
-const drawerWidth = 190;
+const drawerWidth = 210;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -34,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
     },
     drawer: {
-      [theme.breakpoints.up('sm')]: {
+      [theme.breakpoints.up('md')]: {
         width: drawerWidth,
         flexShrink: 0,
       },
@@ -64,9 +65,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     menuButton: {
       marginRight: theme.spacing(2),
-      [theme.breakpoints.up('sm')]: {
+      [theme.breakpoints.up('md')]: {
         display: 'none'
-      },
+      }
     },
     // necessary for content to be below app bar
     toolbar: theme.mixins.toolbar,
@@ -99,6 +100,7 @@ interface IProps {
 }
 
 
+
 const dashboardMenu = [
   { icon: MdDashboard, name: "Home", link: "/home" },
   { icon: FaPrayingHands, name: "Prayer Wall", link: "/prayer" },
@@ -123,6 +125,7 @@ const DashboardLayout:React.FC<IProps> = (props) => {
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [desktopOpen,setDesktopOpen] = React.useState(true)
+  const currentUser = useSelector((state:AppState) => state.system.currentUser)
 
   const atProfile = location.pathname.includes("/profile")
   const handleDrawerToggle = () => {
@@ -169,15 +172,6 @@ const DashboardLayout:React.FC<IProps> = (props) => {
           >
             <Icon color="black" w="1.69rem" h="1.13rem" as={GiHamburgerMenu} />
           </IconButton>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDesktopToggle}
-            // className={classes.menuButton}
-          >
-            <Icon color="black" w="1.69rem" h="1.13rem" as={GiHamburgerMenu} />
-          </IconButton>
           <Flex align="center" justify="space-around" flex={3}>
             <Logo white={false} />
           </Flex>
@@ -194,7 +188,7 @@ const DashboardLayout:React.FC<IProps> = (props) => {
               <MenuButton>
               <Avatar border="2px solid #B603C9"
                 size="sm" name="Temitope Emmanuel"
-                src="https://bit.ly/ryan-florence" />
+                src={currentUser.picture_url || "https://bit.ly/ryan-florence"} />
               </MenuButton>
               <MenuList>
                 {
@@ -215,7 +209,7 @@ const DashboardLayout:React.FC<IProps> = (props) => {
       </AppBar>
       <nav className={classes.drawer} aria-label="mailbox folders">
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-        <Hidden smUp implementation="css">
+        <Hidden mdUp implementation="css">
           <Drawer
             // container={container}
             variant="temporary"
@@ -232,7 +226,7 @@ const DashboardLayout:React.FC<IProps> = (props) => {
             {drawer}
           </Drawer>
         </Hidden>
-        <Hidden xsDown implementation="css">
+        <Hidden smDown implementation="css">
           <Drawer
             classes={{
               paper: classes.drawerPaper,
