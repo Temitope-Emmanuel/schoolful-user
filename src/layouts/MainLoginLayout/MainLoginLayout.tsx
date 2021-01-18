@@ -32,7 +32,7 @@ const MainLoginLayout:React.FC<IProps> = ({children,showLogo}) => {
             } />
                 {
                     showLogo && 
-                <Box position="absolute" display={["none","block"]} left="0" top="7.5em" >
+                <Box position="absolute" display={["none","block"]} left="0"  top={["2rem","7rem"]}>
                     <Logo white={false} />
                 </Box>
                 }

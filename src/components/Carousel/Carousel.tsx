@@ -77,7 +77,8 @@ const useStyles = makeStyles((theme) => ({
       fontWeight:"600"
     },
     "& p:nth-child(2)":{
-      fontSize:"0.85rem"
+      fontSize:"0.85rem",
+      fontStyle:"italic"
     }
   }
 }));
@@ -105,7 +106,7 @@ function SwipeableTextMobileStepper() {
     <div className={classes.root}>
       <AutoPlaySwipeableViews
         axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-        index={1}
+        index={activeStep}
         onChangeIndex={handleStepChange}
         enableMouseEvents
       >

@@ -1,37 +1,38 @@
 import React from "react"
 import {
-    Box, Flex,Heading, Text, Skeleton, SimpleGrid,
-    AspectRatio, Image, VStack, ModalFooter,Avatar,
-    ModalHeader, ModalBody, ModalContent,Stack,IconButton,
+    Box, Flex, Heading, Text, Skeleton, SimpleGrid,
+    AspectRatio, Image, VStack, ModalFooter, Avatar,
+    ModalHeader, ModalBody, ModalContent, Stack, IconButton,
     ModalCloseButton, HStack, Icon
 } from "@chakra-ui/react"
 import { Button } from "components/Button"
-import {BsCardImage} from "react-icons/bs"
+import { BsCardImage } from "react-icons/bs"
 // eslint-disable-next-line
 import { Formik, FormikProps } from "formik"
-import {Fade} from "@material-ui/core"
+import { Fade } from "@material-ui/core"
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles"
 import { Dialog } from "components/Dialog"
 import { Link } from "components/Link"
-import { TextInput, Select,DatePicker,SearchInput } from "components/Input"
+import { TextInput, Select, DatePicker, SearchInput } from "components/Input"
 import * as Yup from "yup"
-import {MainLoginLayout} from "layouts/MainLoginLayout"
+import { MainLoginLayout } from "layouts/MainLoginLayout"
 import { IChurchMember } from 'core/models/ChurchMember'
+import {ICountry} from "core/models/Location"
 import { IDenomination } from "core/models/Denomination"
 import { IState } from "core/models/Location"
 import { IChurch } from "core/models/Church"
 import useToast from "utils/Toast"
 import * as churchService from "core/services/church.service"
-import { getState } from "core/services/utility.service"
+import { getState,getCountry } from "core/services/utility.service"
 import * as accountService from "core/services/account.service"
 import { MessageType } from 'core/enums/MessageType'
 import { BsCheckCircle } from "react-icons/bs"
-import { AiFillCheckCircle} from "react-icons/ai"
-import {BiLeftArrowCircle} from "react-icons/bi"
-import {buttonBackground} from "theme/chakraTheme/palette"
-import {ChurchImage} from "assets/images"
-import {login} from "store/System/actions"
-import {useDispatch} from "react-redux"
+import { AiFillCheckCircle } from "react-icons/ai"
+import { BiLeftArrowCircle } from "react-icons/bi"
+import { buttonBackground } from "theme/chakraTheme/palette"
+import { ChurchImage } from "assets/images"
+import { login } from "store/System/actions"
+import { useDispatch } from "react-redux"
 
 
 
@@ -41,15 +42,17 @@ const useStyles = makeStyles(theme => createStyles({
         alignSelf: "center",
         justifyContent: "center",
         flexDirection: "column",
-        marginTop:"1.9rem",
+        marginTop: "1.9rem",
         "& > *:first-child": {
             marginTop: "0 !important"
+        },
+        "& button": {
+            fontFamily: "MulishBold"
         }
     },
     inputContainer: {
-        maxHeight: "35rem",
         minHeight: "24rem",
-        overflowY: "auto",
+        marginRight: "0 !important",
         "& > div": {
             "& > p": {
                 fontSize: "1rem",
@@ -58,13 +61,16 @@ const useStyles = makeStyles(theme => createStyles({
         }
     },
     searchInput: {
-        width:"100%",
-        [theme.breakpoints.up("sm")]:{
-            width:"45vw",
+        width: "100%",
+        [theme.breakpoints.up("sm")]: {
+            width: "45vw",
         }
     },
     birthdayContainer: {
-        maxWidth: "25rem"
+        maxWidth: "25rem",
+        "& > div:nth-child(2)":{
+            width:"100% !important"
+        }
     },
     imageContainer: {
         border: "1px dashed rgba(0, 0, 0, .5)",
@@ -73,8 +79,8 @@ const useStyles = makeStyles(theme => createStyles({
         justifyContent: "center",
         alignItems: "center",
         // [theme.breakpoints.up("sm")]:{
-            width: "17.5vh",
-            height: "17.5vh",
+        width: "17.5vh",
+        height: "17.5vh",
         // },
         "& svg": {
             color: "#151C4D",
@@ -92,7 +98,7 @@ const useStyles = makeStyles(theme => createStyles({
 interface IForm {
     firstname: string;
     lastname: string;
-    username:string;
+    username: string;
     genderID: number;
     denominationId: number;
     state: number;
@@ -107,8 +113,17 @@ interface IForm {
 const churchStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         minHeight: "10rem",
-        boxShadow:"0px 3px 6px #0000000D",
-        borderRadius:"4px"
+        boxShadow: "0px 3px 6px #0000000D",
+        borderRadius: "4px",
+        "& p:first-child":{
+            fontFamily:"MulishBold",
+            fontSize:"1.25rem"
+        },
+        "& p:last-child":{
+            fontSize:"1.1rem",
+            fontFamily:"MulishLight",
+            fontStyle:"italic"
+        }
     }
 }))
 
@@ -126,10 +141,10 @@ const ChurchView: React.FC<IChurchView> = ({ churchName, address, image }) => {
                 <Image src={image || ChurchImage} />
             </AspectRatio>
             <Box>
-                <Text as="h6" color="tertiary">
+                <Text color="tertiary">
                     {churchName}
                 </Text>
-                <Text color="tertiary" opacity={.7}>
+                <Text color="tertiary">
                     {address || ""}
                 </Text>
             </Box>
@@ -144,10 +159,10 @@ interface IShowChurchDetail {
 
 const ShowDetail: React.FC<IShowChurchDetail> = ({ name, value }) => (
     <VStack align={["center", "flex-start"]} mb="5" >
-        <Text>
+        <Text fontSize="1.25rem">
             {name}
         </Text>
-        <Text as="b" >
+        <Text as="b"  fontSize="1rem">
             {value}
         </Text>
     </VStack>
@@ -160,7 +175,7 @@ interface IVerifyChurchDialog {
 }
 
 const VerifyChurchDialog: React.FC<IVerifyChurchDialog> = ({ handleClose, handleConfirmation, church: {
-    name, countryID, denominationId,
+    name, country, denomination,
     address, stateName,
 } }) => {
     const handleConfirmationClose = () => {
@@ -173,7 +188,7 @@ const VerifyChurchDialog: React.FC<IVerifyChurchDialog> = ({ handleClose, handle
             <ModalHeader color="primary" textAlign="center" >
                 Please confirm, is this your church ?
             </ModalHeader>
-            <ModalCloseButton border="2px solid rgba(0,0,0,.5)" onClick={handleClose}
+            <ModalCloseButton mt={5} mr={5} border="2px solid rgba(0,0,0,.5)" onClick={handleClose}
                 outline="none" borderRadius="50%" opacity={.5} />
             <ModalBody display="flex" width="100%" flexDirection={["column", "row"]} maxW="45rem"
                 alignItems={["center", "flex-start"]} justifyContent="space-around">
@@ -184,7 +199,7 @@ const VerifyChurchDialog: React.FC<IVerifyChurchDialog> = ({ handleClose, handle
                     />
                     <ShowDetail
                         name="Denomination"
-                        value={denominationId}
+                        value={denomination as string}
                     />
                     <ShowDetail
                         name="Church Address"
@@ -196,13 +211,13 @@ const VerifyChurchDialog: React.FC<IVerifyChurchDialog> = ({ handleClose, handle
                     />
                     <ShowDetail
                         name="State"
-                        value="Lagos"
+                        value={stateName || ""}
                     />
                 </VStack>
                 <VStack align={["center", "flex-start"]}>
                     <ShowDetail
                         name="Country"
-                        value={countryID}
+                        value={country || ""}
                     />
                     <ShowDetail
                         name="Head Pastor"
@@ -236,10 +251,10 @@ const VerifyChurchDialog: React.FC<IVerifyChurchDialog> = ({ handleClose, handle
 }
 
 interface IProps {
-    churchDetail:IChurch
+    churchDetail: IChurch
 }
-const ShowSuccess:React.FC<IProps> = () => {
-    return(
+const ShowSuccess: React.FC<IProps> = () => {
+    return (
         <ModalContent>
             <ModalBody my="10" >
                 <VStack>
@@ -253,7 +268,7 @@ const ShowSuccess:React.FC<IProps> = () => {
     )
 }
 
-const GoBack = ({func}:any) => (
+const GoBack = ({ func }: any) => (
     <IconButton aria-label="go-back" color="primary" bgColor="transparent" onClick={func}
         as={BiLeftArrowCircle} />
 )
@@ -271,15 +286,16 @@ const Signup = () => {
     }
     const [currentChurch, setCurrentChurch] = React.useState<IChurch>(defaultChurch)
     const [churchSelect, setChurchSelect] = React.useState<IChurch[]>(new Array(10).fill(defaultChurch))
-    const [showChurchSelect,setShowChurchSelect] = React.useState<IChurch[]>([])
+    const [showChurchSelect, setShowChurchSelect] = React.useState<IChurch[]>([])
     const currentDate = new Date()
     const dispatch = useDispatch()
     const minDate = new Date()
-    minDate.setFullYear(1900,0,0,)
-    currentDate.setFullYear(2000,0,0)
+    minDate.setFullYear(1900, 0, 0,)
+    currentDate.setFullYear(2000, 0, 0)
     const [denomination, setDenomination] = React.useState<IDenomination[]>([])
+    const [country,setCountry] = React.useState<ICountry[]>([])
     const [showBirthday, setShowBirthday] = React.useState(false)
-    const [inputValue,setInputValue] = React.useState("")
+    const [inputValue, setInputValue] = React.useState("")
     const [showSuccess, setShowSuccess] = React.useState(false)
     const [showDialog, setShowDialog] = React.useState(false)
     const [state, setState] = React.useState<IState[]>([])
@@ -295,7 +311,7 @@ const Signup = () => {
     React.useEffect(() => {
         const getStateLocation = async () => {
             await getState(160).then(payload => {
-                setState([...state, ...payload.data])
+                setState([...payload.data])
             }).catch(err => {
                 toast({
                     title: "Unable to get State List",
@@ -304,11 +320,18 @@ const Signup = () => {
                 })
             })
         }
+        const getCountryLocation = async () => {
+            await getCountry().then(payload => {
+                setCountry([...payload.data])
+            }).catch(err => {
+                
+            })
+        }
 
         const getDenomination = async () => {
             try {
                 await churchService.getChurchDenomination().then(payload => {
-                    setDenomination([...denomination, ...payload.data])
+                    setDenomination([...payload.data])
                 })
             } catch (err) {
                 toast({
@@ -319,6 +342,7 @@ const Signup = () => {
             }
         }
 
+        getCountryLocation()
         getStateLocation()
         getDenomination()
         return () => {
@@ -328,19 +352,19 @@ const Signup = () => {
     }, [])
 
     React.useEffect(() => {
-        const testString = new RegExp(inputValue,"i")
+        const testString = new RegExp(inputValue, "i")
         const newChurchSelect = churchSelect.filter((item) => testString.test(item.name))
         setShowChurchSelect([...newChurchSelect])
-    },[inputValue])
+    }, [inputValue])
 
-    const handleInputChange = (e:React.SyntheticEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: React.SyntheticEvent<HTMLInputElement>) => {
         setInputValue(e.currentTarget.value)
     }
 
     const initialValues = {
         firstname: "",
         lastname: "",
-        username:"",
+        username: "",
         genderID: 0,
         denominationId: 0,
         state: 0,
@@ -369,7 +393,7 @@ const Signup = () => {
         lastname: Yup.string().min(1, "Name must be at 1 character")
             .max(15, "Name is too long").required(),
         password: Yup.string().min(5, "Password is too short").required(),
-        genderID:Yup.string().oneOf(["1","2"],"Please Select Your gender Type").required(),
+        genderID: Yup.string().oneOf(["1", "2"], "Please Select Your gender Type").required(),
         churchId: Yup.string().required()
     })
 
@@ -383,7 +407,12 @@ const Signup = () => {
     }
     // Set the current church selected
     const handleSetCurrentChurch = (church: IChurch) => () => {
-        setCurrentChurch(church)
+        const currentChurch:IChurch = {
+            ...church,
+            country:country.find(item => item.countryID === church.countryID)?.name,
+            denomination:denomination.find(item => item.denominationID === church.denominationId)?.denominationName || ""
+        }
+        setCurrentChurch(currentChurch)
         handleDialogToggle()
     }
     // Show Success Dialog 
@@ -421,13 +450,13 @@ const Signup = () => {
                 handleToggle()
             } else {
                 actions.setSubmitting(true)
-                const { firstname, password, phoneNumber, email,lastname,birthday } = values
+                const { firstname, password, phoneNumber, email, lastname, birthday } = values
                 const newUser: IChurchMember = {
                     firstname,
                     lastname,
-                    username:String(phoneNumber),
+                    username: String(phoneNumber),
                     personTypeID: 1,
-                    genderID:values.genderID,
+                    genderID: values.genderID,
                     email,
                     phoneNumber,
                     password,
@@ -435,14 +464,14 @@ const Signup = () => {
                     enteredBy: "ChurchMember",
                     ...(currentChurch.churchID && { churchId: currentChurch.churchID }),
                     isDataCapture: false,
-                    dateOfBirth:birthday.toJSON(),
-                    ...(image.base64 && { picture_url:image.base64}),
+                    dateOfBirth: birthday.toJSON(),
+                    ...(image.base64 && { picture_url: image.base64 }),
                     societies: [],
                     societyPosition: []
                 }
                 await accountService.createChurchMember(newUser).then(payload => {
                     handleShowSuccess()
-                    dispatch(login(newUser.phoneNumber as number,newUser.password,toast))
+                    dispatch(login(newUser.phoneNumber as number, newUser.password, toast))
                     toast({
                         title: "Success",
                         subtitle: "New User Created",
@@ -467,7 +496,6 @@ const Signup = () => {
         setShowBirthday(!showBirthday)
     }
 
-    
     return (
         <>
             <MainLoginLayout showLogo={true}>
@@ -477,9 +505,31 @@ const Signup = () => {
                     <Heading textStyle="h3" my={["2", 5]} >
                         Sign Up
                 </Heading>
-                    <Text textStyle="h6" textAlign={["center", "left"]} maxWidth="sm" mt={["3"]}>
+                    <Text textStyle="h6" opacity={.8} textAlign={["center", "left"]}
+                     maxWidth="sm" mt={["3"]}>
                         Register as a church member by providing your details
                 </Text>
+                    {!showBirthday && !open &&
+                        <VStack align="flex-start" w="100%">
+                            <Heading color="tertiary" fontFamily="MulishBold" fontSize="3rem" >
+                                Find Your Church
+                            </Heading>
+                            <Text fontSize="0.875rem">
+                                If you can't find your church&nbsp;
+                            <Text as="b" onClick={showBirthdayForm} >
+                                    Click Here
+                            </Text>
+                            </Text>
+                            <HStack my={6} w="100%">
+                                <GoBack func={handleToggle} />
+                                <SearchInput className={classes.input}
+                                    value={inputValue} width={["100%", "50%"]}
+                                    setValue={handleInputChange} />
+                            </HStack>
+                        </VStack>
+
+                    }
+
                     <Formik initialValues={initialValues}
                         validationSchema={validationSchema}
                         onSubmit={handleSubmit}
@@ -501,44 +551,50 @@ const Signup = () => {
                                                     onChange={(onChange as any)} minDate={minDate} name="birthday"
                                                 />
                                                 <HStack w="100%">
-                                                <GoBack func={handleBirthdayToggle} />
-                                                {
-                                                    currentChurch.churchID &&
-                                                    <HStack width="100%" ml={3} my="auto">
-                                                        <Image maxW="5rem"
-                                                         src={currentChurch.churchLogo || ChurchImage} />
-                                                        <VStack mr="auto" align="flex-start" >
-                                                            <Text as="b">
-                                                                {currentChurch.name}
-                                                            </Text>
-                                                            <Text opacity={.7} >
-                                                                {currentChurch.address}
-                                                            </Text>
-                                                        </VStack>
-                                                        <Icon color="primary" boxSize="2rem" as={AiFillCheckCircle} />
-                                                    </HStack>
-                                                }
+                                                    <GoBack func={handleBirthdayToggle} />
+                                                    {
+                                                        currentChurch.churchID &&
+                                                        <HStack width="100%" borderRadius="4px"
+                                                        boxShadow="0px 3px 6px #0000000D"
+                                                        ml={3} my="auto">
+                                                            <Image maxW="5rem"
+                                                                src={currentChurch.churchLogo || ChurchImage} />
+                                                            <VStack mr="auto" align="flex-start" >
+                                                                <Text fontSize="1.25rem" as="b">
+                                                                    {currentChurch.name}
+                                                                </Text>
+                                                                <Text fontFamily="MulishLight" as="i"
+                                                                 opacity={.7}  fontSize="1rem" >
+                                                                    {currentChurch.address}
+                                                                </Text>
+                                                            </VStack>
+                                                            <Icon color="primary" boxSize="2rem" as={AiFillCheckCircle} />
+                                                        </HStack>
+                                                    }
                                                 </HStack>
-                                                <Stack direction={{ base: "column-reverse", md: "row" }} align="center" >
+                                                
+                                                <VStack align="center" >
                                                     <Flex className={classes.imageContainer} p={5} >
                                                         <input accept="image/jpeg,image/png" onChange={handleImageTransformation} type="file"
                                                             className={classes.input} id="icon-button-file" />
                                                         <label htmlFor="icon-button-file">
-                                                            <IconButton as="span" padding={[2,4]} boxSize={["2.5rem","5rem"]} aria-label="submit image"
+                                                            <IconButton as="span" padding={[2, 4]} boxSize={["7.5rem"]}
+                                                             aria-label="submit image"
                                                                 borderRadius="50%" bgColor={buttonBackground}
-                                                                icon={<BsCardImage fontSize="2rem" />} />
+                                                                icon={image.name ? 
+                                                                <Avatar size="2xl" src={image.base64} /> : 
+                                                                <BsCardImage fontSize="2rem" />
+                                                            } />
                                                         </label>
                                                         <Heading as="h4" mt={2} fontSize="1.125rem" >Profile Image</Heading>
-                                                        {
-                                                            image.name ?
-                                                                <Text fontSize="0.68rem" opacity={.5} isTruncated maxW="2xs" >{image.name}</Text> :
-                                                                <Text fontSize="0.68rem" opacity={.5}>Dimension 200px by 400px</Text>
-                                                        }
                                                     </Flex>
-                                                    {image.base64 &&
-                                                        <Avatar size="2xl" src={image.base64} />
-                                                    }
-                                                </Stack>
+                                                        {
+                                                            image.name &&
+                                                                <Text fontSize="10px" opacity={.5} isTruncated maxW="2xs" 
+                                                                >{image.name}
+                                                                </Text>
+                                                        }
+                                                </VStack>
                                                 <Button width="100%" disabled={formikProps.isSubmitting || !formikProps.dirty || !formikProps.isValid}
                                                     isLoading={formikProps.isSubmitting}
                                                     loadingText={`Creating new Church Member ${formikProps.values.firstname}`}
@@ -548,93 +604,81 @@ const Signup = () => {
                                             </VStack> :
                                             open ?
                                                 <Fade timeout={150} in={open}>
-                                                        <Box maxWidth="sm">
-                                                            <TextInput name="firstname" placeholder="Input your First Name" />
-                                                            <TextInput name="lastname" placeholder="Input Your Last Name" />
-                                                            <TextInput name="email" placeholder="email" />
-                                                            <TextInput name="phoneNumber" placeholder="Phone Number" />
-                                                            <Select name="genderID" placeholder="gender" value={formikProps.values.genderID} >
-                                                                {["male", "female"].map((item, idx) => (
-                                                                    <option key={idx} value={idx+1} >
-                                                                        {item}
-                                                                    </option>
-                                                                ))}
-                                                            </Select>
-                                                            <Select name="denominationId" placeholder="Select Denomination">
-                                                                {denomination.map((item, idx) => (
-                                                                    <option key={idx} value={item.denominationID}>
-                                                                        {item.denominationName}
-                                                                    </option>
-                                                                ))}
-                                                            </Select>
-                                                            <Select name="state" placeholder="Select Church State">
-                                                                {state.map((item, idx) => (
-                                                                    <option key={idx} value={item.stateID}>
-                                                                        {item.name}
-                                                                    </option>
-                                                                ))}
-                                                            </Select>
-                                                            <TextInput name="password"
-                                                                type="password" placeholder="Password" />
-                                                            <TextInput name="confirmPassword"
-                                                                type="password" placeholder="Confirm Password" />
-                                                            <Text textStyle="h6">
-                                                                By signing up you accept the &nbsp;
+                                                    <Box maxWidth="sm">
+                                                        <TextInput name="firstname" placeholder="Input your First Name" />
+                                                        <TextInput name="lastname" placeholder="Input Your Last Name" />
+                                                        <TextInput name="email" placeholder="email" />
+                                                        <TextInput name="phoneNumber" placeholder="Phone Number" />
+                                                        <Select name="genderID" placeholder="gender" value={formikProps.values.genderID} >
+                                                            {["male", "female"].map((item, idx) => (
+                                                                <option key={idx} value={idx + 1} >
+                                                                    {item}
+                                                                </option>
+                                                            ))}
+                                                        </Select>
+                                                        <Select name="denominationId" placeholder="Select Denomination">
+                                                            {denomination.map((item, idx) => (
+                                                                <option key={idx} value={item.denominationID}>
+                                                                    {item.denominationName}
+                                                                </option>
+                                                            ))}
+                                                        </Select>
+                                                        <Select name="state" placeholder="Select Church State">
+                                                            {state.map((item, idx) => (
+                                                                <option key={idx} value={item.stateID}>
+                                                                    {item.name}
+                                                                </option>
+                                                            ))}
+                                                        </Select>
+                                                        <TextInput name="password"
+                                                            type="password" placeholder="Password" />
+                                                        <TextInput name="confirmPassword"
+                                                            type="password" placeholder="Confirm Password" />
+                                                        <Text fontSize="0.875rem" color="tertiary" >
+                                                            By signing up you accept the&nbsp;
                                                     <Link to="/" >
-                                                                    Terms of Service
+                                                                Terms of Service
                                                     </Link>
                                                     &nbsp;and&nbsp;
                                                     <Link to="/" >
-                                                        Privacy Policy
+                                                                Privacy Policy
                                                     </Link>
                                                         </Text>
-                                                            <Button disabled={formikProps.isSubmitting || !formikProps.dirty || !formikProps.isValid}
-                                                                onClick={(formikProps.handleSubmit as any)} width={["90vw", "100%"]}
-                                                                my="6">
-                                                                {formikProps.isValid ? "Next" : "Please Complete Form"}
-                                                            </Button>
-                                                        </Box>
-                                                    
+                                                        <Button disabled={formikProps.isSubmitting || !formikProps.dirty || !formikProps.isValid}
+                                                            onClick={(formikProps.handleSubmit as any)} width={["90vw", "100%"]}
+                                                            my="6">
+                                                            {formikProps.isValid ? "Next" : "Please Complete Form"}
+                                                        </Button>
+                                                    </Box>
+
                                                 </Fade>
                                                 :
                                                 <Fade timeout={150} in={!open}>
-                                                    <Box >
-                                                            <Text>
-                                                                If you can't find your church&nbsp;
-                                                                <Text as="b" onClick={showBirthdayForm} >
-                                                                        Click Here
-                                                                </Text>
+                                                    <Box maxH="35rem" overflowY="auto" >
+                                                        <SimpleGrid minChildWidth="12.5rem" gridGap=".5rem"
+                                                            spacing="40px">
+                                                            {showChurchSelect.length > 0 ?
+                                                                showChurchSelect.map((item, idx) => (
+                                                                    <Skeleton onClick={handleSetCurrentChurch(item)} key={idx}
+                                                                        isLoaded={Boolean(item.churchID)} cursor="pointer" >
+                                                                        <ChurchView churchName={item.name}
+                                                                            address={item.address} image={item.churchLogo}
+                                                                        />
+                                                                    </Skeleton>
+                                                                )) :
+                                                                <Text>
+                                                                    Church Does Not Exist
                                                             </Text>
-                                                            <HStack my={6}>
-                                                                <GoBack func={handleToggle} />
-                                                                <SearchInput className={classes.input}
-                                                                 value={inputValue} width={["100%","50%"]}
-                                                                  setValue={handleInputChange} />
-                                                            </HStack>
-                                                            <SimpleGrid minChildWidth="12.5rem" gridGap=".5rem"
-                                                                spacing="40px">
-                                                                {showChurchSelect.length > 0 ? 
-                                                            showChurchSelect.map((item, idx) => (
-                                                                <Skeleton onClick={handleSetCurrentChurch(item)} key={idx}
-                                                                    isLoaded={Boolean(item.churchID)} cursor="pointer" >
-                                                                    <ChurchView churchName={item.name}
-                                                                        address={item.address} image={item.churchLogo}
-                                                                    />
-                                                                </Skeleton>
-                                                            )) : 
-                                                            <Text>
-                                                                Church Does Not Exist
-                                                            </Text>    
                                                             }
-                                                            </SimpleGrid>
-                                                        </Box>
+                                                        </SimpleGrid>
+                                                    </Box>
                                                 </Fade>
                                     }
                                 </Box>
                             )
                         }}
                     </Formik>
-                    <Text textStyle="h6" >Already have an account? &nbsp;
+                    <Text fontSize="1.125rem" >Already have an account? &nbsp;
                         <Link to="/login">
                             Login here
                         </Link>

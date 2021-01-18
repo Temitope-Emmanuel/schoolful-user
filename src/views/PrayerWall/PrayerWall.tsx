@@ -1,7 +1,7 @@
 import React from "react"
 import {
     Avatar, AvatarGroup, HStack, Icon,
-    Tab, TabList, TabPanel, Textarea, ModalHeader,
+    Tab, TabList, TabPanel, Textarea, ModalHeader,Heading,
     TabPanels, Tabs, VStack, Text, IconButton, ModalBody,
     ModalCloseButton, ModalContent, ModalFooter
 } from "@chakra-ui/react"
@@ -26,6 +26,7 @@ import { IPrayerRequest } from "core/models/PrayerRequest"
 import { MessageType } from "core/enums/MessageType"
 import { Testimony } from "core/enums/Testimony"
 import { ITestimony,ICommentTestimony } from "core/models/Testimony"
+import axios from "axios"
 
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -38,13 +39,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     tabsContainer: {
         paddingBottom: "1rem",
         "& button": {
-            borderBottom: "0 !important"
+            borderBottom: "0 !important",
+            fontFamily:"MulishBold"
         }
     },
     prayerContainer: {
         width: "100%",
         maxWidth: "27rem",
-        marginTop: "3rem !important",
+        // marginTop: "3rem !important",
         "& > *": {
             width: "100%",
             shadow: "5px 0px 6px #0000001A",
@@ -59,7 +61,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 interface IAddPrayerRequestForm {
     title: string;
-    detail: string;
+    request: string;
 }
 
 interface IAddPrayerRequest {
@@ -72,7 +74,7 @@ const AddPrayerRequest: React.FC<IAddPrayerRequest> = ({ addNewPrayer }) => {
     const currentUser = useSelector((state: AppState) => state.system.currentUser)
     const initialValues = {
         title: "",
-        detail: ""
+        request: ""
     }
     const submitAddPrayerForm = (values: IAddPrayerRequestForm, { ...actions }: any) => {
         actions.setSubmitting(true)
@@ -80,8 +82,7 @@ const AddPrayerRequest: React.FC<IAddPrayerRequest> = ({ addNewPrayer }) => {
             churchId: Number(params.churchId),
             dateEntered: (new Date()).toJSON(),
             personId: currentUser.id,
-            prayerDetail: values.detail,
-            prayerTile: values.title,
+            prayerDetail: values.request,
             prayerTitle: values.title,
         }
 
@@ -274,6 +275,7 @@ const AddTestimony: React.FC<IAddTestimonyProps> = ({ addTestimony }) => {
             })
             addTestimony(payload.data)
         }).catch(err => {
+            actions.setSubmitting(false)
             toast({
                 title: "Unable to Add new Testimony",
                 subtitle: `Error:${err}`,
@@ -347,7 +349,7 @@ const PrayerWall = () => {
         dateEntered: new Date(),
         personId: "",
         prayerDetail: "",
-        prayerTile: ""
+        prayerTitle: ""
     }
     const defaultTestimony: ITestimony = {
         churchId: 0,
@@ -370,7 +372,9 @@ const PrayerWall = () => {
     const [churchPrayer, setChurchPrayer] = React.useState<IPrayer[]>(new Array(10).fill(defaultPrayer))
     const [memberPrayerRequest, setMemberPrayerRequest] = React.useState<IPrayerRequest[]>(new Array(10).fill(defaultPrayerRequest))
     const [churchTestimony, setChurchTestimony] = React.useState<ITestimony[]>(new Array(10).fill(defaultTestimony))
-
+    const options = {month: 'long'};
+    const dateMonth = new Intl.DateTimeFormat('en-US', options).format(new Date())
+    
     const addToPrayerRequest = (newPrayerRequest: IPrayerRequest) => {
         setMemberPrayerRequest([...memberPrayerRequest, newPrayerRequest])
         handleDialog()
@@ -394,43 +398,53 @@ const PrayerWall = () => {
     }
 
     React.useEffect(() => {
+        const token = axios.CancelToken.source()
         const getChurchPrayerByChurch = async () => {
-            getPrayer(3).then(payload => {
+            getPrayer(currentChurch.denominationId,token).then(payload => {
                 setChurchPrayer(payload.data)
             }).catch(err => {
-                toast({
-                    title: "Unable to Get Church Prayers",
-                    subtitle: `Error:${err}`,
-                    messageType: "error"
-                })
+                if(!axios.isCancel(err)){
+                    toast({
+                        title: "Unable to Get Church Prayers",
+                        subtitle: `Error:${err}`,
+                        messageType: "error"
+                    })
+                }
             })
         }
         const getChurchMemberPrayer = async () => {
-            getPrayerRequest(Number(params.churchId)).then(payload => {
+            getPrayerRequest(Number(params.churchId),token).then(payload => {
                 setMemberPrayerRequest(payload.data)
             }).catch(err => {
-                toast({
-                    title: "Unable to Get Church Prayer Request",
-                    subtitle: `Error:${err}`,
-                    messageType: MessageType.ERROR
-                })
+                if(!axios.isCancel(err)){
+                    toast({
+                        title: "Unable to Get Church Prayer Request",
+                        subtitle: `Error:${err}`,
+                        messageType: MessageType.ERROR
+                    })
+                }
             })
         }
         const getChurchTestimony = async () => {
-            getTestimony({ churchId: Number(params.churchId), testimonyType: Testimony.GENERAL }).then(payload => {
+            getTestimony({ churchId: Number(params.churchId), testimonyType: Testimony.GENERAL },token).then(payload => {
                 setChurchTestimony(payload.data)
             }).catch(err => {
-                toast({
-                    title: "Unable to Get Church Testimony",
-                    subtitle: `Error:${err}`,
-                    messageType: MessageType.ERROR
-                })
+                if(!axios.isCancel(err)){
+                    toast({
+                        title: "Unable to Get Church Testimony",
+                        subtitle: `Error:${err}`,
+                        messageType: MessageType.ERROR
+                    })
+                }
             })
         }
 
         getChurchPrayerByChurch()
         getChurchMemberPrayer()
         getChurchTestimony()
+        return () => {
+            token.cancel()
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -474,14 +488,14 @@ const PrayerWall = () => {
                     </TabList>
                     <TabPanels>
                         <TabPanel>
-                            <Button onClick={handlePrayerForm}>
+                            <Button my={5} onClick={handlePrayerForm}>
                                 Add Prayer Request
                         </Button>
                             <VStack spacing={4} width="100%"
                                 className={classes.prayerContainer}>
                                 {memberPrayerRequest.map((item, idx) => (
                                     <DetailCard isLoaded={Boolean(item.prayerRequestID)}
-                                     title={item.prayerTile}
+                                     title={item.prayerTitle}
                                         key={idx}
                                          subtitle={""}
                                         image="https://bit.ly/ryan-florence" timing="2d"
@@ -507,10 +521,9 @@ const PrayerWall = () => {
                             </VStack>
                         </TabPanel>
                         <TabPanel>
-
-                            <Button onClick={handleTestimonyForm}>
+                            <Button my={5} onClick={handleTestimonyForm}>
                                 Add a Testimony
-                        </Button>
+                            </Button>
                             <VStack spacing={4} width="100%"
                                 className={classes.prayerContainer}>
                                 {churchTestimony.map((item, idx) => (
@@ -520,7 +533,7 @@ const PrayerWall = () => {
                                         body={item.testimonyDetail}
                                     >
                                         <HStack width="100%" justify="space-between">
-                                            <IconButton onClick={handleTestimonyCommentForm(item)} aria-label="add comment to Testimony" icon={
+                                            <IconButton bgColor="transparent" onClick={handleTestimonyCommentForm(item)} aria-label="add comment to Testimony" icon={
                                             <Icon fontSize="1.5rem" as={FaComment} color="tertiary" opacity={.5} />
                                             } />
                                         </HStack>
@@ -531,11 +544,11 @@ const PrayerWall = () => {
                         <TabPanel>
                             <VStack spacing={4} width="100%"
                                 className={classes.prayerContainer}>
-                                {/* <Heading p={0} as="h6" color="primary" size="1rem" textAlign="left"
+                                <Heading p={0} as="h6" color="primary" size="1rem" textAlign="left"
                                     alignSelf="flex-start" bgColor="transparent"
                                 >
-                                    October Daily Fasting & Prayer
-                                </Heading> */}
+                                    {`${dateMonth} Daily Fasting & Prayer`}
+                                </Heading>
                                 {churchPrayer.map((item, idx) => (
                                     <DetailCard isLoaded={Boolean(item.prayerID)} title={item.prayerName}
                                         key={idx} subtitle=""

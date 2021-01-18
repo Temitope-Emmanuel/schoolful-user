@@ -58,7 +58,7 @@ const Groups = () => {
                 <Button>
                     Join Group
                 </Button>
-                <VStack width={{base:"95%",md:"80%"}}>
+                <VStack spacing={10} width={{base:"95%",md:"80%"}}>
                     {churchGroup.map((item,idx) => (
                         <GroupCard isLoaded={Boolean(item.societyID)}
                          imgSrc={item.imageUrl} name={item.name} onClick={handleSetCurrentGroup(item.societyID || 0)}

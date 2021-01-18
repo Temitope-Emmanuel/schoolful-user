@@ -250,7 +250,6 @@ const Activity = () => {
       })
     };
 
-
     gapi.client.calendar.events.insert({
       'calendarId': 'primary',
       resource: event
@@ -313,18 +312,13 @@ const Activity = () => {
             endDate
           } } } = activity
 
-          const startDateString = String(startDate)
-          const endDateString = String(endDate)
-          const newStartDate = `${startDateString.substring(0, 4)}-${startDateString.substring(4, 6)}-${startDateString.substring(6, 8)}T${startDateString.substring(9, 11)}:${startDateString.substring(11, 13)}:${startDateString.substring(13, 15).concat("Z")}`
-          const newEndDate = `${endDateString.substring(0, 4)}-${endDateString.substring(4, 6)}-${endDateString.substring(6, 8)}T${endDateString.substring(9, 11)}:${endDateString.substring(11, 13)}:${endDateString.substring(13, 15).concat("Z")}`
-
           currentChurchActivity.push({
             ...activity,
             schedule: {
               ...activity.schedule,
               time: {
-                startDate: new Date(newStartDate),
-                endDate: new Date(newEndDate)
+                startDate: new Date(startDate),
+                endDate: new Date(endDate)
               }
             }
           })
@@ -356,7 +350,8 @@ const Activity = () => {
   // Update the currentDate
   const handleCurrentDate = (e: Date | Date[]) => {
     setCurrentDate((e as Date));
-  };
+  }
+
 
   return (
     <VStack className={classes.root} maxW="lg">

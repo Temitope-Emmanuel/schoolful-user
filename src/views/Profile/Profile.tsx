@@ -200,18 +200,18 @@ const Profile = () => {
                                 </VStack>
                                 <VStack>
                                     <HStack my={7} alignSelf="flex-start">
-                                        <Text color="primary">
+                                        {/* <Text color="primary">
                                             Groups
-                                        </Text>
+                                        </Text> */}
                                         <Button onClick={(formikProps.handleSubmit as any)}
                                         isLoading={formikProps.isSubmitting} loadingText={`Updating User ${formikProps.values.firstname}`}
                                          disabled={ formikProps.isSubmitting || !formikProps.isValid}
                                         >
                                             Submit
                                         </Button>
-                                        <Button>
+                                        {/* <Button>
                                             Join Group
-                                        </Button>
+                                        </Button> */}
                                     </HStack>
                                     <IconInput name="member" placeholder="Member" label="Choir Group"
                                     secondaryIcon={IoMdExit}

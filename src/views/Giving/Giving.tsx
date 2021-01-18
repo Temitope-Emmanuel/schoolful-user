@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     detailContainer: {
         position: "relative",
         boxShadow: "0px 5px 10px #0000001A",
-        height: "37.5vh",
+        height: "22.5vh",
         borderRadius: "4px",
         "& > svg": {
             borderRadius: "50%",

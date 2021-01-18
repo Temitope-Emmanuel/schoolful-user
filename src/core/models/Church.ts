@@ -3,7 +3,10 @@ import {IChurchResponse} from "./ChurchResponse"
 export interface IChurch extends IChurchResponse {
     churchStatus?:string;
     email?:string;
-    country?:string
+    country?:string;
+    // 
+    // denominationName?:string;
+    countryName?:string
 }
 
 interface ISubscription {

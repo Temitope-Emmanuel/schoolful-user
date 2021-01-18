@@ -7,8 +7,8 @@ import {IDailyReading} from "core/models/dailyReading"
 import {IoMdArrowDropdown} from 'react-icons/io'
 import {MessageType} from "core/enums/MessageType"
 import useToast from "utils/Toast"
-
-import * as prayerService from "core/services/prayer.service"
+import axios from "axios"
+import {getDailyReading} from "core/services/prayer.service"
 
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -32,7 +32,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         }
     },
     textMainContainer:{
-        lineHeight:"1.4"
+        lineHeight:"1.4",
+        width:"100%"
     }
 }))
 
@@ -47,8 +48,9 @@ const Reflection = () => {
     const newDate = new Intl.DateTimeFormat('en-US', options).format(new Date())
     
     React.useEffect(() => {
-        const getDailyReading = async () => {
-            await prayerService.getDailyReading().then(payload => {
+        const token = axios.CancelToken.source()
+        const getDailyReadingApi = async () => {
+            await getDailyReading(token).then(payload => {
                 const newReading:IDailyReading[] = payload.data.readings.map((item:IDailyReading,idx:number) => ({
                     ...item,
                     content:item.content.replace(/[1-9][0-9]*/g,(text:string) => (
@@ -57,14 +59,19 @@ const Reflection = () => {
                 })) 
                 setDailyReading(newReading)
             }).catch(err => {
-                toast({
-                    title:"Unable to get Daily Reading",
-                    subtitle:`Error:${err}`,
-                    messageType:MessageType.ERROR
-                })
+                if(!axios.isCancel(err)){
+                    toast({
+                        title:"Unable to get Daily Reading",
+                        subtitle:`Error:${err}`,
+                        messageType:MessageType.ERROR
+                    })
+                }
             })
         }
-       getDailyReading() 
+       getDailyReadingApi() 
+       return () => {
+           token.cancel()
+       }
     },[])
     
     return (
@@ -106,12 +113,13 @@ const Reflection = () => {
                     </HStack>
                 </HStack>
                 <VStack className={classes.textMainContainer}>
-                    <SkeletonText startColor="pink.500" endColor="orange.500"  noOfLines={14} spacing="1" 
-                        isLoaded={Boolean(dailyReading[0]?.name)}>
+                    <SkeletonText w="100%" startColor="gray.100" endColor="gray.500" noOfLines={14} spacing="1" 
+                        isLoaded={Boolean(dailyReading[0]?.name.length > 2)}>
                      <Text fontWeight={600} color="tertiary" 
                       dangerouslySetInnerHTML={{__html: dailyReading.length > 0 ? dailyReading[1].content : ""}} />   
                     </SkeletonText>
-                    <SkeletonText startColor="pink.500" endColor="orange.500"  noOfLines={14} spacing="1" isLoaded={Boolean(dailyReading[0]?.name)}>
+                    <SkeletonText w="100%" startColor="gray.100" endColor="gray.500" noOfLines={14}
+                     spacing="1" isLoaded={Boolean(dailyReading[0]?.name.length > 2)}>
                         <Text color="tertiary" 
                           dangerouslySetInnerHTML={{__html: dailyReading.length > 1 ? dailyReading[0].content : ""}} />
                     </SkeletonText>

@@ -1,8 +1,9 @@
 import React from "react"
-import {VStack,Heading,Button,Skeleton,
+import {VStack,Heading,Skeleton,
         Text,AspectRatio,Image, Avatar,
         AvatarGroup, HStack, Icon} from "@chakra-ui/react"
 import {DetailCard} from "components/Card"
+import {Button} from "components/Button"
 import {createStyles,makeStyles,Theme} from "@material-ui/core/styles"
 import {Carousel} from "components/Carousel"
 import { FaPrayingHands } from "react-icons/fa"
@@ -15,6 +16,7 @@ import {useSelector} from "react-redux"
 import {Scripture} from "assets/images"
 import { IPrayerRequest } from "core/models/PrayerRequest"
 import {IDailyReading} from "core/models/dailyReading"
+import axios from "axios"
 
 const useStyles = makeStyles((theme:Theme) => createStyles({
     root:{
@@ -37,7 +39,7 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
         "& > h3":{
             fontWeight:400,
             fontSize:"1.5rem",
-            opacity:.4
+            opacity:.75
         },
         "& > h2":{
             lineHeight:'1.15',
@@ -114,41 +116,45 @@ const Home = () => {
     const toast = useToast()
     const currentDate = new Date()
     const params = useParams()
-    const [show,setShow] = React.useState(false)
     const [churchPrayer,setChurchPrayer] = React.useState<IPrayerRequest[]>(new Array(10).fill(defaultPrayer))
     const currentUser = useSelector((state:AppState) => state.system.currentUser)
     const [dailyReading,setDailyReading] = React.useState<IDailyReading[]>([defaultReading])
 
     React.useEffect(() => {
-        setTimeout(() => {
-            setShow(!show)
-        },2500)
+        const source = axios.CancelToken.source()
         const getPrayerByChurch = async () => {
             // Add denomination id
-            getPrayerRequest(Number(params.churchId)).then(payload => {
+            getPrayerRequest(Number(params.churchId),source).then(payload => {
                 setChurchPrayer(payload.data)
             }).catch(err => {
+                if(!axios.isCancel(err)){
                 toast({
                     title:"Unable to Get Church Prayers",
                     subtitle:`Error:${err}`,
                     messageType:"error"
                 })
+                }
             })
         }
         const churchDailyReading = () => {
-            getDailyReading().then(payload => {
+            getDailyReading(source).then(payload => {
                 setDailyReading(payload.data.readings)            
             }).catch(err => {
-                toast({
-                    title:"Unable to Load Daily Reading",
-                    subtitle:`Error:${err}`,
-                    messageType:"error"
-                })
+                if(!axios.isCancel(err)){
+                    toast({
+                        title:"Unable to Load Daily Reading",
+                        subtitle:`Error:${err}`,
+                        messageType:"error"
+                    })
+                }
             })
         }
 
         getPrayerByChurch()
         churchDailyReading()
+        return () => {
+            source.cancel()
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
@@ -163,12 +169,12 @@ const Home = () => {
                 <Heading as="h3" color="tertiary">
                     {todayDate}
                 </Heading>
-                <Heading color="tertiary">
+                <Heading fontFamily='MulishExtraBold' color="tertiary">
                     Welcome,<br/>{currentUser.fullname}
                 </Heading>
             </VStack>
             <VStack>
-                <Button colorScheme="buttonColor" bgColor="buttonColor">
+                <Button bgColor="buttonColor" fontFamily='MulishExtraBold'>
                     Add Bookings / Request
                 </Button>
                 <VStack>
@@ -197,7 +203,7 @@ const Home = () => {
                          className={classes.prayerContainer}>
                             {churchPrayer.map((item,idx) => (
                                 <DetailCard isLoaded={Boolean(item.prayerRequestID)}
-                                    title={item.prayerTile} key={idx} 
+                                    title={item.prayerTitle} key={idx} 
                                     subtitle={"Prayer For Help"} timing="2d"
                                     image="https://bit.ly/ryan-florence" 
                                     body={item.prayerDetail}
