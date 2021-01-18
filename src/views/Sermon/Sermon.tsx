@@ -1,7 +1,7 @@
 import React from "react"
 import { 
         Tab,TabList,TabPanel,Icon,Flex,HStack,
-        TabPanels,Tabs,VStack,Heading,ButtonGroup
+        TabPanels,Tabs,VStack,Heading
      } from "@chakra-ui/react"
 import {makeStyles,createStyles,Theme} from "@material-ui/core/styles"
 import {Zoom} from "@material-ui/core"
@@ -39,7 +39,8 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
         transition: "all .6s linear",
         marginBottom:"2rem",
         "& button":{
-            borderBottom:"0 !important"
+            borderBottom:"0 !important",
+            fontFamily:"MulishBold"
         }
     },
     prayerContainer:{
@@ -235,7 +236,7 @@ const Sermon = () => {
             </VStack>
             <Tabs align="center" zIndex={5} onChange={(index) => setTabIndex(index)} >
                 <TabList className={classes.tabsContainer} 
-                bgColor={scrolling.scrolling ? "bgColor" : "" } defaultValue={2}>
+                    bgColor={scrolling.scrolling ? "bgColor" : "" } defaultValue={2}>
                     <Tab color="tertiary" _selected={selected} >Written Sermon</Tab>
                     <Tab color="tertiary" _selected={selected}>Video Sermon</Tab>
                     <Tab color="tertiary" _selected={selected}>Audio Sermon</Tab>

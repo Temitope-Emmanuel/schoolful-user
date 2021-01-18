@@ -11,7 +11,6 @@ import useParams from "utils/Params"
 import { ICurrentActivity } from "core/models/Activity"
 import {ICurrentEvent} from "core/models/Event"
 import { IAdvert } from "core/models/Advert"
-import * as activityService from "core/services/activity.service"
 import * as adsService from "core/services/ads.service"
 import {useSelector} from "react-redux"
 import {AppState} from "store"
@@ -66,7 +65,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         width: "100%",
         margin: 0,
         [theme.breakpoints.up("sm")]: {
-            // position:"-webkit-sticky",
             position: "sticky",
             top: 0,
             flexDirection: "column",
@@ -98,6 +96,7 @@ const AdvertLayout = ({ children }: any) => {
     const [ads, setAds] = React.useState<IAdvert[]>([])
     const groupRoute = location.pathname.includes("groups")
     const currentDate = new Date()
+    // add the total amount of second the current date
     const weekEndDate = new Date(currentDate.getTime() + (604800000))
 
     React.useEffect(() => {
@@ -158,7 +157,7 @@ const AdvertLayout = ({ children }: any) => {
                     className={classes.activityContainer} zIndex={4} >
                     <HStack>
                         <Icon as={FiActivity} />
-                        <Text>
+                        <Text fontFamily='MulishExtraBold'>
                             Upcoming Activities & Events
                         </Text>
                     </HStack>
