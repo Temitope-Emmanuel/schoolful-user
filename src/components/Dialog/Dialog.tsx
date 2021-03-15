@@ -1,12 +1,5 @@
 import React from "react"
 import { Modal, ModalOverlay } from "@chakra-ui/react"
-import {createStyles,makeStyles,Theme} from "@material-ui/core/styles"
-
-const useStyles = makeStyles((theme:Theme) => createStyles({
-    root:{
-
-    }
-}))
 
 
 

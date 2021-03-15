@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 const Reflection = () => {
     const classes = useStyles()
     const toast = useToast()
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const options:Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const [dailyReading,setDailyReading] = React.useState<IDailyReading[]>([])
     const newDate = new Intl.DateTimeFormat('en-US', options).format(new Date())
     
@@ -95,13 +95,13 @@ const Reflection = () => {
             <VStack className={classes.bodyContainer}>
 
                 <HStack justify="space-between">
-                    <VStack>
-                        <SkeletonText startColor="pink.500" endColor="orange.500"  isLoaded={Boolean(dailyReading[0]?.name)}>
+                    <VStack w="100%">
+                        <SkeletonText w="100%" startColor="pink.500" endColor="orange.500"  isLoaded={Boolean(dailyReading[0]?.name)}>
                             <Text fontSize="0.8rem" fontWeight={600} color="primary" >
                                 {dailyReading.length > 0 && dailyReading[0].name}
                             </Text>
                         </SkeletonText>
-                        <SkeletonText startColor="pink.500" endColor="orange.500"  isLoaded={Boolean(dailyReading[0]?.verse)}>
+                        <SkeletonText w="100%" startColor="pink.500" endColor="orange.500"  isLoaded={Boolean(dailyReading[0]?.verse)}>
                             <Text fontSize="0.7rem" opacity={.7}>
                             {dailyReading.length > 0 && dailyReading[0].verse}
                             </Text>

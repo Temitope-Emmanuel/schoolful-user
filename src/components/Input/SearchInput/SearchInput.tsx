@@ -2,7 +2,6 @@ import { InputGroup, Icon,FlexProps, Input,Flex, InputLeftElement } from "@chakr
 import React from "react"
 import { RiSearchLine } from "react-icons/ri"
 import {makeStyles,createStyles,Theme} from "@material-ui/core/styles"
-import {tertiary} from "theme/chakraTheme/palette"
 
 interface IProps extends FlexProps {
     value:string;

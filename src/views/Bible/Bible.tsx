@@ -1,6 +1,6 @@
 import React from "react"
 import {makeStyles,createStyles,Theme} from "@material-ui/core/styles"
-import {VStack,HStack,StackDivider,Text,Select} from "@chakra-ui/react"
+import {VStack,HStack,StackDivider,Text,Select,SkeletonText,Skeleton} from "@chakra-ui/react"
 import {IBibleBook,IBibleChapter,IBibleVerses} from "core/models/Bible"
 import {GetBibleBookChapters,GetBibleVerses,GetBibleByVersion} from "core/services/prayer.service"
 import axios from "axios"
@@ -95,6 +95,7 @@ const Bible = () => {
         return () => {
             cancelToken.cancel()
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
 
@@ -113,6 +114,7 @@ const Bible = () => {
             })
         }
         GetBibleBookChapterApi()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[currentBook])
 
     React.useEffect(() => {
@@ -136,6 +138,7 @@ const Bible = () => {
             })
         }
         getChurchBook()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[bibleVersion])
 
     React.useEffect(() => {
@@ -153,6 +156,7 @@ const Bible = () => {
             })
         }
         getBibleBookChapter()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[currentChapter,currentBibleBook,bibleVersion])
 
 
@@ -163,33 +167,41 @@ const Bible = () => {
                 divider={<StackDivider my={10} borderColor="gray.200" />}>
                 <HStack>
                     <HStack width="57%">
-                        <Select onClick={handleCurrentBookBible} color="tertiary" >
-                            {bible.map((item,idx) => (
-                                <option value={item.number} key={item.number || idx} >
-                                    {item.name}
-                                </option>
-                            ))}
-                        </Select>
-                        <Select w="45%" onClick={handleBibleVersion} color="tertiary">
-                            {bibleVersionList.map((item,idx) => (
-                                <option value={item} key={idx} >
-                                    {item}
-                                </option>
-                            ))}
-                        </Select>
+                        <Skeleton isLoaded={Boolean(bible.length)} >
+                            <Select onClick={handleCurrentBookBible} color="tertiary" >
+                                {bible.map((item,idx) => (
+                                    <option value={item.number} key={item.number || idx} >
+                                        {item.name}
+                                    </option>
+                                ))}
+                            </Select>
+                        </Skeleton>
+                        <Skeleton w="45%" isLoaded={Boolean(bibleVersionList.length)} >
+                            <Select w="100%" onClick={handleBibleVersion} color="tertiary">
+                                {bibleVersionList.map((item,idx) => (
+                                    <option value={item} key={idx} >
+                                        {item}
+                                    </option>
+                                ))}
+                            </Select>
+                        </Skeleton>
                     </HStack>
-                    <Select width="15%" onClick={handleCurrentChapter}>
-                        {bibleChapter.map((item,idx) => (
-                            <option value={item.chapter} key={item.chapter || idx} >
-                                {item.chapter}
-                            </option>
-                        ))}
-                    </Select>
+                    <Skeleton w="15%" isLoaded={Boolean(bibleChapter.length)} >
+                        <Select width="100%" onClick={handleCurrentChapter}>
+                            {bibleChapter.map((item,idx) => (
+                                <option value={item.chapter} key={item.chapter || idx} >
+                                    {item.chapter}
+                                </option>
+                            ))}
+                        </Select>
+                    </Skeleton>
                 </HStack>
-            <VStack maxW="xl" align="flex-start" className={classes.chapterContainer} >
-                {currentBook.verses.map((item,idx) => (
-                    <Text key={idx} dangerouslySetInnerHTML={{__html:`${item.verse}. ${item.text}`}} />
-                ))}
+            <VStack maxW="xl" align="flex-start" w="100%" className={classes.chapterContainer} >
+                <SkeletonText w="100%" noOfLines={50} isLoaded={Boolean(currentBook.verses.length)} >
+                    {currentBook.verses.map((item,idx) => (
+                        <Text key={idx} dangerouslySetInnerHTML={{__html:`${item.verse}. ${item.text}`}} />
+                    ))}
+                </SkeletonText>
             </VStack>
             </VStack>
         </VStack>

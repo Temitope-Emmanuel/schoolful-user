@@ -29,8 +29,7 @@ interface IProps {
 
 const DatePicker:React.FC<IProps> = ({name,value,minDate,onChange}) => {
     const classes = useStyles()
-    const currentDate = new Date()
-
+    
     return(
             <DatePickerComponent name={name} format="MMM dd,y"
             // calendarIcon={null} 

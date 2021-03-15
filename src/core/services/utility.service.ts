@@ -1,7 +1,6 @@
 import axios from "axios"
 import {IResponse} from "core/models/Response"
 import {ICity,ICountry,IState} from "core/models/Location"
-import {ILeaderPosition} from "core/models/Group"
 
 
 const baseUrl = `${process.env.REACT_APP_SERVER_URL}/Utility`
