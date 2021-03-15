@@ -4,8 +4,6 @@ import {
     Select,
     FormLabel,
     FormErrorMessage,
-    Alert,
-    AlertIcon
   } from "@chakra-ui/react";
   import {Field,FieldProps} from "formik"
 
@@ -25,6 +23,7 @@ const InputComponent:React.FC<IProps> = ({placeholder,className,label,val = 0,na
       if(func){
         func(val)
       }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[val])
     return (
       <Field name={name}>

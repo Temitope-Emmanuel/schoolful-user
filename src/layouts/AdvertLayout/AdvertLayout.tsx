@@ -6,7 +6,6 @@ import {
 } from "@chakra-ui/react"
 import { FiActivity } from "react-icons/fi"
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles"
-import useToast from "utils/Toast"
 import useParams from "utils/Params"
 import { ICurrentActivity } from "core/models/Activity"
 import {ICurrentEvent} from "core/models/Event"
@@ -88,7 +87,6 @@ const AdvertLayout = ({ children }: any) => {
     const classes = useStyles()
     const location = useLocation()
     const params = useParams()
-    const toast = useToast()
     const [currentChurchActivity, setCurrentChurchActivity] = React.useState<ICurrentActivity[]>([])
     const [currentEvent,setCurrentEvent] = React.useState<ICurrentEvent[]>([])
     const churchActivity = useSelector((state:AppState) => state.activity.activities)
@@ -108,7 +106,7 @@ const AdvertLayout = ({ children }: any) => {
             })
         }
         getChurchAd()
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
     React.useEffect(() => {
@@ -116,6 +114,7 @@ const AdvertLayout = ({ children }: any) => {
             const currentActivity: ICurrentActivity[] = []
 
             churchActivity.map((item) => {
+                // eslint-disable-next-line 
                 if (item.recurringRule && item.recurringRule.between(currentDate, weekEndDate, true).length > 0) {
                     currentActivity.push({
                         ...item
@@ -125,6 +124,7 @@ const AdvertLayout = ({ children }: any) => {
             setCurrentChurchActivity(currentActivity)
         }
         getChurchActivity()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [churchActivity])
 
     React.useEffect(() => {
@@ -141,7 +141,7 @@ const AdvertLayout = ({ children }: any) => {
           }
         }
         setCurrentEvent([...currentChurchEvent])
-    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [churchEvent])
     
     return (

@@ -8,7 +8,7 @@ const baseUrl = new URL(`${process.env.REACT_APP_SERVER_URL}/Sermon`)
 export const getSermonById = async (sermonId:number):Promise<IResponse<ISermon>> => {
     try{
         const base = new URL(`${baseUrl}/GetSermonById`)
-        const url = new URLSearchParams(String(base)).append("id",String(sermonId))
+        new URLSearchParams(String(base)).append("id",String(sermonId))
         const response = await axios.get(String(base))
         return response.data
     }catch(err){

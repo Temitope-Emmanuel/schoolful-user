@@ -1,4 +1,4 @@
-import { VStack,Text,Icon,Skeleton, AspectRatio,Image } from "@chakra-ui/react"
+import { VStack,Text,Icon,AspectRatio,Image } from "@chakra-ui/react"
 import {makeStyles,createStyles,Theme} from "@material-ui/core/styles"
 import {FiShare2} from "react-icons/fi"
 import React from "react"

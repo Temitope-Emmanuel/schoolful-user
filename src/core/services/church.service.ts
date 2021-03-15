@@ -1,4 +1,4 @@
-import axios,{AxiosRequestConfig} from "axios"
+import axios from "axios"
 import {IChurch} from "core/models/Church"
 import {IDenomination} from "core/models/Denomination"
 import {IResponse} from "core/models/Response"
@@ -21,7 +21,6 @@ export const getChurchDenomination = async ():Promise<IResponse<IDenomination[]>
         const url = `${baseUrl}/getDenomination`
 
         const response = await axios.get(url)
-        const config:AxiosRequestConfig = {headers:{Accept:"application/json"}}
         return response.data
     }catch(err){
         throw err
