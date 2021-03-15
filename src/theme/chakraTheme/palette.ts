@@ -19,6 +19,7 @@ const outlinePrimary = "rgba(181, 3, 201, 0.1)"
 
 // 
 const buttonColor = "#00A7AF"
+// eslint-disable-next-line
 export default {
   ...colors,
   bgColor,

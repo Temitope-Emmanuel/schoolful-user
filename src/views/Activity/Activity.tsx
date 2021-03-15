@@ -280,7 +280,7 @@ const Activity = () => {
 
   // Generating the list of days in the week
   React.useEffect(() => {
-    const optionForDate = { weekday: "short", day: "numeric" };
+    const optionForDate:Intl.DateTimeFormatOptions = { weekday: "short", day: "numeric" };
     const currentWeek = [0, 1, 2, 3, 4, 5, 6].map((item) => {
       const currentDateHolder = new Date(currentDate);
       const newDate = new Intl.DateTimeFormat("en-US", optionForDate)
@@ -298,8 +298,9 @@ const Activity = () => {
   }, [currentDate]);
 
   // Search For Activity on the current Date
+  console.log("this is the church activity",churchActivity)
   React.useEffect(() => {
-    if (churchActivity[0].activityID) {
+    if ( churchActivity[0] && churchActivity[0].activityID) {
       // Find the next Day value add the amount of seconds in a day to the current active day
       const nextDay = new Date(activeIndex.getTime() + 86400000)
       const currentChurchActivity: ICurrentActivity[] = []

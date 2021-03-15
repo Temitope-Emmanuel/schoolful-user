@@ -145,7 +145,7 @@ const theme:DefaultTheme & any =  {
       //   color:"tertiary"
       // },
       h6:{
-        fontSize:"1.5rem",
+        fontSize:"1.125rem",
         color:"tertiary",
       }
     },

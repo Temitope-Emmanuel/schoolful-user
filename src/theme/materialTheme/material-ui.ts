@@ -1,6 +1,5 @@
 // import {createMuiTheme} from "@material-ui/core/styles"
 import {createMuiTheme} from "@material-ui/core"
-import shadows from "./shadows"
 
 
 const theme = createMuiTheme({

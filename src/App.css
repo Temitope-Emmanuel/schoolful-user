@@ -6,10 +6,10 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-body {
   box-sizing: border-box;
   font-family: MulishRegular;
+  /* background-color: #F9F5F9 !important; */
+  /* min-height: 100vh !important;  */
 }
 
 code {

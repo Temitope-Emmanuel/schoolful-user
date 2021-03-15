@@ -14,9 +14,9 @@ const Login = () => {
                 flexDirection="column" px={{ sm: "3" }} flex={[1, 3]} >
             <LoginComponent/>
                     <HStack>
-                        <Text whiteSpace="nowrap" >Don't have an account?
+                        <Text fontSize="1.125rem" whiteSpace="nowrap" >Don't have an account?
                         </Text>
-                            <Text color="primary" textDecoration="underline">
+                            <Text fontSize="1.125rem" color="primary" textDecoration="underline">
                                 <Link to="/signup/member">
                                         Sign Up here
                                 </Link>
