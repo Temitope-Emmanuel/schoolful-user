@@ -1,5 +1,6 @@
 import React from "react"
 import {makeStyles,createStyles,Theme} from "@material-ui/core/styles"
+import {Typography} from "@material-ui/core"
 import {VStack,Stack} from "@chakra-ui/react"
 import {Button} from "components/Button"
 import {GroupCard} from "components/Card"
@@ -7,6 +8,8 @@ import useParams from "utils/Params"
 import useToast from "utils/Toast"
 import {IGroup} from "core/models/Group"
 import * as groupService from "core/services/group.service"
+import SendMessage from "./SendMessage"
+import {HubConnectionBuilder,HubConnection} from "@aspnet/signalr"
 
 
 const useStyles = makeStyles((theme:Theme) => createStyles({
@@ -15,6 +18,8 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
     }
 }))
 
+
+const serverUrl = process.env.REACT_APP_SERVER_URL
 
 const Groups = () => {
     const defaultGroup:IGroup = {
@@ -29,10 +34,18 @@ const Groups = () => {
     const params = useParams()
     const toast = useToast()
     const [churchGroup,setChurchGroup] = React.useState<IGroup[]>(new Array(10).fill(defaultGroup))
-    const [currentGroup,setCurrentGroup] = React.useState<number>(0)
-    
-    const handleSetCurrentGroup = (idx:number) => () => {
-        setCurrentGroup(idx)
+    const [currentGroup,setCurrentGroup] = React.useState<IGroup>({
+        churchId:0,
+        denominationId:0,
+        description:"",
+        isDeleted:false,
+        memberCount:0,
+        name:"",
+    })
+    const connection = React.useRef<HubConnection>()
+
+    const handleSetCurrentGroup = (curGroup:IGroup) => () => {
+        setCurrentGroup(curGroup)
     }
     
     React.useEffect(() => {
@@ -47,6 +60,21 @@ const Groups = () => {
                 })
             })
         }
+        const setUpConnection = async () => {
+            const connect = await new HubConnectionBuilder()
+            .withUrl(`${serverUrl}/chathub` || "").build()
+            connect.start().catch(err => {
+                console.log("this is the err",err)
+                toast({
+                    messageType:"error",
+                    title:"Something went wrong",
+                    subtitle:`Error:${err}`
+                })
+            })
+            connection.current = connect
+            console.log("this is the connect",connect)
+        }
+        setUpConnection()
         getGroupsByChurch()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
@@ -61,14 +89,25 @@ const Groups = () => {
                 <VStack spacing={10} width={{base:"95%",md:"80%"}}>
                     {churchGroup.map((item,idx) => (
                         <GroupCard isLoaded={Boolean(item.societyID)}
-                         imgSrc={item.imageUrl} name={item.name} onClick={handleSetCurrentGroup(item.societyID || 0)}
-                            active={currentGroup === item.societyID} member={item.memberCount} key={item.societyID || idx}
+                         imgSrc={item.imageUrl} name={item.name} onClick={handleSetCurrentGroup(item)}
+                            active={currentGroup.societyID === item.societyID} member={item.memberCount} key={item.societyID || idx}
                         />
                     ))}
                 </VStack>
             </VStack>
             <VStack bgColor="#F9F5F9" flex={6}>
-                This is the chat handle
+                <Typography>
+                    This is the chat handle
+                </Typography>
+                {
+                    currentGroup && connection.current && 
+                    <>
+                        <SendMessage currentGroupDetail={{
+                            name:currentGroup.name,
+                            societyID:currentGroup.societyID
+                        }} connection={connection.current} />
+                    </>
+                }
             </VStack>
         </Stack>
     )
