@@ -104,7 +104,7 @@ const Groups = () => {
                     <>
                         <SendMessage currentGroupDetail={{
                             name:currentGroup.name,
-                            societyID:currentGroup.societyID
+                            societyID:currentGroup.societyID as number
                         }} connection={connection.current} />
                     </>
                 }
