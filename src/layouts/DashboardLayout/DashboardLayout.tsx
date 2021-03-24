@@ -81,7 +81,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     content: {
       flexGrow: 1,
-      backgroundColor:"#F9F5F9"
+      backgroundColor:"#F9F5F9",
+      minHeight:"100vh"
     },
     link: {
       color: "#383838",
