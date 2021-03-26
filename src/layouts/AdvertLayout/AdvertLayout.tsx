@@ -87,6 +87,7 @@ const AdvertLayout = ({ children }: any) => {
     const classes = useStyles()
     const location = useLocation()
     const params = useParams()
+    const showAdvert = useSelector((state:AppState) => state.system.showAdvertLayout)
     const [currentChurchActivity, setCurrentChurchActivity] = React.useState<ICurrentActivity[]>([])
     const [currentEvent,setCurrentEvent] = React.useState<ICurrentEvent[]>([])
     const churchActivity = useSelector((state:AppState) => state.activity.activities)
@@ -105,7 +106,9 @@ const AdvertLayout = ({ children }: any) => {
     
             })
         }
-        getChurchAd()
+        if(!showAdvert){
+            getChurchAd()
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
@@ -123,7 +126,9 @@ const AdvertLayout = ({ children }: any) => {
             })
             setCurrentChurchActivity(currentActivity)
         }
-        getChurchActivity()
+        if(!showAdvert){
+            getChurchActivity()
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [churchActivity])
 
@@ -140,10 +145,15 @@ const AdvertLayout = ({ children }: any) => {
             })
           }
         }
-        setCurrentEvent([...currentChurchEvent])
+
+        if(!showAdvert){
+            setCurrentEvent([...currentChurchEvent])
+        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [churchEvent])
     
+    console.log("this is the value for showAdvert",showAdvert)
+    const displayStyle = {display:showAdvert ? "initial":"none"}
     return (
         <Stack direction={["column-reverse", "row"]} className={classes.root}>
             <Spacer display={groupRoute ? "none" : ""} flex={1} />
@@ -151,7 +161,7 @@ const AdvertLayout = ({ children }: any) => {
             <Spacer display={groupRoute ? "none" : ""} flex={1} />
             <VStack spacing={2} mr={3}
                 display={{ base: "none", md: "flex" }}
-                flex={groupRoute ? 2 : ""}
+                flex={groupRoute ? 2 : ""} style={displayStyle}
                 className={classes.mainContainer} >
                 <VStack bgColor="primary" position="sticky" top="9%" width={groupRoute ? "100%" : "25vw"}
                     className={classes.activityContainer} zIndex={4} >
