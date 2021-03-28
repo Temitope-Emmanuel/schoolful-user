@@ -5,10 +5,12 @@ import thunkMiddleware from 'redux-thunk'
 
 import {systemReducer} from "./System/reducers"
 import {activityReducer} from "./Activity/reducers"
+import {chatReducer} from "./Chat/reducers"
 
 const rootReducer = combineReducers({
     system:systemReducer,
-    activity:activityReducer
+    activity:activityReducer,
+    chat:chatReducer
 })
 
 

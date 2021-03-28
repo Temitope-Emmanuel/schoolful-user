@@ -1,14 +1,23 @@
-export interface SendMessageToUser { 
-    id:number;
-    receiverId:string;
-    text:string;
-    when:Date;
-}
+// export interface SendMessageToUser { 
+//     id:number;
+//     receiverId:string;
+//     text:string;
+//     when:Date;
+// }
 
-export interface SendMessageToGroup {
-    id:number;
+export interface GroupMessage {
+    id?:number;
     groupId:number;
+    personId:string;
     groupName:string;
     text:string;
-    when:Date
+    when:Date | string;
+    ownerIsCurrentUser?:boolean;
+}
+
+export interface GetGroupChat {
+    groupName:string;
+    page:number;
+    take:number;
+    count:number;
 }

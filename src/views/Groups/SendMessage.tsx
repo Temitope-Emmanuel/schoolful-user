@@ -8,8 +8,12 @@ import {FormikProps,Formik} from "formik"
 import {HubConnection} from "@aspnet/signalr"
 import {IGroup} from "core/models/Group"
 import useToast from "utils/Toast"
-import {sendMessageToGroup} from "core/services/chat.service"
-
+import {AppState} from "store"
+import {useSelector} from "react-redux"
+import {AiOutlineSend} from "react-icons/ai"
+import TouchRipple from "@material-ui/core/ButtonBase";
+import {VscLoading} from "react-icons/vsc"
+import * as Yup from "yup"
 
 const useStyles = makeStyles((theme) => createStyles({
     root:{
@@ -20,10 +24,10 @@ const useStyles = makeStyles((theme) => createStyles({
         alignItems:"center",
         width:"85%",
         padding:theme.spacing(2),
-        "& > svg":{
+        "& svg":{
             fontSize:"1.75rem"
         },
-        "& > svg:first-child":{
+        "& svg:first-child":{
             color:"#B603C9"
         },
         "& > *:nth-child(2)":{
@@ -35,6 +39,9 @@ const useStyles = makeStyles((theme) => createStyles({
                 borderBottomColor:"black"
             }
         }
+    },
+    rotate:{
+        animation:"rotation 2s infinite linear"
     }
 }))
 
@@ -54,28 +61,29 @@ interface IProps {
 
 const SendMessage:React.FC<IProps> = ({connection,currentGroupDetail:{name,societyID}}) => {
     const classes = useStyles()
+    const currentUser = useSelector((state:AppState) => state.system.currentUser)
     const toast = useToast()
+
     const handleSubmit = async (values:messageForm,{...actions}:any) => {
         try{
             actions.setSubmitting(true)
-            // const response = await connection.invoke("sendMessage",{
-            //     id:0,
-            //     groupId:societyID,
-            //     groupName:name,
-            //     when:(new Date()).toJSON(),
-            //     text:values.message
-            // })
-            const response = await sendMessageToGroup({
-                    id:0,
-                    groupId:societyID,
-                    groupName:name,
-                    when:(new Date()).toJSON() as any,
-                    text:values.message
-                })
-                console.log("this is the response",response)
-            actions.setSubmitting(true)
+            const newMessage = {
+                groupId:societyID,
+                groupName:name,
+                when:(new Date()).toJSON() as any,
+                text:values.message,
+                personId:currentUser.id
+            }
+            connection.send("SendGroupMessage",newMessage)
+            actions.setSubmitting(false)
+            actions.resetForm()
+            toast({
+                messageType:"info",
+                subtitle:"Message Sent successful",
+                title:""
+            })
         }catch(err){
-            actions.setSubmitting(true)
+            actions.setSubmitting(false)
             toast({
                 messageType:"error",
                 title:"Something went wrong while Sending Message",
@@ -83,18 +91,28 @@ const SendMessage:React.FC<IProps> = ({connection,currentGroupDetail:{name,socie
             })
         }
     }
-    const handleKeyPress = (e:React.SyntheticEvent<HTMLInputElement>) => {
-        console.log(e)
-    }
+
+    const validationScheme = Yup.object({
+        message:Yup.string().required()
+    })
+
     return(
         <Box className={classes.root}>
-            <GoPlus/>
-            <Formik initialValues={initialValues} onSubmit={handleSubmit} >
+            <Formik initialValues={initialValues} validationSchema={validationScheme}
+             onSubmit={handleSubmit}>
                 {(formikProps:FormikProps<messageForm>) => (
-                    <TextInput name="message" placeholder="Write a message" onKeyPress={handleKeyPress} />
+                    <>
+                        <GoPlus/>
+                        <TextInput name="message" placeholder="Write a message"
+                        />
+                        <TouchRipple 
+                            disabled={formikProps.isSubmitting || !formikProps.dirty || !formikProps.isValid}
+                            onClick={formikProps.handleSubmit as any}>
+                            {formikProps.isSubmitting ? <VscLoading className={classes.rotate} /> : <AiOutlineSend/>}
+                        </TouchRipple>
+                    </>
                 )}
             </Formik>
-            <FaMicrophone/>
         </Box>
     )
 }
