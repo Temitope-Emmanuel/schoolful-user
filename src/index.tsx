@@ -13,7 +13,7 @@ import {ChakraTheme,MaterialTheme} from "theme"
 
 
 const store = configureStore()
-configureAxios()
+// configureAxios()
 
 const Root = () => (
   <React.StrictMode>

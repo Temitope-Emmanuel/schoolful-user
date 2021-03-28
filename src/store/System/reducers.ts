@@ -3,6 +3,7 @@ import isEmpty from "lodash/isEmpty"
 
 const initialState: SystemState = {
     isAuthenticated: false,
+    showAdvertLayout:true,
     isLoading:false,
     authLoading:true,
     pageTitle:"",
@@ -36,6 +37,11 @@ const initialState: SystemState = {
 
 export function systemReducer(state = initialState, action: Action): SystemState {
     switch (action.type) {
+        case ActionTypes.SET_ADVERT_LAYOUT:
+            return {
+                ...state,
+                showAdvertLayout:action.payload
+            }
         case ActionTypes.SETCURRENTUSER:
             return {
                 ...state,

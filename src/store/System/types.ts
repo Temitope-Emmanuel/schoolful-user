@@ -7,7 +7,8 @@ export interface SystemState {
     authLoading:boolean;
     pageTitle:string;
     currentUser:LoggedInUser;
-    currentChurch:IChurch
+    currentChurch:IChurch;
+    showAdvertLayout:boolean
 }
 
 
@@ -20,6 +21,7 @@ export enum ActionTypes {
     SETCURRENTUSER = "[System] SetCurrentUser",
     SET_CURRENT_CHURCH = "[System] SetCurrentChurch",
     SET_PAGE_TITLE = "[System] SetPageTitle",
+    SET_ADVERT_LAYOUT = "[System] SetAdvertLayout"
 }
 
 export interface SetChurchAction {
@@ -28,6 +30,10 @@ export interface SetChurchAction {
 }
 export interface ShowSpinnerAction {
     type:ActionTypes.SHOW_SPINNER
+}
+export interface SetAdvertLayoutAction {
+    type:ActionTypes.SET_ADVERT_LAYOUT,
+    payload:boolean
 }
 export interface HideSpinnerAction {
     type:ActionTypes.HIDE_SPINNER
@@ -51,5 +57,5 @@ export interface SetCurrentUserAction {
     payload: any
 } 
 
-export type Action = HideSpinnerAction  | LoginAction | SetCurrentUserAction | SetChurchAction 
+export type Action = HideSpinnerAction  | LoginAction | SetCurrentUserAction | SetChurchAction |SetAdvertLayoutAction 
 | ShowSpinnerAction | HideSpinnerAction | SetTitleAction | ShowAuthSpinnerAction |HideAuthSpinnerAction

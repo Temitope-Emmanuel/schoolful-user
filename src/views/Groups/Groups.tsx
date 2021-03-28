@@ -10,6 +10,11 @@ import {IGroup} from "core/models/Group"
 import * as groupService from "core/services/group.service"
 import SendMessage from "./SendMessage"
 import {HubConnectionBuilder,HubConnection} from "@aspnet/signalr"
+import ListMessage from "./ListMessage"
+import { useDispatch, useSelector } from "react-redux"
+import {setChatGroup,loadGroupChatMessage} from "store/Chat/actions"
+import {setAdvertLayout} from "store/System/actions"
+import {AppState} from "store"
 
 
 const useStyles = makeStyles((theme:Theme) => createStyles({
@@ -19,9 +24,8 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
 }))
 
 
-const serverUrl = process.env.REACT_APP_SERVER_URL
-
 const Groups = () => {
+    const currentGroup = useSelector((state:AppState) => state.chat.currentGroup)
     const defaultGroup:IGroup = {
         churchId:0,
         denominationId:0,
@@ -31,24 +35,18 @@ const Groups = () => {
         name:""
     }
     const classes = useStyles()
+    const dispatch = useDispatch()
     const params = useParams()
     const toast = useToast()
     const [churchGroup,setChurchGroup] = React.useState<IGroup[]>(new Array(10).fill(defaultGroup))
-    const [currentGroup,setCurrentGroup] = React.useState<IGroup>({
-        churchId:0,
-        denominationId:0,
-        description:"",
-        isDeleted:false,
-        memberCount:0,
-        name:"",
-    })
     const connection = React.useRef<HubConnection>()
 
     const handleSetCurrentGroup = (curGroup:IGroup) => () => {
-        setCurrentGroup(curGroup)
+        dispatch(setChatGroup(curGroup))
     }
     
     React.useEffect(() => {
+        dispatch(setAdvertLayout(false))
         const getGroupsByChurch = async () => {
             await groupService.getGroupByChurch(params.churchId).then(payload => {
                 setChurchGroup(payload.data)
@@ -60,11 +58,11 @@ const Groups = () => {
                 })
             })
         }
+        getGroupsByChurch()
         const setUpConnection = async () => {
-            const connect = await new HubConnectionBuilder()
-            .withUrl(`${serverUrl}/chathub` || "").build()
-            connect.start().catch(err => {
-                console.log("this is the err",err)
+            const connect = new HubConnectionBuilder()
+            .withUrl(`http://api.thefaithfuls.com/chathub` as string ).build()
+            await connect.start().catch(err => {
                 toast({
                     messageType:"error",
                     title:"Something went wrong",
@@ -72,13 +70,27 @@ const Groups = () => {
                 })
             })
             connection.current = connect
-            console.log("this is the connect",connect)
         }
+
         setUpConnection()
-        getGroupsByChurch()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
+
+
+    React.useEffect(() => {
+        const addToGroup = () => {
+            if(connection.current && currentGroup.name){
+               connection.current.send("joinGroup",currentGroup.name)
+               dispatch(loadGroupChatMessage(toast))
+            }
+        }
+
+        
+        if(currentGroup.name){
+            addToGroup()
+        }
+    },[currentGroup])
 
     return(
         <Stack direction={["column","row"]} className={classes.root}>
@@ -100,8 +112,9 @@ const Groups = () => {
                     This is the chat handle
                 </Typography>
                 {
-                    currentGroup && connection.current && 
+                    currentGroup.societyID && connection.current && 
                     <>
+                        <ListMessage currentGroup={currentGroup} connection={connection.current} />
                         <SendMessage currentGroupDetail={{
                             name:currentGroup.name,
                             societyID:currentGroup.societyID as number

@@ -1,4 +1,4 @@
-import {ActionTypes,SetTitleAction,SetChurchAction} from "./types"
+import {ActionTypes,SetTitleAction,SetChurchAction,SetAdvertLayoutAction} from "./types"
 import {Dispatch} from "redux"
 // import * as accountService from "core/services/account.service"
 import {getChurchById} from "core/services/church.service"
@@ -27,6 +27,13 @@ export function getChurch(toast:ToastFunc) {
                 messageType:MessageType.ERROR
             })
         }
+    }
+}
+
+export function setAdvertLayout(arg:boolean):SetAdvertLayoutAction{
+    return {
+        type:ActionTypes.SET_ADVERT_LAYOUT,
+        payload:arg
     }
 }
 
