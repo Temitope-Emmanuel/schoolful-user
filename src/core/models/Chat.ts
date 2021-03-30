@@ -1,9 +1,3 @@
-// export interface SendMessageToUser { 
-//     id:number;
-//     receiverId:string;
-//     text:string;
-//     when:Date;
-// }
 
 export interface GroupMessage {
     id?:number;
@@ -13,11 +7,19 @@ export interface GroupMessage {
     text:string;
     when:Date | string;
     ownerIsCurrentUser?:boolean;
+    senderImageUrl:string;
 }
 
 export interface GetGroupChat {
     groupName:string;
     page:number;
     take:number;
-    count:number;
+}
+
+export interface GetGroupChatResponse {
+    currentPage:number;
+    pageSize:number;
+    totalPages:number;
+    totalRecords:number;
+    records?:GroupMessage[]
 }

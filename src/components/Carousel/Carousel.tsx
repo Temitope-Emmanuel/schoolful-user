@@ -47,7 +47,9 @@ const useStyles = makeStyles((theme) => ({
       width:"100%"
     },
     "& .MuiMobileStepper-positionStatic": {
-      justifyContent: "center"
+      justifyContent: "center",
+      margin:"auto",
+      width:"min-content"
     },
     "& .MuiMobileStepper-dot": {
       backgroundColor: "#383838"
@@ -57,14 +59,15 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   img: {
-    height: 255,
+    height: 200,
     display: 'block',
     overflow: 'hidden',
-    width: '100%',
+    width: '100%'
   },
   imageContainer:{
     boxShadow:"0px 5px 10px #151C4D1F",
     backgroundColor:"white",
+    maxW:"3rem !important",
     margin:`${theme.spacing(2,1)} !important`,
     borderRadius:"4px",
     flex:1,
@@ -107,11 +110,12 @@ function SwipeableTextMobileStepper() {
       <AutoPlaySwipeableViews
         axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
         index={activeStep}
+        // index={activeStep}
         onChangeIndex={handleStepChange}
         enableMouseEvents
       >
         {tutorialSteps.map((step, index) => (
-          <HStack maxW="3xl">
+          <HStack maxW="40rem" mx="auto">
             <VStack key={step.label} className={classes.imageContainer}>
                 {Math.abs(activeStep - index) <= 2 ? (
                 <img className={classes.img} src={step.imgPath} alt={step.label} />
