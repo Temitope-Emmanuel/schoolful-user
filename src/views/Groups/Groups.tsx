@@ -92,9 +92,10 @@ const Groups = () => {
         }
     },[currentGroup])
 
+
     return(
         <Stack direction={["column","row"]} className={classes.root}>
-            <VStack justify="center" flex={4} bgColor="bgColor2">
+            <VStack maxW="md" justify="center" flex={4} bgColor="bgColor2">
                 <Button>
                     Join Group
                 </Button>

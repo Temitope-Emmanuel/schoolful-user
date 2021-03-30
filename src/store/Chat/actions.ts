@@ -48,13 +48,12 @@ export function loadGroupChatMessage(toast:ToastFunc){
         try{
             // dispatch(clearGroupMessage())
             return getGroupChat({
-                count:10,
                 groupName:state().chat.currentGroup.name,
                 page:1,
                 take:10
             }).then(payload => {
                 const currentUserId = state().system.currentUser.id;
-                const checkOwner = payload.data.models.map(item => ({
+                const checkOwner = payload.data.records!.map(item => ({
                     ...item,
                     ownerIsCurrentUser:currentUserId === item.personId
                 })).reverse()

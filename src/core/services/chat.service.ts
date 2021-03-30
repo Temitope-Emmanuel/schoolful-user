@@ -1,13 +1,7 @@
 import axios,{AxiosRequestConfig} from "axios"
 import {IResponse} from "core/models/Response"
-import {GetGroupChat,GroupMessage} from "core/models/Chat"
+import {GetGroupChat,GetGroupChatResponse} from "core/models/Chat"
 
-interface MessageResponse<T> {
-    count:number;
-    models:T;
-    page:number;
-    totalCount:number
-}
 
 const baseUrl = `${process.env.REACT_APP_SERVER_URL}/Chat`
 
@@ -43,8 +37,8 @@ const baseUrl = `${process.env.REACT_APP_SERVER_URL}/Chat`
 // }
 
 
-export const getGroupChat = async (arg:GetGroupChat):Promise<IResponse<MessageResponse<GroupMessage[]>>> => {
-    const url = `${baseUrl}/get-group-chat?groupName=${arg.groupName}&page=${arg.page}&take=${arg.take}&count=${arg.count}`
+export const getGroupChat = async (arg:GetGroupChat):Promise<IResponse<GetGroupChatResponse>> => {
+    const url = `${baseUrl}/get-group-chat?groupName=${arg.groupName}&page=${arg.page}&take=${arg.take}`
     try{
         const config:AxiosRequestConfig = {
             headers:{
