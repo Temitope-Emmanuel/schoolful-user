@@ -29,7 +29,7 @@ export const getChurchDenomination = async ():Promise<IResponse<IDenomination[]>
 export const getChurchByDenomination = async (denomationId:number,stateId:number) => {
     try{
         // const url = `${baseUrl}/getchurchbydenomination?denominationId=${denomationId}&stateId=${stateId}`
-        const url = `http://ogbuifymark-001-site1.btempurl.com/api/Church/getchurchbydenomination?denominationId=3&stateId=2671`
+        const url = `${baseUrl}/getchurchbydenomination?denominationId=3&stateId=2671`
         const response = await axios.get(url)
         return response.data
     }catch(err){

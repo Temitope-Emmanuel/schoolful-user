@@ -40,6 +40,7 @@ import {primary} from "theme/chakraTheme/palette"
 const useStyles = makeStyles(theme => createStyles({
     root: {
         alignSelf: "center",
+        maxHeight: "38rem",
         justifyContent: "center",
         flexDirection: "column",
         backgroundColor:"white",
@@ -59,7 +60,8 @@ const useStyles = makeStyles(theme => createStyles({
         }
     },
     inputContainer: {
-        minHeight: "24rem",
+        maxHeight: "27rem",
+        overflow:"auto",
         marginRight: "0 !important",
         "& > div": {
             "& > p": {
@@ -81,7 +83,6 @@ const useStyles = makeStyles(theme => createStyles({
         }
     },
     imageContainer: {
-        border: "1px dashed rgba(0, 0, 0, .5)",
         borderRadius: "4px",
         flexDirection: "column",
         justifyContent: "center",
@@ -557,10 +558,11 @@ const Signup = () => {
     return (
         <>
             <MainLoginLayout showLogo={true}>
-                <Flex className={classes.root} px={{ sm: "3" }}
+                <Flex className={classes.root} 
+                // px={{ sm: "3" }}
                     alignItems={["center", "flex-start"]}
-                    mx="auto" flex={[1, 3]} >
-                    <Heading textStyle="h3" my={["2", 5]} >
+                    mx="auto" ml={0} pl={0} flex={[1, 3]} >
+                    <Heading textStyle="h3" mb={"6"} textAlign={["center", "left"]}>
                         Sign Up
                     </Heading>
                     <Text textStyle="h6" opacity={.8} textAlign={["center", "left"]}
@@ -631,30 +633,30 @@ const Signup = () => {
                                                     }
                                                 </HStack>
                                                 
-                                                <VStack align="center" >
+                                                <HStack align="center" justifyContent="space-between" >
                                                     <Flex className={classes.imageContainer} p={5} >
-                                                        <input accept="image/jpeg,image/png" onChange={handleImageTransformation} type="file"
+                                                        <input accept="image/jpeg,image/png"
+                                                         onChange={handleImageTransformation} type="file"
                                                             className={classes.input} id="icon-button-file" />
                                                         <label htmlFor="icon-button-file">
                                                             <IconButton as="span" padding={[2, 4]} boxSize={["7.5rem"]}
                                                              aria-label="submit image"
                                                                 borderRadius="50%" bgColor={buttonBackground}
                                                                 icon={image.name ? 
-                                                                <Avatar size="2xl" src={image.base64} /> : 
+                                                                <Avatar size="xl" src={image.base64} /> : 
                                                                 <BsCardImage fontSize="2rem" />
                                                             } />
                                                         </label>
-                                                        <Heading as="h4" mt={2} fontSize="1.125rem" >Profile Image</Heading>
                                                     </Flex>
                                                         {
                                                             image.name &&
-                                                                <Text fontSize="10px" opacity={.5} isTruncated maxW="2xs" 
-                                                                >{image.name}
+                                                                <Text isTruncated fontWeight="bold" fontSize="1.5rem" maxW="2xs" 
+                                                                >{`${formikProps.values.firstname}-${formikProps.values.lastname}`}
                                                                 </Text>
                                                         }
-                                                </VStack>
-                                                <Button width="100%" disabled={formikProps.isSubmitting || !formikProps.dirty || !formikProps.isValid}
-                                                    isLoading={formikProps.isSubmitting}
+                                                </HStack>
+                                                <Button width="100%" isLoading={formikProps.isSubmitting}
+                                                    disabled={formikProps.isSubmitting || !formikProps.dirty || !formikProps.isValid}
                                                     loadingText={`Creating new Church Member ${formikProps.values.firstname}`}
                                                     onClick={(formikProps.handleSubmit as any)} >
                                                     Next
@@ -713,9 +715,9 @@ const Signup = () => {
                                                 </Fade>
                                                 :
                                                 <Fade timeout={150} in={!open}>
-                                                    <Box maxH="35rem" overflowY="auto" >
+                                                    <Box>
                                                         <SimpleGrid minChildWidth="12.5rem" gridGap=".5rem"
-                                                            spacing="40px">
+                                                            spacing="40px" w="55vw">
                                                             {showChurchSelect.length > 0 ?
                                                                 showChurchSelect.map((item, idx) => (
                                                                     <Skeleton onClick={handleSetCurrentChurch(item)} key={idx}

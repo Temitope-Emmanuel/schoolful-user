@@ -11,6 +11,7 @@ import {Announcement} from "views/Announcement"
 import {Activity} from "views/Activity"
 import {Bible} from "views/Bible"
 import {Groups} from "views/Groups"
+import {LiveStreamView} from "views/Livestream"
 
 
 const DashboardRoute = () => {
@@ -31,6 +32,10 @@ const DashboardRoute = () => {
                     />
                     <Route exact path={`${path}/sermon`} render={() => (
                         <Sermon/>
+                    )}
+                    />
+                    <Route exact path={`${path}/livestream/:liveStreamID`} render={() => (
+                        <LiveStreamView/>
                     )}
                     />
                     <Route exact path={`${path}/profile`} render={() => (

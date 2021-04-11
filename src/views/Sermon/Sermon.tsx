@@ -1,7 +1,7 @@
 import React from "react"
 import { 
         Tab,TabList,TabPanel,Icon,Flex,HStack,
-        TabPanels,Tabs,VStack,Heading
+        TabPanels,Tabs,VStack,Heading,Text,Divider
      } from "@chakra-ui/react"
 import {makeStyles,createStyles,Theme} from "@material-ui/core/styles"
 import {Zoom} from "@material-ui/core"
@@ -17,6 +17,12 @@ import useScroll from "utils/Scroll"
 import {MediaPlayer} from "components/MediaPlayer"
 import {MediaType} from "core/enums/MediaType"
 import {Button} from "components/Button"
+import { useSelector,useDispatch } from "react-redux"
+import { AppState } from "store"
+import {setCurrentStream} from "store/Livestream/actions"
+import { LiveStreamChurchResponse } from "core/models/livestream"
+import {MdLiveTv} from "react-icons/md"
+import { useHistory } from "react-router-dom"
 
 
 
@@ -80,8 +86,10 @@ const Sermon = () => {
         next:false
     }
     const params = useParams()
+    const history = useHistory()
     const scrolling = useScroll()
     const toast = useToast()
+    const dispatch = useDispatch()
     const classes = useStyles()
     const selected = {color:"primary"}
     const [tabIndex,setTabIndex] = React.useState(0)
@@ -91,7 +99,11 @@ const Sermon = () => {
     const [textSermon,setTextSermon] = React.useState<ISermon[]>([])
     const [videoSermon,setVideoSermon] = React.useState<ISermon[]>([])
     const [audioSermon,setAudioSermon] = React.useState<ISermon[]>([])
-
+    const livestream = useSelector((state: AppState) => ({
+        upComing: state.livestream.upComing,
+        isLive: state.livestream.isLive
+    }))
+    
     React.useEffect(() => {
         const getChurchSermonApi = async () => {
             await getChurchSermon(params.churchId).then(payload => {
@@ -200,6 +212,14 @@ const Sermon = () => {
 
     const setNextVideoSermon = setNewCurrentMedia(videoSermon,1)
     const setPreviousVideoSermon = setNewCurrentMedia(videoSermon,-1)
+
+    const handleSetCurrentStream = (arg:LiveStreamChurchResponse) => () => {
+        dispatch(setCurrentStream({
+            broadCastID:arg.liveBroadcastID,
+            toast
+        }))
+        history.push(`/church/${params.churchId}/livestream/${arg.liveBroadcastID}`)
+    }
     
     return (
         <VStack className={classes.root}>
@@ -237,9 +257,10 @@ const Sermon = () => {
             <Tabs align="center" zIndex={5} onChange={(index) => setTabIndex(index)} >
                 <TabList className={classes.tabsContainer} 
                     bgColor={scrolling.scrolling ? "bgColor" : "" } defaultValue={2}>
-                    <Tab color="tertiary" _selected={selected} >Written Sermon</Tab>
-                    <Tab color="tertiary" _selected={selected}>Video Sermon</Tab>
-                    <Tab color="tertiary" _selected={selected}>Audio Sermon</Tab>
+                    <Tab color="tertiary" _selected={selected} >Written</Tab>
+                    <Tab color="tertiary" _selected={selected}>Video</Tab>
+                    <Tab color="tertiary" _selected={selected}>Audio</Tab>
+                    <Tab color="tertiary" _selected={selected}>Livestream</Tab>
                 </TabList>
                 <TabPanels>
                     <TabPanel>
@@ -285,6 +306,32 @@ const Sermon = () => {
                             ))}
                         </VStack>
                     </TabPanel>
+                <TabPanel>
+                <VStack spacing={4} width="100%"
+                         className={classes.prayerContainer}>
+                             <Text>
+                                Live
+                             </Text>
+                            {livestream.isLive.map((item,idx) => (
+                                <PlayListCard key={idx} isLoaded={Boolean(item.liveBroadcastID)}
+                                    icon={IconComponent(MdLiveTv,"3rem")} onClick={handleSetCurrentStream(item)}
+                                    title={item.title} image={LandingImage}
+                                    subtitle={item.description}
+                                />
+                            ))}
+                            <Divider/>
+                            <Text>
+                                UpComing
+                            </Text>
+                            {livestream.upComing.map((item,idx) => (
+                                <PlayListCard key={idx} isLoaded={Boolean(item.liveBroadcastID)}
+                                    icon={IconComponent(MdLiveTv,"3rem")} onClick={handleSetCurrentStream(item)}
+                                    title={item.title} image={LandingImage}
+                                    subtitle={item.description}
+                                />
+                            ))}
+                        </VStack>
+                </TabPanel>
                 </TabPanels>
             </Tabs>
         </VStack>

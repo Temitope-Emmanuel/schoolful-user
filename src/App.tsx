@@ -15,13 +15,15 @@ const App = () => {
   const toast = useToast()
   const token = authManager.getToken();
   const userDetail = JSON.parse(authManager.getUserDetail() as string)
+  const windowsLocation = window.location.href
   
-  
+
+  console.log({windowsLocation})
 
   React.useEffect(() => {
     if(!token || !userDetail){
       dispatch(hideAuthLoading())
-      logout()
+      logout(windowsLocation.includes("church"))
     }else{
       userService.verifyToken(token).then(payload => {
         if(!payload) dispatch(logout());
@@ -42,7 +44,7 @@ const App = () => {
           subtitle:`Error: ${err}`,
           messageType:"info"
         })
-        logout();
+        logout(windowsLocation.includes("church"));
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
