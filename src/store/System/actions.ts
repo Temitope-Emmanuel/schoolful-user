@@ -61,12 +61,14 @@ export function login(phoneNumber:number,password:string,toast:ToastFunc){
     }
 }
 
-export function logout() {
+export function logout(redirect = true) {
         auth.removeToken()
         auth.removeUserDetail()
         setCurrentUser({})
         setCurrentChurch({})
-        history.push("/login")
+        if(redirect){
+            history.push("/login")
+        }
 }
 export function setCurrentUser(user:any) {
     return{

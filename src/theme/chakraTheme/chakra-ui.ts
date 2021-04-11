@@ -34,16 +34,12 @@ const Input = {
   variants: {
     solid: {
       border:"1px solid rgba(0, 0, 0, .3)",
-      // opacity:.9,
+      height: "2.5rem",
       bgColor:"white",
       borderRadius:"4px",
       color:"#00000099",
-      fontSize:"1.25rem",
-      letterSpacing:".15px",
-      _placeholder:{
-        color:"grey",
-        opacity:.74
-      }
+      fontSize:"1rem",
+      letterSpacing:".15px"
     }
   },
   // The default size and variant values
@@ -129,11 +125,14 @@ const theme =  {
         lineHeight:"21px",
         letterSpacing:"0px"
       },
-      // h3:{
-      //   fontWeight:400,
-      //   whiteSpace:["normal","nowrap"],
-      //   textAlign:["center","left"]
-      // },
+      h3:{
+        fontSize:"2rem",
+        color:"#383838",
+        fontWeight:600,
+        letterSpacing:"0px",        
+        whiteSpace:["normal","nowrap"],
+        textAlign:["center","left"]
+      },
       h4:{
         fontSize:"1.875rem",
         color:primary,

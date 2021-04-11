@@ -11,9 +11,9 @@ const Login = () => {
         <MainLoginLayout showLogo={true}>
             <Flex alignSelf="center" mx="auto"
                 justifyContent="center" alignItems={["center", "flex-start"]}
-                flexDirection="column" px={{ sm: "3" }} flex={[1, 3]} >
+                flexDirection="column" pr={{ sm: "3" }} flex={[1, 3]} >
             <LoginComponent/>
-                    <HStack>
+                    <HStack opacity={.66}>
                         <Text fontSize="1.125rem" whiteSpace="nowrap" >Don't have an account?
                         </Text>
                             <Text fontSize="1.125rem" color="primary" textDecoration="underline">

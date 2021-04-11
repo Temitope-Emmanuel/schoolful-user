@@ -4,8 +4,10 @@ import {
     Select,
     FormLabel,
     FormErrorMessage,
+    useStyleConfig,
   } from "@chakra-ui/react";
   import {Field,FieldProps} from "formik"
+import {createStyles,makeStyles} from "@material-ui/core"
 
 
 interface IProps {
@@ -18,6 +20,16 @@ interface IProps {
     [key:string]:any;
 }
 
+const useStyles = makeStyles((theme) => createStyles({
+  root:{},
+  select:{
+    color:"#00000099",
+    "& option":{
+      color:"#00000099"
+    }
+  }
+}))
+
 const InputComponent:React.FC<IProps> = ({placeholder,className,label,val = 0,name,func,children,...props}) => {
     React.useEffect(() => {
       if(func){
@@ -25,6 +37,9 @@ const InputComponent:React.FC<IProps> = ({placeholder,className,label,val = 0,na
       }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[val])
+    const styles = useStyleConfig("Input", {})
+    const classes = useStyles()
+  
     return (
       <Field name={name}>
         {({ field, form }:FieldProps) => {
@@ -33,8 +48,8 @@ const InputComponent:React.FC<IProps> = ({placeholder,className,label,val = 0,na
             isInvalid={Boolean(form.touched[name]) && Boolean(form.errors[name])} {...props} >
               { label  && <FormLabel htmlFor={name} fontWeight="500" color="primary">{label}</FormLabel>}
               
-              <Select size="md" alignSelf="center" id={name} mx="auto" {...field}
-                width={["85%","auto"]} placeholder={placeholder}>
+              <Select size="md" alignSelf="center" id={name} mx="auto" {...field} className={classes.select}
+                width={["85%","auto"]} sx={styles} placeholder={placeholder}>
                   {children}
               </Select>
               {

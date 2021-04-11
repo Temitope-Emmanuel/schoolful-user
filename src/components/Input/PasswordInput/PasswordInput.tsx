@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => (
       textTransform: "none",
       "&::placeholder": {
         color: "black",
-        fontSize: "1rem"
+        fontSize: ".5rem"
       }
     }
   })
@@ -64,10 +64,10 @@ const PasswordInput: React.FC<IProps> = ({ placeholder, showErrors = true, icon,
             { label && <FormLabel fontWeight="500" color="primary">{label}</FormLabel>}
             {
               <InputGroup size="md">
-                <Input sx={styles} className={classes.input}
-                  pr="4.5rem" {...field} id={name}
+                <Input sx={styles} placeholder={placeholder}
+                  // pr="4.5rem" 
+                  {...field} id={name}
                   type={show ? "text" : "password"}
-                  placeholder={placeholder}
                 />
                 <InputRightElement width="4.5rem">
                   <Icon cursor="pointer" color="black" bgColor="green"
