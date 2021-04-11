@@ -8,9 +8,21 @@ import useParams from "utils/Params"
 
 const useStyles = makeStyles((theme) => createStyles({
     root:{
-
+        // overflow: "hidden",
+        // paddingBottom: "56.25%",
+        // position: "relative",
+        // height: 0,
+        // "& iframe":{
+        //     left: 0,
+        //     top: 0,
+        //     height: "100%",
+        //     width: "100%",
+        //     position: "absolute",
+        // }
     }
 }))
+
+
 
 
 const LiveStream = () => {
@@ -38,7 +50,7 @@ const LiveStream = () => {
                 allowFullScreen
                 title={currentStream.title}
             />
-            
+
         </Box>
     )
 }
