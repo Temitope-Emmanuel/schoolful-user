@@ -152,7 +152,6 @@ const AdvertLayout = ({ children }: any) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [churchEvent])
     
-    console.log("this is the value for showAdvert",showAdvert)
     const displayStyle = {display:showAdvert ? "initial":"none"}
     return (
         <Stack direction={["column-reverse", "row"]} className={classes.root}>

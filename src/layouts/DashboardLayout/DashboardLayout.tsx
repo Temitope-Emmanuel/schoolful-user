@@ -13,6 +13,7 @@ import { Logo } from "components/Logo"
 import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
 import {useDispatch, useSelector} from "react-redux"
 import {LoadActivitiesForChurch,LoadEventsForChurch} from "store/Activity/actions"
+import {getPendingStream} from "store/Livestream/actions"
 import {AdvertLayout} from "layouts/AdvertLayout"
 import { MdDashboard } from "react-icons/md"
 import { FaPrayingHands, FaHandHoldingHeart, FaUserAlt, FaBible } from "react-icons/fa"
@@ -21,11 +22,12 @@ import { FiActivity } from "react-icons/fi"
 import { TiGroup } from "react-icons/ti"
 import {FiLogOut} from "react-icons/fi"
 import { RiBroadcastLine } from "react-icons/ri"
-import { GiPodiumWinner,GiHamburgerMenu } from "react-icons/gi"
+import { GiHamburgerMenu } from "react-icons/gi"
 import {getChurch,logout} from "store/System/actions"
 import useToast from "utils/Toast"
 import useParams from "utils/Params"
 import { AppState } from 'store';
+import axios from "axios"
 
 
 const drawerWidth = 210;
@@ -117,6 +119,8 @@ const dashboardMenu = [
 ]
 
 
+
+
 const DashboardLayout:React.FC<IProps> = (props) => {
   const location = useLocation()
   const activeLink = location.pathname
@@ -128,6 +132,7 @@ const DashboardLayout:React.FC<IProps> = (props) => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [desktopOpen,setDesktopOpen] = React.useState(true)
   const currentUser = useSelector((state:AppState) => state.system.currentUser)
+  const currentChurch = useSelector((state:AppState) => state.system.currentChurch)
 
   const atProfile = location.pathname.includes("/profile")
   const handleDrawerToggle = () => {
@@ -143,7 +148,21 @@ const DashboardLayout:React.FC<IProps> = (props) => {
     dispatch(LoadEventsForChurch(params.churchId,toast))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
+  
+  React.useEffect(() => {
+    const cancelToken = axios.CancelToken.source()
+    if(currentChurch.churchID){
+      dispatch(getPendingStream("upComing",toast,cancelToken))
+      dispatch(getPendingStream("isLive",toast,cancelToken))
+    }
 
+  },[currentChurch])
+  const signOut = () => {
+    logout()
+  }
+
+
+  
   const drawer = (
     <>
       <div className={classes.toolbar} />
@@ -201,7 +220,7 @@ const DashboardLayout:React.FC<IProps> = (props) => {
                     Profile
                   </MenuItem>
                 }
-                <MenuItem color="rgba(0,0,0,.6)" onClick={logout}>
+                <MenuItem color="rgba(0,0,0,.6)" onClick={signOut}>
                   <Icon as={FiLogOut} />
                     Logout
                   </MenuItem>

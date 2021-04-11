@@ -1,13 +1,13 @@
 import React from "react"
 import {useHistory} from "react-router-dom"
 import {useDispatch} from "react-redux"
-import {Box,Heading,FormHelperText,FormControl} from "@chakra-ui/react"
+import {Box,Heading,FormHelperText,FormControl,Text} from "@chakra-ui/react"
 import {Button} from "components/Button"
 import {useSelector} from "react-redux"
 // import {AppState} from "store"
 // eslint-disable-next-line
 import {Formik,FormikProps} from "formik"
-import {TextInput} from "components/Input"
+import {TextInput,PasswordInput} from "components/Input"
 import useToast from "utils/Toast"
 import {login} from "store/System/actions"
 import {AppState} from "store"
@@ -59,9 +59,9 @@ const Signup = () => {
 
     return (
         <>
-        <Heading mb={"6"} textAlign={["center", "left"]}>
+        <Text textStyle="h3" mb={"6"} textAlign={["center", "left"]}>
             Login
-        </Heading>   
+        </Text>   
         <Formik initialValues={initialValue}
             validationSchema={validationScheme}
             onSubmit={handleSubmit}
@@ -69,19 +69,20 @@ const Signup = () => {
             {(formikProps: FormikProps<IForm>) => {
                 return (
                     <Box my={["4"]} width={["90vw", "100%"]} maxWidth="sm" >
-                        <TextInput name="phoneNumber" placeholder="phone Number" />
-                        <TextInput mt="6" name="password" type="password" placeholder="Password" />
+                        <TextInput name="phoneNumber" placeholder="Phone number" />
+                        <PasswordInput mt="6" name="password" type="password"
+                         placeholder="Password" />
                         <FormControl>
-                            <FormHelperText cursor="pointer" mb="3" ml="2" onClick={moveToChangePassword}>
+                            <FormHelperText cursor="pointer" mb="3"
+                             ml="2" onClick={moveToChangePassword}>
                                 Forgot Password
                             </FormHelperText>
                         </FormControl>
                         <Button
                          disabled={formikProps.isSubmitting || !formikProps.dirty || !formikProps.isValid}
-                        loadingText={`Login User`}
-                         width={["90vw", "100%"]} color="white" maxWidth="sm" 
-                         isLoading={formikProps.isSubmitting}
-                          onClick={(formikProps.handleSubmit as any)} backgroundColor="primary" my="3">
+                        loadingText={`Login User`} color="white" maxWidth="sm"
+                        width={["90vw", "100%"]} isLoading={formikProps.isSubmitting}
+                        onClick={(formikProps.handleSubmit as any)} backgroundColor="primary" my="3">
                             { formikProps.isValid ? "Login" : "Please Fill Form"}
                         </Button>
                     </Box>

@@ -6,11 +6,13 @@ import thunkMiddleware from 'redux-thunk'
 import {systemReducer} from "./System/reducers"
 import {activityReducer} from "./Activity/reducers"
 import {chatReducer} from "./Chat/reducers"
+import {livestreamReducer} from "./Livestream/reducers"
 
 const rootReducer = combineReducers({
     system:systemReducer,
     activity:activityReducer,
-    chat:chatReducer
+    chat:chatReducer,
+    livestream:livestreamReducer
 })
 
 
