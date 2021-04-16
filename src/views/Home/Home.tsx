@@ -12,21 +12,30 @@ import { Carousel } from "components/Carousel"
 import { FaPrayingHands } from "react-icons/fa"
 import useParams from "utils/Params"
 import useToast from "utils/Toast"
-import { getPrayerRequest, getDailyReading } from "core/services/prayer.service"
-import { IPrayer } from "core/models/Prayer"
+import { getDailyReading } from "core/services/prayer.service"
+import {getChurchSermon} from "core/services/sermon.service"
 import { AppState } from "store"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { Scripture } from "assets/images"
-import { IPrayerRequest } from "core/models/PrayerRequest"
 import { IDailyReading } from "core/models/dailyReading"
 import { TiMediaRecord } from "react-icons/ti"
 import { FaPlayCircle } from "react-icons/fa"
+import { ISermon } from "core/models/Sermon"
+import {loadChurchPrayerRequest,addUserToHasPrayed} from "store/Prayer/actions"
 import axios from "axios"
+
+
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
+        alignItems:"center !important",
+        [theme.breakpoints.up("md")]:{
+            alignItems:"flex-start !important"
+        },
         "& > div:nth-child(2)": {
-            width: "75%",
+            [theme.breakpoints.up("sm")]:{
+                width: "75%"
+            },
             "& button": {
                 boxShadow: "0px 5px 10px #00A7AF33",
                 fontSize: ".9rem",
@@ -142,22 +151,18 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 const Home = () => {
     const classes = useStyles()
-    const defaultPrayer: IPrayer = {
-        denominationID: 0,
-        prayerName: "",
-        prayerdetail: "",
-        denomination: ""
-    }
     const defaultReading: IDailyReading = {
         verse: "",
         content: "",
         name: ""
     }
     const toast = useToast()
-    const currentDate = new Date()
-
     const params = useParams()
-    const [churchPrayer, setChurchPrayer] = React.useState<IPrayerRequest[]>(new Array(10).fill(defaultPrayer))
+    const currentDate = new Date()
+    const dispatch = useDispatch()
+    const prayerRequest = useSelector((state:AppState) => state.prayer.prayerRequest)
+    const [churchSermon,setChurchSermon] = React.useState<ISermon[]>([])
+    // const [churchPrayer, setChurchPrayer] = React.useState<IPrayerRequest[]>(new Array(10).fill(defaultPrayer))
     const currentUser = useSelector((state: AppState) => state.system.currentUser)
     const [dailyReading, setDailyReading] = React.useState<IDailyReading[]>([defaultReading])
     const livestream = useSelector((state: AppState) => ({
@@ -167,20 +172,11 @@ const Home = () => {
 
     React.useEffect(() => {
         const source = axios.CancelToken.source()
-        const getPrayerByChurch = async () => {
-            // Add denomination id
-            getPrayerRequest(Number(params.churchId), source).then(payload => {
-                setChurchPrayer(payload.data)
-            }).catch(err => {
-                if (!axios.isCancel(err)) {
-                    toast({
-                        title: "Unable to Get Church Prayers",
-                        subtitle: `Error:${err}`,
-                        messageType: "error"
-                    })
-                }
-            })
-        }
+        dispatch(loadChurchPrayerRequest({
+            cancelToken:source,
+            churchId:params.churchId as any,
+            toast
+        }))
         const churchDailyReading = () => {
             getDailyReading(source).then(payload => {
                 setDailyReading(payload.data.readings)
@@ -194,8 +190,19 @@ const Home = () => {
                 }
             })
         }
+        const getChurchSermonApi = () => {
+            getChurchSermon(params.churchId).then(payload => {
+                setChurchSermon(payload.data)
+            }).catch(err => {
+                toast({
+                    messageType:"error",
+                    subtitle:`Error:${err}`,
+                    title:"Unable to complete request"
+                })
+            })
+        }
 
-        getPrayerByChurch()
+        getChurchSermonApi()
         churchDailyReading()
         return () => {
             source.cancel()
@@ -206,9 +213,12 @@ const Home = () => {
     const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const newDate = new Intl.DateTimeFormat('en-US', options).format(currentDate)
     const todayDate = newDate.substring(0, (newDate.length - 6))
-
-    console.log({ livestream })
-
+    const addChurchMemberToPrayed = (prayerId:number) => () => {
+        dispatch(addUserToHasPrayed({
+            toast,
+            prayerId
+        }))
+    }
 
 
     return (
@@ -240,7 +250,7 @@ const Home = () => {
                                 Night Prayers
                         </Text>
                         </VStack>
-                        <Link to={`/church/${params.churchId}/sermon?tabs=livestream`}>
+                        <Link to={`/church/${params.churchId}/sermon?tabs=3`}>
                             <Button color="white" variant="outline">
                                 <FaPlayCircle />
                                 <Text>
@@ -250,9 +260,10 @@ const Home = () => {
                         </Link>
                     </Box>
                 }
+
                 <VStack>
                     <HStack display={{ base: "none", lg: "flex" }}>
-                        <Carousel />
+                        <Carousel churchSermon={churchSermon}/>
                     </HStack>
                     <Skeleton width="100%" isLoaded={dailyReading[0].verse.length > 2} >
                         <VStack className={classes.verseContainer}>
@@ -274,25 +285,29 @@ const Home = () => {
                     </Skeleton>
                     <VStack spacing={4} width="100%"
                         className={classes.prayerContainer}>
-                        {churchPrayer.map((item, idx) => (
+                        {prayerRequest.map((item, idx) => (
                             <DetailCard isLoaded={Boolean(item.prayerRequestID)}
-                                title={item.prayerTitle} key={idx}
-                                subtitle={"Prayer For Help"} timing="2d"
+                                title={item.prayerTile as string} key={idx}
+                                subtitle={"Prayer For Help"}
+                                timing={item.dateEntered as string}
                                 image="https://bit.ly/ryan-florence"
                                 body={item.prayerDetail}
                             >
                                 <HStack width="100%" justify="space-between">
-                                    <AvatarGroup size="sm" max={3}>
-                                        <Avatar name="Ryan Florence" src="https://bit.ly/ryan-florence" />
-                                        <Avatar name="Segun Adebayo" src="https://bit.ly/sage-adebayo" />
-                                        <Avatar name="Kent Dodds" src="https://bit.ly/kent-c-dodds" />
-                                        <Avatar name="Prosper Otemuyiwa" src="https://bit.ly/prosper-baba" />
-                                        <Avatar name="Christian Nwamba" src="https://bit.ly/code-beast" />
-                                    </AvatarGroup>
-                                    <Text mr="auto">
-                                        <Text as="b">14 People</Text> Prayed
+                                    {item.prayedPrayerRequests?.length && 
+                                    <>
+                                        <AvatarGroup size="sm" max={5}>
+                                        {item.prayedPrayerRequests.map((item) => (
+                                            <Avatar name={item.fullName} src={item.pictureUrl} />
+                                        ))}
+                                        </AvatarGroup>
+                                        <Text mr="auto">
+                                            <Text as="b">{`${item.prayedPrayerRequests.length} ${item.prayedPrayerRequests.length === 1 ? "Person has" : "People"}`}</Text> Prayed
                                         </Text>
-                                    <Icon boxSize="1rem" as={FaPrayingHands} />
+                                    </>
+                                    }
+                                    <Icon ml="auto" boxSize="1rem" cursor="pointer" display={item.hasPrayed ? "none" :"initial"}
+                                    onClick={addChurchMemberToPrayed(item.prayerRequestID as number)} as={FaPrayingHands} />
                                 </HStack>
                             </DetailCard>
                         ))}

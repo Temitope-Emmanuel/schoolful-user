@@ -48,7 +48,6 @@ const Signup = () => {
         password: ""
     }
 
-    // 128192891289
 
     // React.useEffect(() => {
 
