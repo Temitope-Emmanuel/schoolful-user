@@ -28,8 +28,23 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
             width:"100%",
             "& > div:first-child":{
                 width:"100%",
-                justifyContent:"space-around"
+                justifyContent:"space-between"
             }
+        }
+    },
+    headerContainer:{
+        position: "sticky",
+        overflow:"hidden",
+        top: "10%",
+        zIndex: 10,
+        alignItems: "flex-start",
+        background:"#F9F5F9",
+        width: "100%",
+        borderRadius: "4px",
+        transition: "all .6s linear",
+        "& select":{
+            width:"min-content",
+            maxWidth:"8rem"
         }
     },
     chapterContainer:{
@@ -158,15 +173,24 @@ const Bible = () => {
         getBibleBookChapter()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     },[currentChapter,currentBibleBook,bibleVersion])
+    
+    React.useEffect(() => {
+        window.scroll({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+          });
+    },[bibleChapter])
 
 
     return(
         <VStack className={classes.root}>
             <VStack width={"95%"} alignSelf="flex-end"
                 align="center"
+                //  position="relative"
                 divider={<StackDivider my={10} borderColor="gray.200" />}>
-                <HStack>
-                    <HStack width="57%">
+                <HStack className={classes.headerContainer}>
+                    <HStack>
                         <Skeleton isLoaded={Boolean(bible.length)} >
                             <Select onClick={handleCurrentBookBible} color="tertiary" >
                                 {bible.map((item,idx) => (

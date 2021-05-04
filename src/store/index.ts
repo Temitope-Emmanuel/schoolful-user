@@ -7,12 +7,14 @@ import {systemReducer} from "./System/reducers"
 import {activityReducer} from "./Activity/reducers"
 import {chatReducer} from "./Chat/reducers"
 import {livestreamReducer} from "./Livestream/reducers"
+import {prayerReducer} from "./Prayer/reducers"
 
 const rootReducer = combineReducers({
     system:systemReducer,
     activity:activityReducer,
     chat:chatReducer,
-    livestream:livestreamReducer
+    livestream:livestreamReducer,
+    prayer:prayerReducer
 })
 
 

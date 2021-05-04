@@ -19,7 +19,7 @@ const DetailCard: React.FC<IDetailProps> = ({ image, isLoaded = true, title, chi
                 {
                     image &&
                     <Avatar
-                        size="md" name="Temitope Emmanuel"
+                        size="sm" name="Temitope Emmanuel"
                         src={image} />
                 }
                 <VStack mr="auto" align="flex-start" width="100%" >
@@ -33,8 +33,8 @@ const DetailCard: React.FC<IDetailProps> = ({ image, isLoaded = true, title, chi
                     }
                 </VStack>
                 {timing &&
-                    <Text opacity={.5}>
-                        {timing}
+                    <Text whiteSpace="nowrap" opacity={.5}>
+                        {`${timing} ago`}
                     </Text>
                 }
             </HStack>
@@ -44,7 +44,7 @@ const DetailCard: React.FC<IDetailProps> = ({ image, isLoaded = true, title, chi
                         {subtitle}
                     </Heading>
                 }
-                <Text textAlign={["center","left"]}>
+                <Text textAlign="left">
                     {body}
                 </Text>
             </VStack>

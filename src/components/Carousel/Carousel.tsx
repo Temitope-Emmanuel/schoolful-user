@@ -7,6 +7,7 @@ import {AiOutlineArrowLeft,AiOutlineArrowRight} from "react-icons/ai"
 import {HStack,VStack,Text} from "@chakra-ui/react"
 import {Button} from "components/Button"
 import {Pyramid,Couple} from "assets/images"
+import { ISermon } from 'core/models/Sermon';
 
 
 
@@ -86,11 +87,15 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function SwipeableTextMobileStepper() {
+interface IProps {
+  churchSermon:ISermon[]
+}
+
+const SwipeableTextMobileStepper:React.FC<IProps> = ({churchSermon}) => {
   const classes = useStyles();
   const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
-  const maxSteps = tutorialSteps.length;
+  const maxSteps = churchSermon.length;
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -114,24 +119,24 @@ function SwipeableTextMobileStepper() {
         onChangeIndex={handleStepChange}
         enableMouseEvents
       >
-        {tutorialSteps.map((step, index) => (
+        {churchSermon.map((item, index) => (
           <HStack maxW="40rem" mx="auto">
-            <VStack key={step.label} className={classes.imageContainer}>
+            <VStack key={item.sermonID} className={classes.imageContainer}>
                 {Math.abs(activeStep - index) <= 2 ? (
-                <img className={classes.img} src={step.imgPath} alt={step.label} />
+                <img className={classes.img} src={item.featureImage} alt={item.title} />
                 ) : null}
                 <VStack pl={3}>
                   <Text color="tertiary" >
-                      More than Gold
+                      {item.title}
                   </Text>
                   <Text color="tertiary" >
-                    Pst Emeka
+                    {item.sermonContent.substr(0,20)}
                   </Text>
                 </VStack>
             </VStack>
-            <VStack key={`${step.label}-2`} className={classes.imageContainer}>
+            <VStack key={`${item.sermonID}-2`} className={classes.imageContainer}>
                 {Math.abs(activeStep - index) <= 2 ? (
-                <img className={classes.img} src={step.imgPath} alt={step.label} />
+                <img className={classes.img} src={item.featureImage} alt={item.title} />
                 ) : null}
                 <VStack pl={3}>
                   <Text color="tertiary" >

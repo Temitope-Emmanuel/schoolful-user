@@ -41,8 +41,8 @@ const useStyles = makeStyles((theme: Theme) =>
         "& > div:last-child": {
           width: "100%",
           justifyContent: "space-between",
-        },
-      },
+        }
+      }
     },
     active: {
       boxShadow: "0px 5px 10px #0000001A",
@@ -298,7 +298,6 @@ const Activity = () => {
   }, [currentDate]);
 
   // Search For Activity on the current Date
-  console.log("this is the church activity",churchActivity)
   React.useEffect(() => {
     if ( churchActivity[0] && churchActivity[0].activityID) {
       // Find the next Day value add the amount of seconds in a day to the current active day

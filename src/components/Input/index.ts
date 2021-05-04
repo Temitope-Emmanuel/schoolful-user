@@ -6,5 +6,5 @@ export {default as DatePicker} from "./DatePicker"
 export {IconInput} from "./IconInput"
 export {SearchInput} from "./SearchInput"
 export {PasswordInput} from "./PasswordInput"
-
-
+export {default as NumberStepper} from "./NumberStepper"
+export {default as NormalNumberStepper} from "./NumberStepper/NormalNumberStepper"

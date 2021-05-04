@@ -93,6 +93,7 @@ const Sermon = () => {
     const classes = useStyles()
     const selected = {color:"primary"}
     const [tabIndex,setTabIndex] = React.useState(0)
+    const [justRendered,setJustRendered] = React.useState(false)
     const [mediaInLocal,setMediaInLocal] = React.useState<null | IMediaSermon>()
     const [churchSermon,setChurchSermon] = React.useState<ISermon[]>(new Array(10).fill(defaultSermon))
     const [currentMedia,setCurrentMedia] = React.useState<IMediaSermon>(defaultMediaSermon)
@@ -103,8 +104,26 @@ const Sermon = () => {
         upComing: state.livestream.upComing,
         isLive: state.livestream.isLive
     }))
+
+    React.useEffect(() => {
+        if(justRendered){
+            if ('URLSearchParams' in window) {
+                const searchParams = new URLSearchParams(window.location.search);
+                searchParams.set("tabs", String(tabIndex));
+                const newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
+                window.history.pushState(null, '', newRelativePathQuery);
+                // window.location.search = searchParams.toString();
+            }
+        }
+    },[tabIndex])
     
     React.useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tabs = urlParams.get('tabs');
+        if((Number(tabs) > -1) && (4 > Number(tabs))){
+            setTabIndex(Number(tabs))
+        }
+        setJustRendered(true)
         const getChurchSermonApi = async () => {
             await getChurchSermon(params.churchId).then(payload => {
                 setChurchSermon(payload.data)
@@ -254,7 +273,7 @@ const Sermon = () => {
                     </Flex>
                 </Zoom>
             </VStack>
-            <Tabs align="center" zIndex={5} onChange={(index) => setTabIndex(index)} >
+            <Tabs align="center" zIndex={5} index={tabIndex} onChange={setTabIndex} >
                 <TabList className={classes.tabsContainer} 
                     bgColor={scrolling.scrolling ? "bgColor" : "" } defaultValue={2}>
                     <Tab color="tertiary" _selected={selected} >Written</Tab>
@@ -266,18 +285,23 @@ const Sermon = () => {
                     <TabPanel>
                         <VStack spacing={4} width="100%"
                          className={classes.prayerContainer}>
-                            {textSermon.map((item,idx) => (
-                                <PlayListCard key={idx} isLoaded={Boolean(item.sermonID)}
-                                    title={item.title} image={item.featureImage || LandingImage}
-                                    subtitle={item.author}
-                                />
-                            ))}
+                            {textSermon.length ? 
+                                textSermon.map((item,idx) => (
+                                    <PlayListCard key={idx} isLoaded={Boolean(item.sermonID)}
+                                        title={item.title} image={item.featureImage || LandingImage}
+                                        subtitle={item.author}
+                                    />
+                                )) : 
+                                <Text color="primary" textStyle="h5">
+                                    No Available Written Sermon
+                                </Text>    
+                        }
                         </VStack>
                     </TabPanel>
                     <TabPanel>
                         <VStack spacing={4} width="100%"
                          className={classes.prayerContainer}>
-                            {videoSermon.map((item,idx) => (
+                            {videoSermon.length ? videoSermon.map((item,idx) => (
                                 <PlayListCard key={idx} isLoaded={Boolean(item.sermonID)}
                                     icon={IconComponent(AiFillPlayCircle,"4rem")} onClick={handleCurrentMedia({
                                         ...item,
@@ -287,13 +311,17 @@ const Sermon = () => {
                                     title={item.title} image={item.featureImage || LandingImage}
                                     subtitle={item.author}
                                 />
-                            ))}
+                            )) : 
+                            <Text color="primary" textStyle="h5">
+                                No Available Video Sermon
+                            </Text> 
+                         }
                         </VStack>
                     </TabPanel>
                     <TabPanel>
                         <VStack spacing={4} width="100%"
                          className={classes.prayerContainer}>
-                            {audioSermon.map((item,idx) => (
+                            {audioSermon.length ?  audioSermon.map((item,idx) => (
                                 <PlayListCard key={idx} isLoaded={Boolean(item.sermonID)}
                                     icon={IconComponent(MdAudiotrack,"4rem")} onClick={handleCurrentMedia({
                                         ...item,
@@ -303,7 +331,11 @@ const Sermon = () => {
                                     title={item.title} image={item.featureImage || LandingImage}
                                     subtitle={item.author}
                                 />
-                            ))}
+                            )) :
+                                <Text color="primary" textStyle="h5">
+                                    No Available Audio Sermon
+                                </Text>
+                            }
                         </VStack>
                     </TabPanel>
                 <TabPanel>
