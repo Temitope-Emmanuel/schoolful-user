@@ -21,11 +21,12 @@ interface IProps {
 }
 
 const useStyles = makeStyles((theme) => createStyles({
-  root:{},
-  select:{
-    color:"#00000099",
-    "& option":{
-      color:"#00000099"
+  root: {
+    "& select": {
+      border: "1px solid rgba(0, 0, 0, .3)",
+      borderRadius: "4px",
+      overflow: "hidden",
+      // borderWidth:"0"
     }
   }
 }))
@@ -44,12 +45,12 @@ const InputComponent:React.FC<IProps> = ({placeholder,className,label,val = 0,na
       <Field name={name}>
         {({ field, form }:FieldProps) => {
           return(
-            <FormControl my={["2"]} className={className}
+            <FormControl my={["2"]} className={classes.root}
             isInvalid={Boolean(form.touched[name]) && Boolean(form.errors[name])} {...props} >
-              { label  && <FormLabel htmlFor={name} fontWeight="500" color="primary">{label}</FormLabel>}
+              {/* { label  && <FormLabel htmlFor={name} fontWeight="500" color="primary">{label}</FormLabel>} */}
               
-              <Select size="md" alignSelf="center" id={name} mx="auto" {...field} className={classes.select}
-                width={["85%","auto"]} sx={styles} placeholder={placeholder}>
+              <Select size="md" alignSelf="center" id={name} mx={{md:"auto"}} {...field}
+                width={["100%","85%","auto"]} sx={styles} placeholder={placeholder}>
                   {children}
               </Select>
               {

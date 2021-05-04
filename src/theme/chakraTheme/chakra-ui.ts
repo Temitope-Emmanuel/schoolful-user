@@ -27,20 +27,24 @@ const Input = {
   },
   // Two sizes: sm and md
   sizes: {
-    md: {
-    }
+    md: {}
   },
+  // Two variants: outline and solid
   // Two variants: outline and solid
   variants: {
     solid: {
-      border:"1px solid rgba(0, 0, 0, .3)",
+      border: "1px solid rgba(0, 0, 0, .3)",
       height: "2.5rem",
-      bgColor:"white",
-      borderRadius:"4px",
-      color:"#00000099",
-      fontSize:"1rem",
-      letterSpacing:".15px"
-    }
+      bgColor: "transparent",
+      borderRadius: "4px",
+      color: "#00000099",
+      fontSize: "1rem",
+      letterSpacing: ".15px",
+      _placeholder: {
+        color: "#00000099",
+        // opacity:.74
+      },
+    },
   },
   // The default size and variant values
   defaultProps: {
@@ -139,13 +143,19 @@ const theme =  {
         fontFamily:"MulishRegular",
         fontWeight:400
       },
-      // h5:{
-      //   fontSize:"1.5rem",
-      //   color:"tertiary"
-      // },
+      h5:{
+        fontSize:"1.1rem",
+        color:"tertiary"
+      },
       h6:{
         fontSize:"1.125rem",
         color:"tertiary",
+      },
+      styleh6: {
+        fontSize: "0.7rem",
+        fontFamily: "MulishRegular",
+        color:"#151C4D",
+        letterSpacing:0
       }
     },
     components:{
@@ -167,14 +177,32 @@ const theme =  {
             colorScheme:"primary",
           },
         }
-      }
-    },
-    // global:{
-    //   "button":{
-    //     backgroundColor:"#B603C9",
-    //     color:"white"
-    //   }
-    // }
+      },
+      Textarea: {
+        // style object for base or default style
+        baseStyle: {
+          border:"1px solid rgba(0, 0, 0, .3)",
+          color: "#00000099",
+          fontFamily:"MulishRegular",
+          fontWeight:"bold",
+          background:"transparent",
+          borderRadius:"4px",
+          padding:"8px",
+          "&::placeholder":{
+              color: "#00000099",
+          }
+        },
+        // styles for different sizes ("sm", "md", "lg")
+        sizes: {},
+        // styles for different visual variants ("outline", "solid")
+        variants: {},
+        // default values for `size` and `variant`
+        defaultProps: {
+          size: "",
+          variant: "",
+        },
+      },
+    }
   };
 
 export default extendTheme(theme)

@@ -40,6 +40,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         "& > *:nth-child(2)":{
             width:"100%"
         }
+    },
+    input: {
+        display: "none"
+    },
+    label:{
+        display:"flex"
     }
 }))
 
@@ -76,6 +82,11 @@ const Profile = () => {
     }
     const classes = useStyles()
     const dispatch = useDispatch()
+    const [image, setImage] = React.useState({
+        name: "",
+        base64: ""
+    })
+    
     const currentUser = useSelector((state:AppState) => state.system.currentUser)
     const currentChurch = useSelector((state:AppState) => state.system.currentChurch)
     const [submitting,setSubmitting] = React.useState(true)
@@ -116,12 +127,24 @@ const Profile = () => {
             church: Yup.string().required()
         })
     )
+    const handleImageTransformation = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files![0]
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = function () {
+                setImage({ ...image, base64: (reader.result as string), name: file.name })
+            }
+            reader.readAsDataURL(file)
+        }
+    }
     
     const handleSubmit = async (values:IProfileForm, {...actions}: any) => {
         actions.setSubmitting(true)
+        const {role,...newProfile} = profile
         const updateChurchMemberDetail = {
-            ...profile,
-            ...values
+            ...newProfile,
+            ...values,
+            imageUrl:image.base64 || profile.picture_url
         }
 
         updateChurchMember((updateChurchMemberDetail as any)).then(payload => {
@@ -141,12 +164,17 @@ const Profile = () => {
         })
     }
 
+
     return (
         <VStack className={classes.root}>
             <VStack spacing={10}>
-                <Avatar size="2xl" name="Christian Nwamba" src="https://bit.ly/code-beast">
+                <Avatar size="2xl" name="Christian Nwamba" src={image.base64 || currentUser.picture_url}>
                     <AvatarBadge bottom="20px" boxSize=".9em" borderColor="primary" bg="primary">
-                        <Icon as={AiFillCamera} padding=".75rem" color="white" />
+                    <input accept="image/jpeg,image/png" onChange={handleImageTransformation} type="file"
+                        className={classes.input} id="icon-button-file" />
+                        <label htmlFor="icon-button-file" className={classes.label}>
+                            <Icon cursor="pointer" as={AiFillCamera} padding=".75rem" color="white" />
+                        </label>
                     </AvatarBadge>
                 </Avatar>
                 <Button>

@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, CancelTokenSource } from "axios";
 import { IResponse } from "core/models/Response";
 import { IPrayer } from "core/models/Prayer";
-import { IPrayerRequest } from "core/models/PrayerRequest";
+import { IPrayerRequest } from "core/models/Prayer";
 import { ITestimony, ICommentTestimony } from "core/models/Testimony";
 import { Testimony } from "core/enums/Testimony";
 import { IBibleBook, IBibleChapter, IBibleVerses } from "core/models/Bible";

@@ -36,7 +36,6 @@ import { useDispatch } from "react-redux"
 import {primary} from "theme/chakraTheme/palette"
 
 
-
 const useStyles = makeStyles(theme => createStyles({
     root: {
         alignSelf: "center",
@@ -45,6 +44,9 @@ const useStyles = makeStyles(theme => createStyles({
         flexDirection: "column",
         backgroundColor:"white",
         marginTop: "1.9rem",
+        [theme.breakpoints.down("sm")]:{
+            padding:theme.spacing(0,2)
+        },
         "& > *:first-child": {
             marginTop: "0 !important"
         },
@@ -62,7 +64,9 @@ const useStyles = makeStyles(theme => createStyles({
     inputContainer: {
         maxHeight: "27rem",
         overflow:"auto",
-        marginRight: "0 !important",
+        [theme.breakpoints.up("sm")]:{
+            marginRight: "0 !important"
+        },
         "& > div": {
             "& > p": {
                 fontSize: "1rem",
@@ -554,12 +558,17 @@ const Signup = () => {
     const handleBirthdayToggle = () => {
         setShowBirthday(!showBirthday)
     }
+    const Cell = ({ columnIndex, rowIndex, style }:any) => (
+        <div style={style}>
+          Item {rowIndex},{columnIndex}
+        </div>
+      );
 
+      
     return (
         <>
             <MainLoginLayout showLogo={true}>
-                <Flex className={classes.root} 
-                // px={{ sm: "3" }}
+                <Flex className={classes.root}
                     alignItems={["center", "flex-start"]}
                     mx="auto" ml={0} pl={0} flex={[1, 3]} >
                     <Heading textStyle="h3" mb={"6"} textAlign={["center", "left"]}>
@@ -571,7 +580,7 @@ const Signup = () => {
                 </Text>
                     {!showBirthday && !open &&
                         <VStack align="flex-start" w="100%">
-                            <Heading color="tertiary" fontFamily="MulishBold" fontSize="3rem" >
+                            <Heading color="tertiary" fontFamily="MulishBold" fontSize={["2rem","2.5rem"]} >
                                 Find Your Church
                             </Heading>
                             <Text fontSize="0.875rem">
@@ -587,9 +596,7 @@ const Signup = () => {
                                     setValue={handleInputChange} />
                             </HStack>
                         </VStack>
-
                     }
-
                     <Formik initialValues={initialValues}
                         validationSchema={validationSchema}
                         onSubmit={handleSubmit}
@@ -632,7 +639,6 @@ const Signup = () => {
                                                         </HStack>
                                                     }
                                                 </HStack>
-                                                
                                                 <HStack align="center" justifyContent="space-between" >
                                                     <Flex className={classes.imageContainer} p={5} >
                                                         <input accept="image/jpeg,image/png"
@@ -716,7 +722,7 @@ const Signup = () => {
                                                 :
                                                 <Fade timeout={150} in={!open}>
                                                     <Box>
-                                                        <SimpleGrid minChildWidth="12.5rem" gridGap=".5rem"
+                                                        <SimpleGrid minChildWidth="10rem" gridGap=".5rem"
                                                             spacing="40px" w="55vw">
                                                             {showChurchSelect.length > 0 ?
                                                                 showChurchSelect.map((item, idx) => (

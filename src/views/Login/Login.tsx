@@ -9,7 +9,7 @@ const Login = () => {
    
    return(
         <MainLoginLayout showLogo={true}>
-            <Flex alignSelf="center" mx="auto"
+            <Flex alignSelf="center" mx="auto" ml={0}
                 justifyContent="center" alignItems={["center", "flex-start"]}
                 flexDirection="column" pr={{ sm: "3" }} flex={[1, 3]} >
             <LoginComponent/>
