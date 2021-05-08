@@ -9,7 +9,8 @@ const initialState:ChatState = {
         memberCount:0,
         name:""
     },
-    currentGroupMessage:[]
+    currentGroupMessage:[],
+    isLoading:false
 }
 
 export function chatReducer(state = initialState,action:Action):ChatState {
@@ -28,6 +29,21 @@ export function chatReducer(state = initialState,action:Action):ChatState {
             return {
                 ...state,
                 currentGroup:action.payload
+            }
+        case ActionTypes.CLEAR_GROUP_MESSAGE:
+            return {
+                ...state,
+                currentGroupMessage:[]
+            }
+        case ActionTypes.SHOW_LOADING:
+            return {
+                ...state,
+                isLoading:true
+            }
+        case ActionTypes.HIDE_LOADING:
+            return {
+                ...state,
+                isLoading:false
             }
         default:
             return state;

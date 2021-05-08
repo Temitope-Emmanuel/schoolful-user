@@ -1,6 +1,6 @@
 import React from "react"
 import {
-    Box, Flex, Heading, Text, Skeleton, SimpleGrid,
+    Box, Flex, Heading, Text, Skeleton,
     AspectRatio, Image, VStack, ModalFooter, Avatar,
     ModalHeader, ModalBody, ModalContent, IconButton,
     ModalCloseButton, HStack, Icon
@@ -13,17 +13,17 @@ import { Fade } from "@material-ui/core"
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles"
 import { Dialog } from "components/Dialog"
 import { Link } from "components/Link"
-import { TextInput, Select, DatePicker, SearchInput,PasswordInput } from "components/Input"
+import { TextInput, Select, DatePicker, SearchInput, PasswordInput } from "components/Input"
 import * as Yup from "yup"
 import { MainLoginLayout } from "layouts/MainLoginLayout"
 import { IChurchMember } from 'core/models/ChurchMember'
-import {ICountry} from "core/models/Location"
+import { ICountry } from "core/models/Location"
 import { IDenomination } from "core/models/Denomination"
 import { IState } from "core/models/Location"
 import { IChurch } from "core/models/Church"
 import useToast from "utils/Toast"
 import * as churchService from "core/services/church.service"
-import { getState,getCountry } from "core/services/utility.service"
+import { getState, getCountry } from "core/services/utility.service"
 import * as accountService from "core/services/account.service"
 import { MessageType } from 'core/enums/MessageType'
 import { BsCheckCircle } from "react-icons/bs"
@@ -32,9 +32,17 @@ import { BiLeftArrowCircle } from "react-icons/bi"
 import { buttonBackground } from "theme/chakraTheme/palette"
 import { ChurchImage } from "assets/images"
 import { login } from "store/System/actions"
-import { useDispatch } from "react-redux"
-import {primary} from "theme/chakraTheme/palette"
+import { useDispatch, useSelector } from "react-redux"
+import { primary } from "theme/chakraTheme/palette"
+import localforage from "localforage"
+import { useImageState } from "utils/useImageState"
+import { FixedSizeGrid as Grid } from 'react-window'
+import AutoSizer from "react-virtualized-auto-sizer"
+import {updateChurchMember} from "core/services/userSetting.service"
+import { AppState } from "store"
 
+const CHURCH_MEMBER_STORAGE_KEY = "CHURCH_MEMBER_STORAGE_KEY"
+const SELECTED_CHURCH_KEY = "SELECTED_CHURCH_KEY"
 
 const useStyles = makeStyles(theme => createStyles({
     root: {
@@ -42,10 +50,10 @@ const useStyles = makeStyles(theme => createStyles({
         maxHeight: "38rem",
         justifyContent: "center",
         flexDirection: "column",
-        backgroundColor:"white",
+        backgroundColor: "white",
         marginTop: "1.9rem",
-        [theme.breakpoints.down("sm")]:{
-            padding:theme.spacing(0,2)
+        [theme.breakpoints.down("sm")]: {
+            padding: theme.spacing(0, 2)
         },
         "& > *:first-child": {
             marginTop: "0 !important"
@@ -53,18 +61,18 @@ const useStyles = makeStyles(theme => createStyles({
         "& button": {
             fontFamily: "MulishRegular"
         },
-        "& p":{
-            color:"#383838",
-            "& span":{
-                textDecoration:'underline',
-                color:primary
+        "& p": {
+            color: "#383838",
+            "& span": {
+                textDecoration: 'underline',
+                color: primary
             }
         }
     },
     inputContainer: {
         maxHeight: "27rem",
-        overflow:"auto",
-        [theme.breakpoints.up("sm")]:{
+        overflow: "auto",
+        [theme.breakpoints.up("sm")]: {
             marginRight: "0 !important"
         },
         "& > div": {
@@ -78,29 +86,6 @@ const useStyles = makeStyles(theme => createStyles({
         width: "100%",
         [theme.breakpoints.up("sm")]: {
             width: "45vw",
-        }
-    },
-    birthdayContainer: {
-        maxWidth: "25rem",
-        "& > div:nth-child(2)":{
-            width:"100% !important"
-        }
-    },
-    imageContainer: {
-        borderRadius: "4px",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        // [theme.breakpoints.up("sm")]:{
-        width: "17.5vh",
-        height: "17.5vh",
-        // },
-        "& svg": {
-            color: "#151C4D",
-        },
-        "& h4,p": {
-            color: "#151C4D",
-            whiteSpace: "nowrap"
         }
     },
     input: {
@@ -128,14 +113,14 @@ const churchStyles = makeStyles((theme: Theme) => createStyles({
         minHeight: "10rem",
         boxShadow: "0px 3px 6px #0000000D",
         borderRadius: "4px",
-        "& p:first-child":{
-            fontFamily:"MulishBold",
-            fontSize:"1.25rem"
+        "& p:first-child": {
+            fontFamily: "MulishBold",
+            fontSize: "1.25rem"
         },
-        "& p:last-child":{
-            fontSize:"1.1rem",
-            fontFamily:"MulishLight",
-            fontStyle:"italic"
+        "& p:last-child": {
+            fontSize: "1.1rem",
+            fontFamily: "MulishLight",
+            fontStyle: "italic"
         }
     }
 }))
@@ -175,31 +160,61 @@ const ShowDetail: React.FC<IShowChurchDetail> = ({ name, value }) => (
         <Text fontSize="1.25rem">
             {name}
         </Text>
-        <Text as="b"  fontSize="1rem">
+        <Text as="b" fontSize="1rem">
             {value}
         </Text>
     </VStack>
 )
 
-interface IVerifyChurchDialog {
+
+const VerifyChurchDialog:React.FC<{
     church: IChurch;
     handleClose: any;
-    handleConfirmation: any
-}
+    navigate: (arg: formStageEnum) => void;
+    isAuthenticated:boolean
+}> = ({ handleClose, navigate, church,isAuthenticated }) => {
 
-const VerifyChurchDialog: React.FC<IVerifyChurchDialog> = ({ handleClose, handleConfirmation, church: {
-    name, country, denomination,
-    address, stateName,
-} }) => {
+    const toast = useToast()
+    
     const handleConfirmationClose = () => {
-        handleConfirmation()
-        handleClose()
+        localforage.setItem(SELECTED_CHURCH_KEY,church).then(data => {
+            navigate(formStageEnum.CHURCH_BIRTHDAY)
+            handleClose()
+        }).catch(err => {
+
+        })
     }
+
+    const {
+        name, country, denomination,
+        address, stateName,
+    } = church
+
+    const handleSubmit = async () => {
+        updateChurchMember({churchID:church.churchID} as any).then(payload => {
+            toast({
+                title: "User detail Updated",
+                subtitle: "",
+                messageType: "success"
+            })
+        }).catch(err => {
+            toast({
+                title: "Unable to Update User Detail",
+                subtitle: `Error: ${err}`,
+                messageType: "error"
+            })
+        })
+    }
+
     return (
         <ModalContent p="12" display="flex" justifyContent="center"
             alignItems="center" flexDirection="column" >
             <ModalHeader color="primary" textAlign="center" >
-                Please confirm, is this your church ?
+                {
+                    isAuthenticated ? 
+                    "Change to this church ?" :
+                    "Please confirm, is this your church ?"
+                }
             </ModalHeader>
             <ModalCloseButton mt={5} mr={5} border="2px solid rgba(0,0,0,.5)" onClick={handleClose}
                 outline="none" borderRadius="50%" opacity={.5} />
@@ -250,9 +265,9 @@ const VerifyChurchDialog: React.FC<IVerifyChurchDialog> = ({ handleClose, handle
                 alignItems="center" >
                 <Flex width="98%" flexDirection={["column", "row"]}
                     justify="center">
-                    <Button mb={["2", "auto"]} onClick={handleConfirmationClose}
+                    <Button mb={["2", "auto"]} onClick={isAuthenticated ? handleSubmit : handleConfirmationClose}
                         px="18" mr={{ sm: 4 }}>
-                        Yes, this is my church
+                        {isAuthenticated ? "Yes" : "Yes, this is my church"}
                     </Button>
                     <Button px="18" variant="outline" onClick={handleClose} >
                         No,keep searching
@@ -280,7 +295,6 @@ const ShowSuccess: React.FC<IProps> = () => {
         </ModalContent>
     )
 }
-
 
 const TermDialog = () => {
     return (
@@ -325,11 +339,412 @@ const TermDialog = () => {
     )
 }
 
-const GoBack = ({ func }: any) => (
-    <IconButton aria-label="go-back" color="primary" bgColor="transparent" onClick={func}
+const GoBack = ({ func,forward }: any) => (
+    <IconButton aria-label="go-back" color="primary" bgColor="transparent"
+     onClick={func} transform={forward ? "rotate(180deg)" : undefined} cursor="pointer"
         as={BiLeftArrowCircle} />
 )
 
+const currentDate = new Date()
+const minDate = new Date()
+minDate.setFullYear(1900, 0, 0,)
+currentDate.setFullYear(2000, 0, 0)
+
+const initialValues = {
+    firstname: "",
+    lastname: "",
+    username: "",
+    genderID: 0,
+    denominationId: 0,
+    state: 0,
+    churchId: 0,
+    email: "",
+    password: "",
+    birthday: currentDate,
+    phoneNumber: null,
+    confirmPassword: "",
+}
+
+interface ChurchMemberFormProps {
+    denomination: IDenomination[];
+    state: IState[];
+    handleShowTerm: () => void;
+    navigate: (arg: formStageEnum) => void
+}
+
+interface SelectMemberChurchProps {
+    showChurchSelect: IChurch[];
+    handleSetCurrentChurch: (arg: IChurch) => () => void;
+    getChurch: (denominatId: number, stateID: number) => void;
+}
+
+const ChurchMemberForm: React.FC<ChurchMemberFormProps> = ({ denomination, state, handleShowTerm, navigate }) => {
+    const toast = useToast()
+    const [formValues, setFormValues] = React.useState(initialValues)
+
+    React.useEffect(() => {
+        localforage.getItem(CHURCH_MEMBER_STORAGE_KEY).then((value) => {
+            if (value) {
+                setFormValues(value as any)
+            }
+        }).catch(err => {
+        })
+        
+    }, [])
+
+    const handleSubmit = async (values: IForm, actions: any) => {
+        if (values.password !== values.confirmPassword) {
+            actions.setErrors({
+                confirmPassword: "Password do not match",
+                password: "Password do not match"
+            })
+        } else {
+            localforage.setItem(CHURCH_MEMBER_STORAGE_KEY, values).then((response) => {
+                // Adding the selected denomination and state to the url
+                const searchParams = new URLSearchParams(window.location.search);
+                searchParams.set("denomination", String(values.denominationId));
+                searchParams.set("state", String(values.state));
+                const newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
+                window.history.pushState(null, '', newRelativePathQuery);
+                navigate(formStageEnum.SELECT_CHURCH)
+
+            }).catch(err => {
+                toast({
+                    messageType: "error",
+                    subtitle: `Error:${err.message}`,
+                    title: "Unable to complete Request"
+                })
+            })
+        }
+
+    }
+    const validationSchema = Yup.object({
+        email: Yup.string().email("Invalid Email address").required(),
+        firstname: Yup.string().min(3, "Name must be at 5 character")
+            .max(15, "Name is too long").required(),
+        lastname: Yup.string().min(1, "Name must be at 1 character")
+            .max(15, "Name is too long").required(),
+        password: Yup.string().min(5, "Password is too short").required(),
+        genderID: Yup.string().oneOf(["1", "2"], "Please Select Your gender Type").required(),
+        churchId: Yup.string().required()
+    })
+
+    return (
+        <Formik enableReinitialize onSubmit={handleSubmit} validationSchema={validationSchema} initialValues={formValues} >
+            {(formikProps: FormikProps<any>) => (
+                <Box maxWidth="sm">
+                    <TextInput name="firstname" placeholder="Input your First Name" />
+                    <TextInput name="lastname" placeholder="Input Your Last Name" />
+                    <TextInput name="email" placeholder="email" />
+                    <TextInput name="phoneNumber" placeholder="Phone Number" />
+                    <Select name="genderID" placeholder="gender" value={formikProps.values.genderID} >
+                        {["male", "female"].map((item, idx) => (
+                            <option key={idx} value={idx + 1} >
+                                {item}
+                            </option>
+                        ))}
+                    </Select>
+                    <Select name="denominationId" placeholder="Select Denomination">
+                        {denomination.map((item, idx) => (
+                            <option key={idx} value={item.denominationID}>
+                                {item.denominationName}
+                            </option>
+                        ))}
+                    </Select>
+                    <Select name="state" placeholder="Select Church State">
+                        {state.map((item, idx) => (
+                            <option key={idx} value={item.stateID}>
+                                {item.name}
+                            </option>
+                        ))}
+                    </Select>
+                    <PasswordInput name="password"
+                        type="password" placeholder="Password" />
+                    <PasswordInput name="confirmPassword"
+                        type="password" placeholder="Confirm Password" />
+                    <Text onClick={handleShowTerm}>
+                        Agree to our &nbsp;
+                    <span>
+                            Terms of Service and Policy
+                    </span>
+                    &nbsp; and  &nbsp;
+                    {/* <span> and</span> */}
+                        <span >
+                            Privacy Policy
+                    </span>
+                    </Text>
+                    <Button disabled={formikProps.isSubmitting || !formikProps.isValid}
+                        onClick={(formikProps.handleSubmit as any)} width={["90vw", "100%"]}
+                        my="6">
+                        {formikProps.isValid ? "Next" : "Please Complete Form"}
+                    </Button>
+                </Box>
+
+            )}
+        </Formik>
+
+    )
+}
+
+interface CellProps {
+    columnIndex: number;
+    rowIndex: number;
+    isScrolling?: boolean;
+    style: any;
+}
+
+const SelectMemberChurch: React.FC<SelectMemberChurchProps> = React.memo(({
+    showChurchSelect, getChurch, handleSetCurrentChurch
+}) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedDenomination = urlParams.get('denomination');
+    const selectedState = urlParams.get('state');
+
+    React.useEffect(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        searchParams.set("formPart", String(formStageEnum.SELECT_CHURCH));
+        const newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
+        window.history.pushState(null, '', newRelativePathQuery);
+        if (selectedState && selectedDenomination) {
+            getChurch(selectedDenomination as any, selectedState as any)
+        }
+    }, [])
+
+    const Cell: React.FC<CellProps> = React.memo(({ columnIndex, isScrolling, rowIndex, style }) => {
+        const GUTTER_SIZE = 5;
+
+        return (
+            <Box
+                style={{
+                    ...style,
+                    left: style.left + GUTTER_SIZE,
+                    top: style.top + GUTTER_SIZE,
+                    width: style.width - GUTTER_SIZE,
+                    height: style.height - GUTTER_SIZE,
+                }}
+                key={`${columnIndex},${rowIndex}`}>
+                {
+                    showChurchSelect[(columnIndex + rowIndex)] ?
+                        <Skeleton onClick={handleSetCurrentChurch(showChurchSelect[(columnIndex + rowIndex)])}
+                            isLoaded={!isScrolling || true}
+                            cursor="pointer" >
+                            <ChurchView churchName={showChurchSelect[(columnIndex + rowIndex)].name}
+                                address={showChurchSelect[(columnIndex + rowIndex)].address}
+                                image={showChurchSelect[(columnIndex + rowIndex)].churchLogo}
+                            />
+                        </Skeleton> : undefined
+                }
+            </Box>
+        )
+    })
+
+    return (
+        <Box maxWidth="lg" w={{ base: "100%", md: "50vw" }} height="40vh">
+            <AutoSizer>
+                {({ height, width }) => (
+                    <Grid height={height} width={width} useIsScrolling columnWidth={200}
+                        rowCount={showChurchSelect.length / 4} rowHeight={100}
+                        columnCount={showChurchSelect.length >= 4 ? 4 : showChurchSelect.length}
+                    >
+                        {Cell}
+                    </Grid>
+                )}
+            </AutoSizer>
+        </Box>
+    )
+})
+
+const churchMemberStyles = makeStyles((theme) => createStyles({
+    birthdayContainer: {
+        maxWidth: "25rem",
+        "& > div:nth-child(2)": {
+            width: "100% !important"
+        }
+    },
+    imageContainer: {
+        borderRadius: "4px",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "17.5vh",
+        height: "17.5vh",
+        "& label":{
+            cursor:"pointer",
+        },
+        "& svg": {
+            color: "#151C4D",
+        },
+        "& h4,p": {
+            color: "#151C4D",
+            whiteSpace: "nowrap"
+        }
+    },
+    input: {
+        display: "none"
+    }
+}))
+
+interface BirthdayFormProps {
+    currentChurch: IChurch;
+    handleShowSuccess:() => void
+    navigate: (arg: formStageEnum) => void
+}
+
+const birthdayForm = {
+    birthday: currentDate
+}
+
+type birthdayFormType = typeof birthdayForm
+
+const ChurchMemberBirthdayForm: React.FC<BirthdayFormProps> = ({ currentChurch, navigate,handleShowSuccess }) => {
+    const classes = churchMemberStyles()
+    const toast = useToast()
+    const dispatch = useDispatch()
+    const { handleImageTransformation, image, resetImage } = useImageState()
+    const [churchMemberDetail, setChurchMemberDetail] = React.useState<IChurchMember>()
+
+    React.useEffect(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        searchParams.set("formPart", String(formStageEnum.CHURCH_BIRTHDAY));
+        const newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
+        window.history.pushState(null, '', newRelativePathQuery);
+        localforage.getItem(CHURCH_MEMBER_STORAGE_KEY).then((data) => {
+            if(data){
+                setChurchMemberDetail(data as any)
+            }else{
+                navigate(formStageEnum.CHURCH_MEMBER_FORM)
+            }
+        })
+    }, [])
+
+    const handleSubmit = async (values: birthdayFormType, { ...actions }: any) => {
+            actions.setSubmitting(true)
+            const {birthday} = values
+            const { firstname, password, phoneNumber, email, lastname,genderID } = churchMemberDetail as IChurchMember
+            const newUser: IChurchMember = {
+                firstname,
+                lastname,
+                username: String(phoneNumber),
+                personTypeID: 1,
+                genderID: genderID,
+                email,
+                phoneNumber,
+                password,
+                role: "ChurchMember",
+                enteredBy: "ChurchMember",
+                ...(currentChurch.churchID && { churchId: currentChurch.churchID }),
+                isDataCapture: false,
+                dateOfBirth: birthday.toJSON(),
+                ...(image.base64 && { picture_url: image.base64 }),
+                societies: [],
+                societyPosition: []
+            }
+            await accountService.createChurchMember(newUser).then(payload => {
+                localforage.clear().then(() => {
+                    handleShowSuccess()
+                    resetImage()
+                    dispatch(login(newUser.phoneNumber as number, newUser.password, toast))
+                    toast({
+                        title: "Success",
+                        subtitle: "New User Created",
+                        messageType: MessageType.SUCCESS
+                    })
+                })
+            }).catch(err => {
+                if(err === "Email/PhoneNumber already exist"){
+                    navigate(formStageEnum.CHURCH_MEMBER_FORM)
+                }
+                actions.setSubmitting(false)
+                toast({
+                    title: "Something went Wrong",
+                    subtitle: `Error:${err}`,
+                    messageType: MessageType.ERROR
+                })
+                actions.setSubmittiong(false)
+            })
+    }
+
+    const goBack = () => {
+        navigate(formStageEnum.SELECT_CHURCH)
+    }
+
+    return (
+        <Formik onSubmit={handleSubmit} initialValues={birthdayForm} >
+            {(formikProps: FormikProps<birthdayFormType>) => {
+                const onChange = (e: Date | any) => {
+                    formikProps.setValues({ ...formikProps.values, birthday: e })
+                }
+                return (
+                    <VStack className={classes.birthdayContainer}>
+                        <Heading textStyle="h5">
+                            Let's know your Birthday
+                        </Heading>
+                        <DatePicker value={formikProps.values.birthday}
+                            onChange={(onChange as any)} minDate={minDate} name="birthday"
+                        />
+                        <HStack w="100%">
+                            <GoBack func={goBack} />
+                            {
+                                currentChurch.churchID &&
+                                <HStack width="100%" borderRadius="4px"
+                                    boxShadow="0px 3px 6px #0000000D"
+                                    ml={3} my="auto">
+                                    <Image maxW="5rem"
+                                        src={currentChurch.churchLogo || ChurchImage} />
+                                    <VStack mr="auto" align="flex-start" >
+                                        <Text fontSize="1.25rem" as="b">
+                                            {currentChurch.name}
+                                        </Text>
+                                        <Text fontFamily="MulishLight" as="i"
+                                            opacity={.7} fontSize="1rem" >
+                                            {currentChurch.address}
+                                        </Text>
+                                    </VStack>
+                                    <Icon color="primary" boxSize="2rem" as={AiFillCheckCircle} />
+                                </HStack>
+                            }
+                        </HStack>
+                        <HStack align="center" justifyContent="space-between" >
+                            <Flex className={classes.imageContainer} p={5} >
+                                <input accept="image/jpeg,image/png"
+                                    onChange={handleImageTransformation} type="file"
+                                    className={classes.input} id="icon-button-file" />
+                                <label htmlFor="icon-button-file">
+                                    <IconButton as="span" padding={[2]} boxSize={["6rem"]}
+                                        aria-label="submit image"
+                                        borderRadius="50%" bgColor={buttonBackground}
+                                        icon={image.name ?
+                                            <Avatar size="xl" src={image.base64} /> :
+                                            <BsCardImage fontSize="2rem" />
+                                        } />
+                                </label>
+                            </Flex>
+                            {
+                                image.name &&
+                                <Text isTruncated fontWeight="bold" fontSize="1.5rem" maxW="2xs"
+                                >{`${churchMemberDetail?.firstname}-${churchMemberDetail?.lastname}`}
+                                </Text>
+                            }
+                        </HStack>
+                        <Button width="100%" isLoading={formikProps.isSubmitting}
+                            disabled={formikProps.isSubmitting || !formikProps.isValid}
+                            loadingText={`Creating new Church Member ${churchMemberDetail?.firstname}`}
+                            onClick={(formikProps.handleSubmit as any)} >
+                            Next
+                        </Button>
+                    </VStack>
+                )
+            }}
+        </Formik>
+    )
+}
+
+enum formStageEnum {
+    LOADING,
+    CHURCH_MEMBER_FORM,
+    SELECT_CHURCH,
+    CHURCH_BIRTHDAY
+}
 
 const Signup = () => {
     const defaultChurch: IChurch = {
@@ -341,32 +756,60 @@ const Signup = () => {
         churchStatus: "",
         address: ""
     }
+    const [formStage, setFormStage] = React.useState<formStageEnum>(formStageEnum.CHURCH_MEMBER_FORM)
     const [currentChurch, setCurrentChurch] = React.useState<IChurch>(defaultChurch)
+    const isAuthenticated = useSelector((state:AppState) => state.system.isAuthenticated)
+    // All current church
     const [churchSelect, setChurchSelect] = React.useState<IChurch[]>(new Array(10).fill(defaultChurch))
+    // Search for church
     const [showChurchSelect, setShowChurchSelect] = React.useState<IChurch[]>([])
-    const currentDate = new Date()
-    const dispatch = useDispatch()
-    const minDate = new Date()
-    minDate.setFullYear(1900, 0, 0,)
-    currentDate.setFullYear(2000, 0, 0)
     const [denomination, setDenomination] = React.useState<IDenomination[]>([])
-    const [showTerm,setShowTerm] = React.useState(false)
-    const [country,setCountry] = React.useState<ICountry[]>([])
-    const [showBirthday, setShowBirthday] = React.useState(false)
+    const [state, setState] = React.useState<IState[]>([])
+    const [country, setCountry] = React.useState<ICountry[]>([])
+    const [showTerm, setShowTerm] = React.useState(false)
     const [inputValue, setInputValue] = React.useState("")
     const [showSuccess, setShowSuccess] = React.useState(false)
     const [showDialog, setShowDialog] = React.useState(false)
-    const [state, setState] = React.useState<IState[]>([])
-    const [open, setOpen] = React.useState(true)
-    const [image, setImage] = React.useState({
-        name: "",
-        base64: ""
-    })
     const classes = useStyles()
     const toast = useToast()
-    // const [churchSelect,setChurchSelect] = React.useState<IChurch[]>((ChurchDetail.data as any))
+    const getChurch = async (denominationId: number, stateId: number) => {
+        churchService.getChurchByDenomination(denominationId, stateId).then(payload => {
+            setChurchSelect(payload.data)
+            setShowChurchSelect([...payload.data])
+        }).catch(err => {
+            toast({
+                title: "Unable to get Church List",
+                subtitle: `Error: ${err}`,
+                messageType: MessageType.ERROR
+            })
+        })
+    }
+
+    const handleToggleTerm = () => {
+        setShowTerm(!showTerm)
+    }
+
+    const updateFormStage = (arg: number) => {
+        switch (arg) {
+            case 1:
+                return setFormStage(formStageEnum.CHURCH_MEMBER_FORM)
+            case 2:
+                return setFormStage(formStageEnum.SELECT_CHURCH)
+            case 3:
+                return setFormStage(formStageEnum.CHURCH_BIRTHDAY)
+            default:
+                return;
+        }
+    }
 
     React.useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const formPart = urlParams.get('formPart');
+        
+        if(formPart){
+            updateFormStage(Number(formPart))
+        }
+
         const getStateLocation = async () => {
             await getState(160).then(payload => {
                 setState([...payload.data])
@@ -382,10 +825,9 @@ const Signup = () => {
             await getCountry().then(payload => {
                 setCountry([...payload.data])
             }).catch(err => {
-                
+
             })
         }
-
         const getDenomination = async () => {
             try {
                 await churchService.getChurchDenomination().then(payload => {
@@ -408,6 +850,16 @@ const Signup = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+    
+    React.useEffect(() => {
+        if(formStage === formStageEnum.CHURCH_BIRTHDAY){
+            localforage.getItem(SELECTED_CHURCH_KEY).then(data => {
+                if(data){
+                    setCurrentChurch(data as any)
+                }
+            })
+        }
+    },[formStage])
 
     React.useEffect(() => {
         const testString = new RegExp(inputValue, "i")
@@ -419,152 +871,36 @@ const Signup = () => {
         setInputValue(e.currentTarget.value)
     }
 
-    const initialValues = {
-        firstname: "",
-        lastname: "",
-        username: "",
-        genderID: 0,
-        denominationId: 0,
-        state: 0,
-        churchId: 0,
-        email: "",
-        password: "",
-        birthday: currentDate,
-        phoneNumber: null,
-        confirmPassword: "",
-    }
-    const handleImageTransformation = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files![0]
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = function () {
-                setImage({ ...image, base64: (reader.result as string), name: file.name })
-            }
-            reader.readAsDataURL(file)
-        }
-    }
-
-    const validationSchema = Yup.object({
-        email: Yup.string().email("Invalid Email address").required(),
-        firstname: Yup.string().min(3, "Name must be at 5 character")
-            .max(15, "Name is too long").required(),
-        lastname: Yup.string().min(1, "Name must be at 1 character")
-            .max(15, "Name is too long").required(),
-        password: Yup.string().min(5, "Password is too short").required(),
-        genderID: Yup.string().oneOf(["1", "2"], "Please Select Your gender Type").required(),
-        churchId: Yup.string().required()
-    })
-
-    // Show the second part of the form
-    const handleToggle = () => {
-        setOpen(!open)
-    }
     // Show the dialog 
     const handleDialogToggle = () => {
         setShowDialog(!showDialog)
     }
-    // Show the terms and condition
-    const handleShowTerms = () => {
-        handleDialogToggle()
-        setShowTerm(true)
-    }
     // Set the current church selected
     const handleSetCurrentChurch = (church: IChurch) => () => {
-        const currentChurch:IChurch = {
+        const currentChurch: IChurch = {
             ...church,
-            country:country.find(item => item.countryID === church.countryID)?.name,
-            denomination:denomination.find(item => item.denominationID === church.denominationId)?.denominationName || ""
+            country: country.find(item => item.countryID === church.countryID)?.name,
+            denomination: denomination.find(item => item.denominationID === church.denominationId)?.denominationName || ""
         }
         setCurrentChurch(currentChurch)
         handleDialogToggle()
     }
+
     // Show Success Dialog 
     const handleShowSuccess = () => {
         setShowSuccess(true)
         setShowDialog(true)
     }
-    // Show the birthday form and clears the current church
-    const showBirthdayForm = () => {
-        setCurrentChurch(defaultChurch)
-        setShowBirthday(!showBirthday)
+
+    const goToMemberForm = () => {
+        setFormStage(formStageEnum.CHURCH_MEMBER_FORM)
     }
-    const getChurch = async (denominationId: number, stateId: number) => {
-        churchService.getChurchByDenomination(denominationId, stateId).then(payload => {
-            setChurchSelect(payload.data)
-            setShowChurchSelect([...payload.data])
-        }).catch(err => {
-            toast({
-                title: "Unable to get Church List",
-                subtitle: `Error: ${err}`,
-                messageType: MessageType.ERROR
-            })
-        })
+    const goForward = () => {
+        setFormStage(formStageEnum.CHURCH_BIRTHDAY)
     }
 
-    const handleSubmit = async (values: IForm, actions: any) => {
-        if (values.password !== values.confirmPassword) {
-            actions.setErrors({
-                confirmPassword: "Password do not match",
-                password: "Password do not match"
-            })
-        } else {
-            if (!showBirthday) {
-                getChurch(values.denominationId, values.state)
-                handleToggle()
-            } else {
-                actions.setSubmitting(true)
-                const { firstname, password, phoneNumber, email, lastname, birthday } = values
-                const newUser: IChurchMember = {
-                    firstname,
-                    lastname,
-                    username: String(phoneNumber),
-                    personTypeID: 1,
-                    genderID: values.genderID,
-                    email,
-                    phoneNumber,
-                    password,
-                    role: "ChurchMember",
-                    enteredBy: "ChurchMember",
-                    ...(currentChurch.churchID && { churchId: currentChurch.churchID }),
-                    isDataCapture: false,
-                    dateOfBirth: birthday.toJSON(),
-                    ...(image.base64 && { picture_url: image.base64 }),
-                    societies: [],
-                    societyPosition: []
-                }
-                await accountService.createChurchMember(newUser).then(payload => {
-                    handleShowSuccess()
-                    dispatch(login(newUser.phoneNumber as number, newUser.password, toast))
-                    toast({
-                        title: "Success",
-                        subtitle: "New User Created",
-                        messageType: MessageType.SUCCESS
-                    })
-                }).catch(err => {
-                    actions.setSubmitting(false)
-                    toast({
-                        title: "Something went Wrong",
-                        subtitle: `Error:${err}`,
-                        messageType: MessageType.ERROR
-                    })
-                    handleToggle()
-                    setShowBirthday(false)
-                    actions.setSubmittiong(false)
-                })
-            }
-        }
 
-    }
-    const handleBirthdayToggle = () => {
-        setShowBirthday(!showBirthday)
-    }
-    const Cell = ({ columnIndex, rowIndex, style }:any) => (
-        <div style={style}>
-          Item {rowIndex},{columnIndex}
-        </div>
-      );
 
-      
     return (
         <>
             <MainLoginLayout showLogo={true}>
@@ -574,190 +910,75 @@ const Signup = () => {
                     <Heading textStyle="h3" mb={"6"} textAlign={["center", "left"]}>
                         Sign Up
                     </Heading>
-                    <Text textStyle="h6" opacity={.8} textAlign={["center", "left"]}
-                     maxWidth="sm" mt={["3"]}>
-                        Register as a church member by providing your details
-                </Text>
-                    {!showBirthday && !open &&
+                    {
+                        formStage === formStageEnum.CHURCH_BIRTHDAY && 
+                        <Text textStyle="h6" opacity={.8} textAlign={["center", "left"]}
+                            maxWidth="sm" mt={["3"]}>
+                            Register as a church member by providing your details
+                        </Text>
+                    }
+                    {formStage === formStageEnum.SELECT_CHURCH &&
                         <VStack align="flex-start" w="100%">
-                            <Heading color="tertiary" fontFamily="MulishBold" fontSize={["2rem","2.5rem"]} >
+                            <Heading color="tertiary" fontFamily="MulishBold" fontSize={["2rem", "2.5rem"]} >
                                 Find Your Church
                             </Heading>
                             <Text fontSize="0.875rem">
                                 If you can't find your church&nbsp;
-                            <Text as="b" onClick={showBirthdayForm} >
-                                    Click Here
+                            <Text as="b" onClick={goToMemberForm} >
+                                Click Here
                             </Text>
                             </Text>
                             <HStack my={6} w="100%">
-                                <GoBack func={handleToggle} />
+                                {
+                                    !login && 
+                                    <>
+                                    <GoBack func={goToMemberForm} />
+                                    {
+                                        currentChurch &&
+                                        <GoBack forward={true} func={goForward} />
+                                    }
+                                    </>
+                                }
                                 <SearchInput className={classes.input}
                                     value={inputValue} width={["100%", "50%"]}
                                     setValue={handleInputChange} />
                             </HStack>
                         </VStack>
                     }
-                    <Formik initialValues={initialValues}
-                        validationSchema={validationSchema}
-                        onSubmit={handleSubmit}
-                    >
-                        {(formikProps: FormikProps<IForm>) => {
-                            const onChange = (e: Date | any) => {
-                                formikProps.setValues({ ...formikProps.values, birthday: e })
-                            }
-                            return (
-                                <Box width={["90vw", "100%"]} className={classes.inputContainer}
-                                    px="1" mx={["auto", "initial"]} maxWidth={open ? "sm" : ""} >
-                                    {
-                                        showBirthday ?
-                                            <VStack className={classes.birthdayContainer}>
-                                                <Heading textStyle="h5">
-                                                    Let's know your Birthday
-                                                </Heading>
-                                                <DatePicker value={formikProps.values.birthday}
-                                                    onChange={(onChange as any)} minDate={minDate} name="birthday"
-                                                />
-                                                <HStack w="100%">
-                                                    <GoBack func={handleBirthdayToggle} />
-                                                    {
-                                                        currentChurch.churchID &&
-                                                        <HStack width="100%" borderRadius="4px"
-                                                        boxShadow="0px 3px 6px #0000000D"
-                                                        ml={3} my="auto">
-                                                            <Image maxW="5rem"
-                                                                src={currentChurch.churchLogo || ChurchImage} />
-                                                            <VStack mr="auto" align="flex-start" >
-                                                                <Text fontSize="1.25rem" as="b">
-                                                                    {currentChurch.name}
-                                                                </Text>
-                                                                <Text fontFamily="MulishLight" as="i"
-                                                                 opacity={.7}  fontSize="1rem" >
-                                                                    {currentChurch.address}
-                                                                </Text>
-                                                            </VStack>
-                                                            <Icon color="primary" boxSize="2rem" as={AiFillCheckCircle} />
-                                                        </HStack>
-                                                    }
-                                                </HStack>
-                                                <HStack align="center" justifyContent="space-between" >
-                                                    <Flex className={classes.imageContainer} p={5} >
-                                                        <input accept="image/jpeg,image/png"
-                                                         onChange={handleImageTransformation} type="file"
-                                                            className={classes.input} id="icon-button-file" />
-                                                        <label htmlFor="icon-button-file">
-                                                            <IconButton as="span" padding={[2, 4]} boxSize={["7.5rem"]}
-                                                             aria-label="submit image"
-                                                                borderRadius="50%" bgColor={buttonBackground}
-                                                                icon={image.name ? 
-                                                                <Avatar size="xl" src={image.base64} /> : 
-                                                                <BsCardImage fontSize="2rem" />
-                                                            } />
-                                                        </label>
-                                                    </Flex>
-                                                        {
-                                                            image.name &&
-                                                                <Text isTruncated fontWeight="bold" fontSize="1.5rem" maxW="2xs" 
-                                                                >{`${formikProps.values.firstname}-${formikProps.values.lastname}`}
-                                                                </Text>
-                                                        }
-                                                </HStack>
-                                                <Button width="100%" isLoading={formikProps.isSubmitting}
-                                                    disabled={formikProps.isSubmitting || !formikProps.dirty || !formikProps.isValid}
-                                                    loadingText={`Creating new Church Member ${formikProps.values.firstname}`}
-                                                    onClick={(formikProps.handleSubmit as any)} >
-                                                    Next
-                                                </Button>
-                                            </VStack> :
-                                            open ?
-                                                <Fade timeout={150} in={open}>
-                                                    <Box maxWidth="sm">
-                                                        <TextInput name="firstname" placeholder="Input your First Name" />
-                                                        <TextInput name="lastname" placeholder="Input Your Last Name" />
-                                                        <TextInput name="email" placeholder="email" />
-                                                        <TextInput name="phoneNumber" placeholder="Phone Number" />
-                                                        <Select name="genderID" placeholder="gender" value={formikProps.values.genderID} >
-                                                            {["male", "female"].map((item, idx) => (
-                                                                <option key={idx} value={idx + 1} >
-                                                                    {item}
-                                                                </option>
-                                                            ))}
-                                                        </Select>
-                                                        <Select name="denominationId" placeholder="Select Denomination">
-                                                            {denomination.map((item, idx) => (
-                                                                <option key={idx} value={item.denominationID}>
-                                                                    {item.denominationName}
-                                                                </option>
-                                                            ))}
-                                                        </Select>
-                                                        <Select name="state" placeholder="Select Church State">
-                                                            {state.map((item, idx) => (
-                                                                <option key={idx} value={item.stateID}>
-                                                                    {item.name}
-                                                                </option>
-                                                            ))}
-                                                        </Select>
-                                                        <PasswordInput name="password"
-                                                            type="password" placeholder="Password" />
-                                                        <PasswordInput name="confirmPassword"
-                                                            type="password" placeholder="Confirm Password" />
-                                                        <Text onClick={handleShowTerms}>
-                                                            Agree to our &nbsp;
-                                                            <span>
-                                                                Terms of Service and Policy
-                                                            </span>
-                                                            &nbsp; and  &nbsp;
-                                                            {/* <span> and</span> */}
-                                                            <span >
-                                                                    Privacy Policy
-                                                            </span>
-                                                        </Text>
-                                                        <Button disabled={formikProps.isSubmitting || !formikProps.dirty || !formikProps.isValid}
-                                                            onClick={(formikProps.handleSubmit as any)} width={["90vw", "100%"]}
-                                                            my="6">
-                                                            {formikProps.isValid ? "Next" : "Please Complete Form"}
-                                                        </Button>
-                                                    </Box>
-
-                                                </Fade>
-                                                :
-                                                <Fade timeout={150} in={!open}>
-                                                    <Box>
-                                                        <SimpleGrid minChildWidth="10rem" gridGap=".5rem"
-                                                            spacing="40px" w="55vw">
-                                                            {showChurchSelect.length > 0 ?
-                                                                showChurchSelect.map((item, idx) => (
-                                                                    <Skeleton onClick={handleSetCurrentChurch(item)} key={idx}
-                                                                        isLoaded={Boolean(item.churchID)} cursor="pointer" >
-                                                                        <ChurchView churchName={item.name}
-                                                                            address={item.address} image={item.churchLogo}
-                                                                        />
-                                                                    </Skeleton>
-                                                                )) :
-                                                                <Text>
-                                                                    Church Does Not Exist
-                                                            </Text>
-                                                            }
-                                                        </SimpleGrid>
-                                                    </Box>
-                                                </Fade>
-                                    }
-                                </Box>
-                            )
-                        }}
-                    </Formik>
-                    <Text fontSize="1.125rem" >Already have an account? &nbsp;
-                        <Link to="/login">
-                            Login here
-                        </Link>
-                    </Text>
+                    <Fade timeout={150} mountOnEnter unmountOnExit
+                        in={formStage === formStageEnum.SELECT_CHURCH}>
+                        <SelectMemberChurch handleSetCurrentChurch={handleSetCurrentChurch}
+                            showChurchSelect={showChurchSelect} getChurch={getChurch} />
+                    </Fade>
+                    <Fade timeout={150} mountOnEnter unmountOnExit
+                        in={formStage === formStageEnum.CHURCH_BIRTHDAY}>
+                        <ChurchMemberBirthdayForm navigate={setFormStage}
+                            currentChurch={currentChurch} handleShowSuccess={handleShowSuccess} />
+                    </Fade>
+                    <Box width={["90vw", "100%"]} className={classes.inputContainer}
+                        px="1" mx={["auto", "initial"]} maxWidth="sm" >
+                        <Fade timeout={150} mountOnEnter unmountOnExit
+                            in={formStage === formStageEnum.CHURCH_MEMBER_FORM}>
+                            <ChurchMemberForm denomination={denomination} navigate={setFormStage}
+                                state={state} handleShowTerm={handleToggleTerm} />
+                        </Fade>
+                    </Box>
+                    {
+                        !login &&
+                        <Text fontSize="1.125rem" >Already have an account? &nbsp;
+                            <Link to="/login">
+                                Login here
+                            </Link>
+                        </Text>
+                    }
                 </Flex>
             </MainLoginLayout>
             <Dialog open={showDialog} size={showSuccess ? "sm" : "full"}
                 close={handleDialogToggle}>
                 {showSuccess ?
                     <ShowSuccess churchDetail={currentChurch} /> :
-                    showTerm ? <TermDialog/> : <VerifyChurchDialog handleClose={handleDialogToggle} handleConfirmation={handleBirthdayToggle}
-                    church={(currentChurch || defaultChurch)} />
+                    showTerm ? <TermDialog /> : <VerifyChurchDialog isAuthenticated={isAuthenticated} handleClose={handleDialogToggle} navigate={setFormStage}
+                        church={(currentChurch || defaultChurch)} />
                 }
             </Dialog>
         </>

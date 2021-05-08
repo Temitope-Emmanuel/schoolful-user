@@ -70,7 +70,7 @@ const PasswordInput: React.FC<IProps> = ({ placeholder, showErrors = true, icon,
                   type={show ? "text" : "password"}
                 />
                 <InputRightElement width="4.5rem">
-                  <Icon cursor="pointer" color="black" bgColor="green"
+                  <Icon cursor="pointer" color="black"
                     onClick={handleClick}
                     as={show ? BiShow : AiFillEyeInvisible}
                   />

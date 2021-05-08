@@ -1,9 +1,8 @@
 import React from "react"
 import {Box} from "@material-ui/core"
-import {createStyles,makeStyles,Theme} from "@material-ui/core/styles"
+import {createStyles,makeStyles} from "@material-ui/core/styles"
 import {GoPlus} from "react-icons/go"
 import {TextInput} from "components/Input"
-import {FaMicrophone} from "react-icons/fa"
 import {FormikProps,Formik} from "formik"
 import {HubConnection} from "@aspnet/signalr"
 import {IGroup} from "core/models/Group"
@@ -77,11 +76,11 @@ const SendMessage:React.FC<IProps> = ({connection,currentGroupDetail:{name,socie
             connection.send("SendGroupMessage",newMessage)
             actions.setSubmitting(false)
             actions.resetForm()
-            toast({
-                messageType:"info",
-                subtitle:"Message Sent successful",
-                title:""
-            })
+            // toast({
+            //     messageType:"info",
+            //     subtitle:"Message Sent successful",
+            //     title:""
+            // })
         }catch(err){
             actions.setSubmitting(false)
             toast({

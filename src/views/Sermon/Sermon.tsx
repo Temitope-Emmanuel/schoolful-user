@@ -225,6 +225,7 @@ const Sermon = () => {
             removeLocal()
         }
     }
+    
     const flexRef = React.useRef<HTMLDivElement>(null)
     const setNextAudioSermon = setNewCurrentMedia(audioSermon,1)
     const setPreviousAudioSermon = setNewCurrentMedia(audioSermon,-1)

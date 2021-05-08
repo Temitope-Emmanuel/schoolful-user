@@ -14,5 +14,5 @@ export interface LoginData {
     personType:number;
     callingCode:number;
     churchId:number;
-    role:string[]
+    role:string[] | string
 }

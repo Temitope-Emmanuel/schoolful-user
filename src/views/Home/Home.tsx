@@ -25,7 +25,6 @@ import {loadChurchPrayerRequest,addUserToHasPrayed} from "store/Prayer/actions"
 import axios from "axios"
 
 
-
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         alignItems:"center !important",
@@ -146,9 +145,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }))
 
 
-
-
-
 const Home = () => {
     const classes = useStyles()
     const defaultReading: IDailyReading = {
@@ -177,6 +173,7 @@ const Home = () => {
             churchId:params.churchId as any,
             toast
         }))
+
         const churchDailyReading = () => {
             getDailyReading(source).then(payload => {
                 setDailyReading(payload.data.readings)
@@ -263,7 +260,10 @@ const Home = () => {
 
                 <VStack>
                     <HStack display={{ base: "none", lg: "flex" }}>
-                        <Carousel churchSermon={churchSermon}/>
+                        {
+                            churchSermon.length &&
+                            <Carousel churchSermon={churchSermon}/>
+                        }
                     </HStack>
                     <Skeleton width="100%" isLoaded={dailyReading[0].verse.length > 2} >
                         <VStack className={classes.verseContainer}>

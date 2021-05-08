@@ -26,10 +26,10 @@ export const getChurchDenomination = async ():Promise<IResponse<IDenomination[]>
         throw err
     }
 }
-export const getChurchByDenomination = async (denomationId:number,stateId:number) => {
+export const getChurchByDenomination = async (denominationId:number,stateId:number) => {
     try{
         // const url = `${baseUrl}/getchurchbydenomination?denominationId=${denomationId}&stateId=${stateId}`
-        const url = `${baseUrl}/getchurchbydenomination?denominationId=3&stateId=2671`
+        const url = `${baseUrl}/getchurchbydenomination?denominationId=${denominationId}&stateId=${stateId}`
         const response = await axios.get(url)
         return response.data
     }catch(err){

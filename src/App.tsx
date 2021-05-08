@@ -18,8 +18,6 @@ const App = () => {
   const windowsLocation = window.location.href
   
 
-  console.log({windowsLocation})
-
   React.useEffect(() => {
     if(!token || !userDetail){
       dispatch(hideAuthLoading())

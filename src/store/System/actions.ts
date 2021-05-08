@@ -37,18 +37,25 @@ export function setAdvertLayout(arg:boolean):SetAdvertLayoutAction{
     }
 }
 
-
 export function login(phoneNumber:number,password:string,toast:ToastFunc){
     return async function(dispatch:Dispatch){
         dispatch(showLoading())
         try{
             return await userService.login(phoneNumber,password).then(payload => {
-                dispatch(hideLoading())
-                const {refreshToken,...userDetail} = payload.data;
-                auth.saveUserDetail(JSON.stringify(userDetail))
-                auth.saveToken(refreshToken)
-                dispatch(setCurrentUser(JSON.parse(auth.getUserDetail() as string)))
-                history.push(`/church/${payload.data.churchId}/home`)
+                if(payload.data.role[0] === "churchMember"){
+                    dispatch(hideLoading())
+                    const {refreshToken,...userDetail} = payload.data;
+                    auth.saveUserDetail(JSON.stringify(userDetail))
+                    auth.saveToken(refreshToken)
+                    dispatch(setCurrentUser(JSON.parse(auth.getUserDetail() as string)))
+                    history.push(`/church/${payload.data.churchId}/home`)
+                }else{
+                    toast({
+                        messageType:"info",
+                        subtitle:`This app is meant for church members only`,
+                        title:"Unable to complete request"
+                    })
+                }
             })
         }catch(err){
             dispatch(hideLoading())
