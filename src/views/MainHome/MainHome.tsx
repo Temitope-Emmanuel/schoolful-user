@@ -1,10 +1,9 @@
 import React from "react"
 import { Link } from "react-router-dom"
 import {
-    Box, Text, Link as ChakraLink, Icon,
+    Box, Text, Link as ChakraLink,
     Heading, Flex, HStack, VStack, Stack, Image,
-    SimpleGrid, InputGroup, Input,
-    InputRightElement
+    SimpleGrid
 } from "@chakra-ui/react"
 import { Button } from "components/Button"
 import { Header } from "components/Header"
@@ -12,17 +11,16 @@ import { LandingImage } from 'assets/images'
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles"
 import { Divider } from "@material-ui/core"
 import {
-    AppStore, PlayStore, Logo,
+    AppStore, PlayStore,
     ChurchMemberApp, ChurchMemberDesktop,
     OnTheGo, FeatureImage, ChurchDetail,
     PrayerHand, Bible, Sermon, Giving, Activity,
     Reflection, Groups, Announcement
 } from "assets/images"
-import { HiOutlineMail } from "react-icons/hi"
+import {getStatisticalInfo} from "core/services/church.service"
 import { primary } from "theme/chakraTheme/palette"
-
-
-
+import Footer from "./Footer"
+import useToast from "utils/Toast"
 
 const useStyles = makeStyles((theme: Theme) => (
     createStyles({
@@ -253,73 +251,6 @@ const useStyles = makeStyles((theme: Theme) => (
                 }
             }
         },
-        footerContainer: {
-            width: "100%",
-            padding: theme.spacing(7, 0),
-            justifyContent: "center",
-            alignItems: "center",
-            [theme.breakpoints.up("sm")]: {
-                padding: theme.spacing(16, 0),
-                "& a": {
-                    textAlign: "left"
-                }
-            },
-            "& button": {
-                fontFamily: "MulishRegular"
-            },
-            "& p,a": {
-                fontSize: "1.1875rem"
-            },
-            "& > div": {
-                borderTop: "1px solid whitesmoke",
-                justifyContent: "space-between",
-                maxWidth: "70rem",
-                paddingTop: "3rem",
-                [theme.breakpoints.up("sm")]: {
-                    marginBottom: theme.spacing(20)
-                },
-                "& a": {
-                    color: "white"
-                },
-                "& input": {
-                    backgroundColor: "transparent",
-                    border: "1px solid white",
-                    "& svg": {
-                        color: `${primary} !important`
-                    }
-                },
-                "& button": {
-                    width: "100%"
-                },
-                "& > div": {
-                    alignItems: "center",
-                    marginTop: "0 !important",
-                    [theme.breakpoints.up("sm")]: {
-                        marginRight: theme.spacing(4),
-                        alignItems: "flex-start",
-                    },
-                    "& p": {
-                        textAlign: "center",
-                        maxWidth: "20rem",
-                        [theme.breakpoints.up("sm")]: {
-                            textAlign: "left",
-                        }
-                    },
-                    "& p:first-child": {
-                        textAlign: "left",
-                        color: primary,
-                        maxWidth: "20rem"
-                    }
-                }
-            }
-        },
-        socialContainer: {
-            marginTop: `${theme.spacing(3)}px !important`,
-            "& svg": {
-                color: "white",
-                marginRight: theme.spacing(1)
-            }
-        },
         storeContainer: {
             zIndex: 5,
             alignItems: "center",
@@ -347,6 +278,11 @@ const useStyles = makeStyles((theme: Theme) => (
 
 const Home = () => {
     const classes = useStyles()
+    const toast = useToast()
+    const [statistics,setStatistics] = React.useState({
+        totalChurchMember:0,
+        totalChurch:0
+    })
     const dashboardMenu = [
         { icon: PrayerHand, title: "Prayer Wall" },
         { icon: Bible, title: "Bible" },
@@ -357,7 +293,20 @@ const Home = () => {
         { icon: Groups, title: "Groups" },
         { icon: Announcement, title: "Announcement" },
     ]
-    
+    React.useEffect(() => {
+        const apiCall = async () => {
+            getStatisticalInfo().then(payload => {
+                setStatistics(payload.data)
+            }).catch(err => {
+                // toast({
+                //     messageType:"error",
+                    
+                // })
+            })
+        }
+        apiCall()
+    },[])
+
     return (
         <>
             <VStack className={classes.root}>
@@ -371,7 +320,7 @@ const Home = () => {
                             Bringing the <Box as="span" color="primary">Church</Box> online
                         </Heading>
                         <Stack direction={["column", "row"]}
-                         className={classes.adminButtonContainer}>
+                            className={classes.adminButtonContainer}>
                             <Text color="primary">
                                 Are you a church Admin?
                             </Text>
@@ -391,8 +340,8 @@ const Home = () => {
                     <Heading color="tertiary" fontSize={["2rem", "3rem", "4rem"]} >
                         Church Administration Made Easy
                 </Heading>
-                <Text color="tertiary">
-                Looking for better ways to reach and engage your church members? Do not worry we have got you covered, The faithfuls is a robust church management solution with all you need to constantly spread the Gospel of Christ across the Globe.
+                    <Text color="tertiary">
+                        Looking for better ways to reach and engage your church members? Do not worry we have got you covered, The faithfuls is a robust church management solution with all you need to constantly spread the Gospel of Christ across the Globe.
 
                 </Text>
                     <Link to="/signup/admin" >
@@ -406,8 +355,8 @@ const Home = () => {
                         <Heading color="tertiary" fontSize={["2.3rem", "2.5rem"]}>
                             Church App For Members
                 </Heading>
-                    <Text color="tertiary">
-                    We have built a robust mobile application for church members to search and join their churches online, members can participate in church activities online, available for Android and IOS users.
+                        <Text color="tertiary">
+                            We have built a robust mobile application for church members to search and join their churches online, members can participate in church activities online, available for Android and IOS users.
                 </Text>
                         <Stack className={classes.storeContainer}>
                             <Image w="12rem" src={PlayStore} />
@@ -419,8 +368,8 @@ const Home = () => {
                         <Heading color="tertiary" fontSize={["2.3rem", "2.5rem"]}>
                             Manage Church Activities
                     </Heading>
-                    <Text color="tertiary" zIndex={5}>
-                    As a church administrator, you can create accounts for your churches, fellowships and special congregations, kindly note that your church will be verified before it becomes active and accessible for members to join, please dont create a church if you are not authorized to manage a church.
+                        <Text color="tertiary" zIndex={5}>
+                            As a church administrator, you can create accounts for your churches, fellowships and special congregations, kindly note that your church will be verified before it becomes active and accessible for members to join, please dont create a church if you are not authorized to manage a church.
                     </Text>
 
                         <Button zIndex={5} className={classes.button}>
@@ -441,8 +390,8 @@ const Home = () => {
                             fontSize={["2rem", "3rem", "4rem"]} fontWeight={600}>
                             Church <br /> on the go
                 </Heading>
-                    <Text color="tertiary" textAlign="left" maxW="sm">
-                    No more excuses, join the faithfuls today
+                        <Text color="tertiary" textAlign="left" maxW="sm">
+                            No more excuses, join the faithfuls today
                 </Text>
                         <Link to='/signup/member?find-church' >
                             <Button className={classes.button}>
@@ -488,7 +437,7 @@ const Home = () => {
                         <HStack justifyContent="flex-end" w="100%" align="flex-start" pr={["5", "16"]}>
                             <VStack mx="6">
                                 <Text color="primary">
-                                    2,000+
+                                    {`${statistics.totalChurch}+`}
                             </Text>
                                 <Text color="tertiary">
                                     Churches
@@ -496,94 +445,17 @@ const Home = () => {
                             </VStack>
                             <VStack>
                                 <Text color="primary">
-                                    40,000+
+                                    {`${statistics.totalChurchMember}+`}
                             </Text>
                                 <Text color="tertiary">
                                     Church Members
                             </Text>
-                        </VStack>
-                    </HStack>
-                    <Divider variant="middle" />
-                </VStack>
-            </Stack>
-            <Stack bgColor="tertiary" className={classes.footerContainer}>
-                <Stack width={["95%", "75%"]} flexDirection={{base:'column',md:'row'}}>
-                    <VStack>
-                        <Image src={Logo} />
-                        {/* <Text color="primary">
-                            But I must explain to you how all this mistaken idea of denouncing
-                            pleasure and praising pain was born and I will give you a complete account of the.
-                    </Text>
-                            <Text color="whitesmoke" className={classes.middleText}>
-                                1st Floor, Leasing House,C & I Leasing Drive, Off Bisola Durosinmi
-                                Etti Drive, Off Admiralty Way, Lekki Phase 1, Lagos, Nigeria
-                    </Text>
-                            <VStack align="flex-start">
-                                <Text color="whitesmoke">
-                                    +234-1-342-9192
-                        </Text>
-                                <Text color="whitesmoke">
-                                    info@thefaithfuls.com
-                        </Text>
                             </VStack>
-                            <HStack spacing={3} className={classes.socialContainer}>
-                                <Icon as={FaFacebookF} />
-                                <Icon as={FaTwitter} />
-                                <Icon as={FaLinkedinIn} />
-                            </HStack>
-                        </VStack>
-                        <HStack spacing={3} className={classes.socialContainer}>
-                            <Icon as={FaFacebookF} />
-                            <Icon as={FaTwitter} />
-                            <Icon as={FaLinkedinIn} />
-                        </HStack> */}
+                        </HStack>
+                        <Divider variant="middle" />
                     </VStack>
-                    <VStack>
-                        <Text>Menu</Text>
-                        <Link to="/" >
-                            Home
-                    </Link>
-                            <Link to="/">
-                                Find Your Church
-                    </Link>
-                            <Link to="/" >
-                                About Us
-                    </Link>
-                            <Link to="/">
-                                Contact Us
-                    </Link>
-                        </VStack>
-                        <VStack>
-                            <Text>
-                                Company
-                    </Text>
-                            <Link to="/">
-                                Terms of service
-                    </Link>
-                            <Link to="/">
-                                Privacy Policy
-                    </Link>
-                            <Link to="/">
-                                Blog
-                    </Link>
-                        </VStack>
-                        <VStack>
-                            <Text>
-                                Subscribe
-                    </Text>
-                            <Text color="white">
-                                For our Newletter and updates
-                    </Text>
-                            <InputGroup>
-                                <Input color="white" placeholder="Enter your Email" />
-                                <InputRightElement children={<Icon color="primary" as={HiOutlineMail} />} />
-                            </InputGroup>
-                            <Button className={classes.button} >
-                                Subscribe
-                    </Button>
-                        </VStack>
-                    </Stack>
                 </Stack>
+                <Footer />
             </VStack>
         </>
     )

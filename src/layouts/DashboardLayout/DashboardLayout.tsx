@@ -155,16 +155,12 @@ const DashboardLayout: React.FC<IProps> = (props) => {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-  // const handleDesktopToggle = () => {
-  //   setDesktopOpen(!desktopOpen)
-  // };
-
   React.useEffect(() => {
     dispatch(getChurch(toast))
     dispatch(LoadActivitiesForChurch(params.churchId, toast))
     dispatch(LoadEventsForChurch(params.churchId, toast))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  },[currentUser])
 
   React.useEffect(() => {
     const cancelToken = axios.CancelToken.source()

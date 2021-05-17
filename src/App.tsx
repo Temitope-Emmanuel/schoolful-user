@@ -33,8 +33,7 @@ const App = () => {
         }
         authManager.saveUserDetail(JSON.stringify(newUserDetail))
         const savedUserDetail = JSON.parse(authManager.getUserDetail() as string)
-        dispatch(setCurrentUser(savedUserDetail))
-        dispatch(hideAuthLoading())
+        setCurrentUser(savedUserDetail,toast,() => {dispatch(hideAuthLoading())})
       }).catch((err) => {
         dispatch(hideAuthLoading())
         toast({

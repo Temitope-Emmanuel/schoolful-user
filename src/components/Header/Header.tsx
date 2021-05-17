@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, LinkProps, useHistory } from "react-router-dom"
+import { Link, LinkProps } from "react-router-dom"
 import { createStyles, makeStyles } from "@material-ui/styles"
 import {
   Box, Flex, Menu, MenuButton, Text, chakra,
@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux'
 import { AppState } from "store"
 import { Dialog } from "components/Dialog"
 import {SearchChurch} from "./FindChurch"
+
 
 const useStyles = makeStyles((theme: any) => (
   createStyles({

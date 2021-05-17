@@ -167,6 +167,7 @@ const Profile = () => {
         const updateChurchMemberDetail = {
             ...newProfile,
             ...values,
+            // churchMemberID:currentUser
             imageUrl: image.base64 || profile.picture_url
         }
 

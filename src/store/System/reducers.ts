@@ -1,37 +1,43 @@
 import { SystemState, Action, ActionTypes } from "./types"
 import isEmpty from "lodash/isEmpty"
 
+const defaultChurch = {
+    churchID: 0,
+    name: "",
+    address: "",
+    churchLogo:"",
+    denominationId: 0,
+    countryID: 0,
+    country:"",
+    stateID:0,
+    cityID: 0,
+    churchStatus: ""
+}
+
+const defaultUser =  {
+    id: "",
+    auth_token: "",
+    fullname: "",
+    phoneNumber: 0,
+    email: "",
+    picture_url:"",
+    expirationTime: 0,
+    personType: 0,
+    callingCode: 0,
+    churchId: 0,
+    role: [],
+    churchMemberID:"",
+    personId:""
+}
+
 const initialState: SystemState = {
     isAuthenticated: false,
     showAdvertLayout:true,
     isLoading:false,
     authLoading:true,
     pageTitle:"",
-    currentUser: {
-        id: "",
-        auth_token: "",
-        fullname: "",
-        phoneNumber: 0,
-        email: "",
-        picture_url:"",
-        expirationTime: 0,
-        personType: 0,
-        callingCode: 0,
-        churchId: 0,
-        role: []
-    },
-    currentChurch:{
-        churchID: 0,
-        name: "",
-        address: "",
-        churchLogo:"",
-        denominationId: 0,
-        countryID: 0,
-        country:"",
-        stateID:0,
-        cityID: 0,
-        churchStatus: ""
-    }
+    currentUser:defaultUser,
+    currentChurch:defaultChurch
 }
 
 
@@ -42,6 +48,17 @@ export function systemReducer(state = initialState, action: Action): SystemState
                 ...state,
                 showAdvertLayout:action.payload
             }
+        case ActionTypes.CLEAR_CURRENT_CHURCH:
+            return{
+                ...state,
+                currentChurch:defaultChurch
+            }
+        case ActionTypes.CLEAR_CURRENT_USER:{
+            return {
+                ...state,
+                currentUser:defaultUser
+            }
+        }
         case ActionTypes.SETCURRENTUSER:
             return {
                 ...state,

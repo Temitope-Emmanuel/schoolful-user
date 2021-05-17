@@ -40,11 +40,10 @@ const PasswordInput: React.FC<IProps> = ({ placeholder, showErrors = true, icon,
   const toast = useToast()
   const handleClick = () => setShow(!show);
   const styles = useStyleConfig("Input", {})
-  const classes = useStyles()
   owasp.config({
     allowPassphrases: false,
     maxLength: 50,
-    minLength: 10,
+    minLength: 8,
     minOptionalTestsToPass: 4
   })
   const validate = (value: string) => {

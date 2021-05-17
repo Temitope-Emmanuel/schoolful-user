@@ -39,7 +39,11 @@ import { useImageState } from "utils/useImageState"
 import { FixedSizeGrid as Grid } from 'react-window'
 import AutoSizer from "react-virtualized-auto-sizer"
 import {updateChurchMember} from "core/services/userSetting.service"
+import {setCurrentUser} from "store/System/actions"
+import * as authManager from "utils/auth"
 import { AppState } from "store"
+import {RedirectType,SearchChurch} from 'components/Header/FindChurch'
+import { useHistory } from "react-router"
 
 const CHURCH_MEMBER_STORAGE_KEY = "CHURCH_MEMBER_STORAGE_KEY"
 const SELECTED_CHURCH_KEY = "SELECTED_CHURCH_KEY"
@@ -125,13 +129,11 @@ const churchStyles = makeStyles((theme: Theme) => createStyles({
     }
 }))
 
-interface IChurchView {
+const ChurchView: React.FC<{
     churchName: string;
     address: string;
     image: string | undefined;
-}
-
-const ChurchView: React.FC<IChurchView> = ({ churchName, address, image }) => {
+}> = ({ churchName, address, image }) => {
     const classes = churchStyles()
     return (
         <Box maxW={{ sm: "17rem" }} className={classes.root}>
@@ -150,12 +152,10 @@ const ChurchView: React.FC<IChurchView> = ({ churchName, address, image }) => {
     )
 }
 
-interface IShowChurchDetail {
+const ShowDetail: React.FC<{
     name: string;
     value: string | number;
-}
-
-const ShowDetail: React.FC<IShowChurchDetail> = ({ name, value }) => (
+}> = ({ name, value }) => (
     <VStack align={["center", "flex-start"]} mb="5" >
         <Text fontSize="1.25rem">
             {name}
@@ -171,11 +171,9 @@ const VerifyChurchDialog:React.FC<{
     church: IChurch;
     handleClose: any;
     navigate: (arg: formStageEnum) => void;
-    isAuthenticated:boolean
-}> = ({ handleClose, navigate, church,isAuthenticated }) => {
+}> = ({ handleClose, navigate, church }) => {
 
     const toast = useToast()
-    
     const handleConfirmationClose = () => {
         localforage.setItem(SELECTED_CHURCH_KEY,church).then(data => {
             navigate(formStageEnum.CHURCH_BIRTHDAY)
@@ -184,19 +182,35 @@ const VerifyChurchDialog:React.FC<{
 
         })
     }
-
     const {
         name, country, denomination,
         address, stateName,
     } = church
+    const dispatch = useDispatch()
+    const history = useHistory()
+    const isAuthenticated = useSelector((state:AppState) => state.system.isAuthenticated)
+    const currentChurch = useSelector((state:AppState) => state.system.currentChurch)
+    const currentUser = useSelector((state:AppState) => state.system.currentUser)
 
     const handleSubmit = async () => {
-        updateChurchMember({churchID:church.churchID} as any).then(payload => {
+        updateChurchMember({
+            churchID:church.churchID,
+            churchMemberID: currentUser.churchMemberID,
+            personId: currentUser.personId
+        } as any).then(payload => {
+            const savedUserDetail = JSON.parse(authManager.getUserDetail() as string)
+            dispatch(
+                setCurrentUser({
+                    ...savedUserDetail,
+                    churchId:church.churchID as number
+                },toast)
+            )
             toast({
                 title: "User detail Updated",
                 subtitle: "",
                 messageType: "success"
             })
+            history.push(`/church/${church.churchID}/profile`)
         }).catch(err => {
             toast({
                 title: "Unable to Update User Detail",
@@ -365,31 +379,30 @@ const initialValues = {
     confirmPassword: "",
 }
 
-interface ChurchMemberFormProps {
-    denomination: IDenomination[];
+const ChurchMemberForm: React.FC<{
     state: IState[];
     handleShowTerm: () => void;
+    selectedChurch:IChurch;
+    denomination: IDenomination[];
     navigate: (arg: formStageEnum) => void
-}
-
-interface SelectMemberChurchProps {
-    showChurchSelect: IChurch[];
-    handleSetCurrentChurch: (arg: IChurch) => () => void;
-    getChurch: (denominatId: number, stateID: number) => void;
-}
-
-const ChurchMemberForm: React.FC<ChurchMemberFormProps> = ({ denomination, state, handleShowTerm, navigate }) => {
+}> = ({ denomination, state, handleShowTerm, navigate,selectedChurch }) => {
     const toast = useToast()
     const [formValues, setFormValues] = React.useState(initialValues)
-
+    
     React.useEffect(() => {
         localforage.getItem(CHURCH_MEMBER_STORAGE_KEY).then((value) => {
+            let currentChurchMemberForm = initialValues
             if (value) {
+               currentChurchMemberForm = value as any
                 setFormValues(value as any)
             }
+            if (selectedChurch.churchID){
+                currentChurchMemberForm.denominationId = selectedChurch.denominationId
+                currentChurchMemberForm.state = selectedChurch.stateID
+            }
+            setFormValues(currentChurchMemberForm)
         }).catch(err => {
-        })
-        
+        })        
     }, [])
 
     const handleSubmit = async (values: IForm, actions: any) => {
@@ -406,8 +419,11 @@ const ChurchMemberForm: React.FC<ChurchMemberFormProps> = ({ denomination, state
                 searchParams.set("state", String(values.state));
                 const newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
                 window.history.pushState(null, '', newRelativePathQuery);
-                navigate(formStageEnum.SELECT_CHURCH)
-
+                if(selectedChurch.churchID){
+                    navigate(formStageEnum.CHURCH_BIRTHDAY)
+                }else{
+                    navigate(formStageEnum.SELECT_CHURCH)
+                }
             }).catch(err => {
                 toast({
                     messageType: "error",
@@ -431,69 +447,72 @@ const ChurchMemberForm: React.FC<ChurchMemberFormProps> = ({ denomination, state
 
     return (
         <Formik enableReinitialize onSubmit={handleSubmit} validationSchema={validationSchema} initialValues={formValues} >
-            {(formikProps: FormikProps<any>) => (
-                <Box maxWidth="sm">
-                    <TextInput name="firstname" placeholder="Input your First Name" />
-                    <TextInput name="lastname" placeholder="Input Your Last Name" />
-                    <TextInput name="email" placeholder="email" />
-                    <TextInput name="phoneNumber" placeholder="Phone Number" />
-                    <Select name="genderID" placeholder="gender" value={formikProps.values.genderID} >
-                        {["male", "female"].map((item, idx) => (
-                            <option key={idx} value={idx + 1} >
-                                {item}
-                            </option>
-                        ))}
-                    </Select>
-                    <Select name="denominationId" placeholder="Select Denomination">
-                        {denomination.map((item, idx) => (
-                            <option key={idx} value={item.denominationID}>
-                                {item.denominationName}
-                            </option>
-                        ))}
-                    </Select>
-                    <Select name="state" placeholder="Select Church State">
-                        {state.map((item, idx) => (
-                            <option key={idx} value={item.stateID}>
-                                {item.name}
-                            </option>
-                        ))}
-                    </Select>
-                    <PasswordInput name="password"
-                        type="password" placeholder="Password" />
-                    <PasswordInput name="confirmPassword"
-                        type="password" placeholder="Confirm Password" />
-                    <Text onClick={handleShowTerm}>
-                        Agree to our &nbsp;
-                    <span>
-                            Terms of Service and Policy
-                    </span>
-                    &nbsp; and  &nbsp;
-                    {/* <span> and</span> */}
-                        <span >
-                            Privacy Policy
-                    </span>
-                    </Text>
-                    <Button disabled={formikProps.isSubmitting || !formikProps.isValid}
-                        onClick={(formikProps.handleSubmit as any)} width={["90vw", "100%"]}
-                        my="6">
-                        {formikProps.isValid ? "Next" : "Please Complete Form"}
-                    </Button>
-                </Box>
-
-            )}
+            {(formikProps: FormikProps<any>) => {
+                return(
+                    <Box maxWidth="sm">
+                        <TextInput name="firstname" placeholder="Input your First Name" />
+                        <TextInput name="lastname" placeholder="Input Your Last Name" />
+                        <TextInput name="email" placeholder="email" />
+                        <TextInput name="phoneNumber" placeholder="Phone Number" />
+                        <Select name="genderID" placeholder="gender" value={formikProps.values.genderID} >
+                            {["male", "female"].map((item, idx) => (
+                                <option key={idx} value={idx + 1} >
+                                    {item}
+                                </option>
+                            ))}
+                        </Select>
+                        {
+                            !selectedChurch.churchID && 
+                            <>
+                                <Select name="denominationId" placeholder="Select Denomination">
+                                    {denomination.map((item, idx) => (
+                                        <option key={idx} value={item.denominationID}>
+                                            {item.denominationName}
+                                        </option>
+                                    ))}
+                                </Select>
+                                <Select name="state" placeholder="Select Church State">
+                                    {state.map((item, idx) => (
+                                        <option key={idx} value={item.stateID}>
+                                            {item.name}
+                                        </option>
+                                    ))}
+                                </Select>
+                            </>
+                        }
+                        <PasswordInput name="password"
+                            type="password" placeholder="Password" />
+                        <PasswordInput name="confirmPassword"
+                            type="password" placeholder="Confirm Password" />
+                        <Text onClick={handleShowTerm}>
+                            Agree to our &nbsp;
+                        <span>
+                                Terms of Service and Policy
+                        </span>
+                        &nbsp; and  &nbsp;
+                        {/* <span> and</span> */}
+                            <span >
+                                Privacy Policy
+                        </span>
+                        </Text>
+                        <Button disabled={formikProps.isSubmitting || !formikProps.isValid}
+                            onClick={(formikProps.handleSubmit as any)} width={["90vw", "100%"]}
+                            my="6">
+                            {formikProps.isValid ? "Next" : "Please Complete Form"}
+                        </Button>
+                    </Box>
+                )
+            }}
         </Formik>
-
     )
 }
 
-interface CellProps {
-    columnIndex: number;
-    rowIndex: number;
-    isScrolling?: boolean;
-    style: any;
-}
 
-const SelectMemberChurch: React.FC<SelectMemberChurchProps> = React.memo(({
+const SelectMemberChurch: React.FC<{
+    showChurchSelect: IChurch[];
+    handleSetCurrentChurch: (arg: IChurch) => () => void;
+    getChurch: (denominatId: number, stateID: number) => void;
+}> = React.memo(({
     showChurchSelect, getChurch, handleSetCurrentChurch
 }) => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -510,7 +529,12 @@ const SelectMemberChurch: React.FC<SelectMemberChurchProps> = React.memo(({
         }
     }, [])
 
-    const Cell: React.FC<CellProps> = React.memo(({ columnIndex, isScrolling, rowIndex, style }) => {
+    const Cell: React.FC<{
+        columnIndex: number;
+        rowIndex: number;
+        isScrolling?: boolean;
+        style: any;
+    }> = React.memo(({ columnIndex, isScrolling, rowIndex, style }) => {
         const GUTTER_SIZE = 5;
 
         return (
@@ -584,19 +608,17 @@ const churchMemberStyles = makeStyles((theme) => createStyles({
     }
 }))
 
-interface BirthdayFormProps {
-    currentChurch: IChurch;
-    handleShowSuccess:() => void
-    navigate: (arg: formStageEnum) => void
-}
-
 const birthdayForm = {
     birthday: currentDate
 }
 
 type birthdayFormType = typeof birthdayForm
 
-const ChurchMemberBirthdayForm: React.FC<BirthdayFormProps> = ({ currentChurch, navigate,handleShowSuccess }) => {
+const ChurchMemberBirthdayForm: React.FC<{
+    currentChurch: IChurch;
+    handleShowSuccess:() => void
+    navigate: (arg: formStageEnum) => void
+}> = ({ currentChurch, navigate,handleShowSuccess }) => {
     const classes = churchMemberStyles()
     const toast = useToast()
     const dispatch = useDispatch()
@@ -758,6 +780,7 @@ const Signup = () => {
     }
     const [formStage, setFormStage] = React.useState<formStageEnum>(formStageEnum.CHURCH_MEMBER_FORM)
     const [currentChurch, setCurrentChurch] = React.useState<IChurch>(defaultChurch)
+    const [redirectType,setRedirectType] = React.useState<RedirectType>(RedirectType.noRedirect)
     const isAuthenticated = useSelector((state:AppState) => state.system.isAuthenticated)
     // All current church
     const [churchSelect, setChurchSelect] = React.useState<IChurch[]>(new Array(10).fill(defaultChurch))
@@ -772,6 +795,8 @@ const Signup = () => {
     const [showDialog, setShowDialog] = React.useState(false)
     const classes = useStyles()
     const toast = useToast()
+
+
     const getChurch = async (denominationId: number, stateId: number) => {
         churchService.getChurchByDenomination(denominationId, stateId).then(payload => {
             setChurchSelect(payload.data)
@@ -805,10 +830,23 @@ const Signup = () => {
     React.useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const formPart = urlParams.get('formPart');
-        
+        const redirect = urlParams.get('redirect')
+        //  Show the for form according to query
         if(formPart){
             updateFormStage(Number(formPart))
         }
+        // Associate the page according to redirect location
+        if(redirect === RedirectType.home){
+            setRedirectType(RedirectType.home)
+        }else if(redirect === RedirectType.profile){
+            setRedirectType(RedirectType.profile)
+        }
+
+        localforage.getItem(SELECTED_CHURCH_KEY).then(data => {
+            if(data){
+                setCurrentChurch(data as any)
+            }
+        })
 
         const getStateLocation = async () => {
             await getState(160).then(payload => {
@@ -870,7 +908,10 @@ const Signup = () => {
     const handleInputChange = (e: React.SyntheticEvent<HTMLInputElement>) => {
         setInputValue(e.currentTarget.value)
     }
-
+    const [openSearchChurch,setOpenSearchChurch] = React.useState(false)
+    const handleSearchChurchToggle = () => {
+        setOpenSearchChurch(!openSearchChurch)
+    }
     // Show the dialog 
     const handleDialogToggle = () => {
         setShowDialog(!showDialog)
@@ -898,11 +939,14 @@ const Signup = () => {
     const goForward = () => {
         setFormStage(formStageEnum.CHURCH_BIRTHDAY)
     }
-
+    
 
 
     return (
         <>
+        <Dialog open={openSearchChurch} close={handleSearchChurchToggle}>
+            <SearchChurch handleClose={handleSearchChurchToggle} getChurch={getChurch}/>
+        </Dialog>
             <MainLoginLayout showLogo={true}>
                 <Flex className={classes.root}
                     alignItems={["center", "flex-start"]}
@@ -924,24 +968,22 @@ const Signup = () => {
                             </Heading>
                             <Text fontSize="0.875rem">
                                 If you can't find your church&nbsp;
-                            <Text as="b" onClick={goToMemberForm} >
+                            <Text as="b" onClick={handleSearchChurchToggle} >
                                 Click Here
-                            </Text>
+                            </Text> 
                             </Text>
                             <HStack my={6} w="100%">
                                 {
-                                    !login && 
-                                    <>
+                                    !isAuthenticated && 
                                     <GoBack func={goToMemberForm} />
-                                    {
-                                        currentChurch &&
-                                        <GoBack forward={true} func={goForward} />
-                                    }
-                                    </>
-                                }
+                                 }
                                 <SearchInput className={classes.input}
                                     value={inputValue} width={["100%", "50%"]}
                                     setValue={handleInputChange} />
+                                    {
+                                        currentChurch.churchID &&
+                                        <GoBack forward={true} func={goForward} />
+                                    }
                             </HStack>
                         </VStack>
                     }
@@ -960,6 +1002,7 @@ const Signup = () => {
                         <Fade timeout={150} mountOnEnter unmountOnExit
                             in={formStage === formStageEnum.CHURCH_MEMBER_FORM}>
                             <ChurchMemberForm denomination={denomination} navigate={setFormStage}
+                            selectedChurch={currentChurch}
                                 state={state} handleShowTerm={handleToggleTerm} />
                         </Fade>
                     </Box>
@@ -977,7 +1020,7 @@ const Signup = () => {
                 close={handleDialogToggle}>
                 {showSuccess ?
                     <ShowSuccess churchDetail={currentChurch} /> :
-                    showTerm ? <TermDialog /> : <VerifyChurchDialog isAuthenticated={isAuthenticated} handleClose={handleDialogToggle} navigate={setFormStage}
+                    showTerm ? <TermDialog /> : <VerifyChurchDialog handleClose={handleDialogToggle} navigate={setFormStage}
                         church={(currentChurch || defaultChurch)} />
                 }
             </Dialog>

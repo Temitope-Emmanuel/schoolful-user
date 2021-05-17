@@ -1,7 +1,7 @@
 import {ActionTypes,SetTitleAction,SetChurchAction,SetAdvertLayoutAction} from "./types"
 import {Dispatch} from "redux"
-// import * as accountService from "core/services/account.service"
 import {getChurchById} from "core/services/church.service"
+import {getUserChurchInfo} from "core/services/account.service"
 import * as userService from "core/services/user.service"
 import * as auth from "utils/auth"
 import history from "utils/history"
@@ -9,6 +9,7 @@ import {IChurch} from "core/models/Church"
 import {ToastFunc} from "utils/Toast"
 import {MessageType} from "core/enums/MessageType"
 import {AppState} from "store"
+import { LoggedInUser } from "core/models/LoggedInUser"
 
 export function getChurch(toast:ToastFunc) {
     return async(dispatch:Dispatch,state:() => AppState) => {
@@ -38,7 +39,7 @@ export function setAdvertLayout(arg:boolean):SetAdvertLayoutAction{
 }
 
 export function login(phoneNumber:number,password:string,toast:ToastFunc){
-    return async function(dispatch:Dispatch){
+    return async function(dispatch:any){
         dispatch(showLoading())
         try{
             return await userService.login(phoneNumber,password).then(payload => {
@@ -47,8 +48,10 @@ export function login(phoneNumber:number,password:string,toast:ToastFunc){
                     const {refreshToken,...userDetail} = payload.data;
                     auth.saveUserDetail(JSON.stringify(userDetail))
                     auth.saveToken(refreshToken)
-                    dispatch(setCurrentUser(JSON.parse(auth.getUserDetail() as string)))
-                    history.push(`/church/${payload.data.churchId}/home`)
+                    return dispatch(
+                        setCurrentUser(JSON.parse(auth.getUserDetail() as string),
+                        toast,() => {history.push(`/church/${payload.data.churchId}/home`)})
+                        )
                 }else{
                     toast({
                         messageType:"info",
@@ -71,19 +74,51 @@ export function login(phoneNumber:number,password:string,toast:ToastFunc){
 export function logout(redirect = true) {
         auth.removeToken()
         auth.removeUserDetail()
-        setCurrentUser({})
-        setCurrentChurch({})
+        clearCurrentChurch()
+        clearCurrentUser()
         if(redirect){
             history.push("/login")
         }
 }
-export function setCurrentUser(user:any) {
-    return{
-        type:ActionTypes.SETCURRENTUSER,
-        payload:user
+export function setCurrentUser(user:LoggedInUser,toast:ToastFunc,func?:any) {
+    return async function (dispatch:Dispatch){
+        try{
+            return await getUserChurchInfo(user.id).then(payload => {
+                if(payload.data && payload.data.length){
+                    const {church,...userDetail} = payload.data[0]
+                    dispatch({
+                        type:ActionTypes.SETCURRENTUSER,
+                        payload:{
+                            ...user,
+                            ...userDetail
+                        }
+                    })
+                    dispatch(hideAuthLoading())
+                    if(func){
+                        func()
+                    }
+                }
+            })
+        }catch(err){
+            toast({
+                title:"Unable to complete request to get user detail",
+                subtitle:`Error:${err}`,
+                messageType:"error"
+            })
+        }
     }
 }
-export function setCurrentChurch(church:IChurch | any){
+export function clearCurrentUser () {
+    return{
+        type:ActionTypes.CLEAR_CURRENT_USER
+    }
+}
+export function clearCurrentChurch () {
+    return{
+        type:ActionTypes.CLEAR_CURRENT_CHURCH
+    }
+}
+export function setCurrentChurch(church:IChurch){
     return{
         type:ActionTypes.SET_CURRENT_CHURCH,
         payload:church

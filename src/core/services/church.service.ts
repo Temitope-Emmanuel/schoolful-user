@@ -37,3 +37,13 @@ export const getChurchByDenomination = async (denominationId:number,stateId:numb
     }
 }
 
+
+export const getStatisticalInfo = async () => {
+    try{
+        const url = `${baseUrl}/getStatisticalInfo`
+        const response = await axios.get(url)
+        return response.data
+    }catch(err){
+        throw err
+    }
+}
