@@ -15,7 +15,7 @@ cache:
 install_dependencies:
   stage: build
   script:
-    - npm install
+    - npm install --save --legacy-peer-deps
     - npm run build
   artifacts:
     paths:
@@ -35,6 +35,6 @@ deploy:
         - ssh root@$IP_ADDRESS "mkdir -p /var/www/faithful_user && exit"
         - scp -r build root@$IP_ADDRESS:/var/www/faithful_user/
         - scp -r server root@$IP_ADDRESS:/var/www/faithful_user/
-        - ssh root@$IP_ADDRESS "cd /var/www/faithful_user/server && npm install && pm2 restart parse-apps.config.js && exit"
+        - ssh root@$IP_ADDRESS "cd /var/www/faithful_user/server && npm install --save --legacy-peer-deps && pm2 restart parse-apps.config.js && exit"
     only:
         - develop
