@@ -40,11 +40,10 @@ const PasswordInput: React.FC<IProps> = ({ placeholder, showErrors = true, icon,
   const toast = useToast()
   const handleClick = () => setShow(!show);
   const styles = useStyleConfig("Input", {})
-  const classes = useStyles()
   owasp.config({
     allowPassphrases: false,
     maxLength: 50,
-    minLength: 10,
+    minLength: 8,
     minOptionalTestsToPass: 4
   })
   const validate = (value: string) => {
@@ -70,7 +69,7 @@ const PasswordInput: React.FC<IProps> = ({ placeholder, showErrors = true, icon,
                   type={show ? "text" : "password"}
                 />
                 <InputRightElement width="4.5rem">
-                  <Icon cursor="pointer" color="black" bgColor="green"
+                  <Icon cursor="pointer" color="black"
                     onClick={handleClick}
                     as={show ? BiShow : AiFillEyeInvisible}
                   />

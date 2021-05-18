@@ -4,6 +4,8 @@ import {IChurchMember} from "core/models/ChurchMember"
 
 const baseUrl = new URL(`${process.env.REACT_APP_SERVER_URL}/Account`)
 
+const config:AxiosRequestConfig = {headers:{"Content-Type":"application/json-patch+json"}}
+
 export const getUserChurchInfo = async (personId:string) => {
     const url = `${baseUrl}/GetUserChurchInfo?personId=${personId}`
     try{
@@ -17,8 +19,7 @@ export const getUserChurchInfo = async (personId:string) => {
 export const createChurchMember = async (newChurchMember:IChurchMember):Promise<IResponse<IChurchMember>> => {
     try{
         const url = `${baseUrl}/createChurchMembers`
-        const config:AxiosRequestConfig = {headers:{"Content-Type":"application/json-patch+json"}}
-        const response = await axios.post(url,newChurchMember,config)
+        const response = await axios.post(url,newChurchMember)
         return response.data
     }catch(err){
         throw err

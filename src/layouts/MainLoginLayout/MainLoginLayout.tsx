@@ -25,10 +25,10 @@ const MainLoginLayout:React.FC<IProps> = ({children,showLogo}) => {
                 backgroundRepeat="no-repeat" backgroundPosition="center"
                 height="100%" backgroundSize="cover"
             />
-            <Flex position="relative" flex={[1,3]} pr={{sm:"5", md:"24"}}
-             pt={{sm:"5", md:"16"}} ml={[0,"2","32"]}
+            <Flex position="relative" flex={[1,3]}
+             pt={{sm:"5", md:"16"}} ml={[0,"2","16"]}
              flexDirection={["column"]}>
-            <HStack w="100%" justifyContent={["center","space-between"]} >
+            <HStack w="100%" maxW="lg" justifyContent={["center","space-between"]} >
                 {
                     showLogo && 
                 <Box display={["none","block"]}>

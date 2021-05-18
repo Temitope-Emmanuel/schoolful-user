@@ -7,7 +7,7 @@ import { PaystackConsumer } from "react-paystack"
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles"
 import { LandingImage } from "assets/images"
 import { NormalNumberStepper } from "components/Input"
-import { VStack, Icon, Text, Skeleton, Heading, HStack, AspectRatio, Image, Button, ModalBody, ModalContent, ModalFooter } from "@chakra-ui/react"
+import { VStack, Icon, Text, Skeleton, Heading, HStack, AspectRatio, Image, Button, ModalBody, ModalContent, ModalFooter, Collapse } from "@chakra-ui/react"
 import { FaHandHoldingHeart } from "react-icons/fa";
 import * as donationService from 'core/services/donation.service'
 import * as paymentService from "core/services/payment.service"
@@ -81,7 +81,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         "& > svg": {
             borderRadius: "50%",
             position: "absolute",
-            top: "49%",
+            top: "42%",
             zIndex: 3,
             right: "3%"
         },
@@ -132,12 +132,16 @@ const Giving = () => {
 
     }
     const [open, setOpen] = React.useState(false)
+    const [confirmation,setConfirmation] = React.useState(false)
     const [submitting,setSubmitting] = React.useState(false)
     const handleToggle = () => {
         setOpen(!open)
     }
     const toggleSubmitting = () => {
         setSubmitting(!submitting)
+    }
+    const toggleConfirmation = () => {
+        setConfirmation(!confirmation)
     }
     const [churchDonation, setChurchDonation] = React.useState<IDonation[]>(new Array(5).fill(defaultDonation))
     const currentUser = useSelector((state:AppState) => state.system.currentUser)
@@ -207,20 +211,29 @@ const Giving = () => {
 
     }
 
-    const beginPayment = (func:any) => () => {
+    const beginPayment = () => {
+        setTransactRef({
+            publicKey:"",
+            reference:""
+        })
         paymentService.generateDonationReference({
             amount:value as any,
             donationId:currentDonation?.donationID as number,
             organizationId:params.churchId as any,
-            organizationType:"charity",
+            organizationType:"church",
             paymentGateway:"Paystack",
-            userId:currentUser.id
+            userId:currentUser.id,
+            societyId:currentDonation?.societyId
         }).then(payload => {
             setTransactRef({
                 reference: payload.data.reference,
                 publicKey: payload.data.publicKey
             })
-            func()
+            Promise.resolve(() => {
+              setTimeout(() => {},500)  
+            }).then(() => {
+                toggleConfirmation()
+            })
         }).catch(err => {
             toast({
                 messageType:"error",
@@ -249,12 +262,28 @@ const Giving = () => {
                             {(formikProps: FormikProps<FormType>) => (
                                 <VStack className={classes.inputContainer}>
                                     <NormalNumberStepper value={value as number} maxValue={100000}
+                                    disabled={confirmation}
                                      onChange={setValue} label="Input Amount to send (NGN)" minValue={1000} />
+                                    
                                     <PaystackConsumer {...componentProps}>
                                         {({initializePayment}: any) => (
-                                            <Button onClick={beginPayment(initializePayment)}>
-                                                {`Pay ${value}`}
-                                            </Button>
+                                            <>
+                                                <Collapse in={!confirmation}>
+                                                    <Button onClick={beginPayment}>
+                                                        {`Pay ${value}`}
+                                                    </Button>
+                                                </Collapse>
+                                                <Collapse in={confirmation}>
+                                                    <HStack>
+                                                        <Button onClick={initializePayment}>
+                                                            Are You Sure ?
+                                                        </Button>
+                                                        <Button onClick={toggleConfirmation}>
+                                                            Cancel
+                                                        </Button>
+                                                    </HStack>
+                                                </Collapse>
+                                            </>
                                         )}
                                     </PaystackConsumer>
                                 </VStack>

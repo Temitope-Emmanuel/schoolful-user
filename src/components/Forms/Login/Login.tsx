@@ -48,14 +48,6 @@ const Signup = () => {
         password: ""
     }
 
-
-    // React.useEffect(() => {
-
-    //     if(isAuthenticated){
-    //         history.push(`/church/${currentUser.churchId}/dashboard`)
-    //     }
-    // },[isAuthenticated])
-
     return (
         <>
         <Text textStyle="h3" mb={"6"} textAlign={["center", "left"]}>

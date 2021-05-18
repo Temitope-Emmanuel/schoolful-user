@@ -19,7 +19,9 @@ export enum ActionTypes {
     HIDE_AUTH_SPINNER = "[System] Hide_Auth_Spinner",
     LOGIN = "[System] Login",
     SETCURRENTUSER = "[System] SetCurrentUser",
+    CLEAR_CURRENT_USER = "[System] Clear_Current_User",
     SET_CURRENT_CHURCH = "[System] SetCurrentChurch",
+    CLEAR_CURRENT_CHURCH = "[System] Clear_Current_Church",
     SET_PAGE_TITLE = "[System] SetPageTitle",
     SET_ADVERT_LAYOUT = "[System] SetAdvertLayout"
 }
@@ -54,8 +56,15 @@ export interface LoginAction {
 }
 export interface SetCurrentUserAction {
     type: ActionTypes.SETCURRENTUSER,
-    payload: any
+    payload: LoggedInUser
 } 
+export interface ClearCurrentChurchAction {
+    type:ActionTypes.CLEAR_CURRENT_CHURCH
+}
+export interface ClearCurrentUserAction {
+    type:ActionTypes.CLEAR_CURRENT_USER
+}
 
 export type Action = HideSpinnerAction  | LoginAction | SetCurrentUserAction | SetChurchAction |SetAdvertLayoutAction 
-| ShowSpinnerAction | HideSpinnerAction | SetTitleAction | ShowAuthSpinnerAction |HideAuthSpinnerAction
+| ShowSpinnerAction | HideSpinnerAction | SetTitleAction | ShowAuthSpinnerAction |HideAuthSpinnerAction | ClearCurrentChurchAction
+| ClearCurrentUserAction

@@ -23,7 +23,7 @@ export const generateDonationReference = async ({
     amount,donationId,organizationId,organizationType,paymentGateway,societyId,userId
 }:generateReference):Promise<IResponse<any>> => {
     try{
-        const url = `${baseUrl}/GenerateDonationReference?paymentGatewayType=${paymentGateway}&amount=${amount}&organizationType=${organizationType}&organizationId=${organizationId}&userId=${userId}&donationId=${donationId}&societyId=12`
+        const url = `${baseUrl}/GenerateDonationReference?paymentGatewayType=${paymentGateway}&amount=${amount}&organizationType=${organizationType}&organizationId=${organizationId}&userId=${userId}&donationId=${donationId}${societyId ? `&societyId=${societyId}` : ""} `
         const response = await axios.get(url)
         return response.data
     }catch(err){

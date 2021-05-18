@@ -2,28 +2,30 @@ import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { Link, useLocation } from "react-router-dom"
-import { Stack, Icon,Heading, Text, Flex, Avatar,
-   Spacer,Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react"
+import {
+  Stack, Icon, Heading, Text, Flex, Avatar,
+  Spacer, Menu, MenuButton, MenuItem, MenuList
+} from "@chakra-ui/react"
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import Toolbar from '@material-ui/core/Toolbar';
-import { CgBell,CgProfile } from 'react-icons/cg'
+import { CgBell, CgProfile } from 'react-icons/cg'
 import { Logo } from "components/Logo"
 import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
-import {useDispatch, useSelector} from "react-redux"
-import {LoadActivitiesForChurch,LoadEventsForChurch} from "store/Activity/actions"
-import {getPendingStream} from "store/Livestream/actions"
-import {AdvertLayout} from "layouts/AdvertLayout"
+import { useDispatch, useSelector } from "react-redux"
+import { LoadActivitiesForChurch, LoadEventsForChurch } from "store/Activity/actions"
+import { getPendingStream } from "store/Livestream/actions"
+import { AdvertLayout } from "layouts/AdvertLayout"
 import { MdDashboard } from "react-icons/md"
 import { FaPrayingHands, FaHandHoldingHeart, FaUserAlt, FaBible } from "react-icons/fa"
-import {GiPublicSpeaker} from "react-icons/gi"
+import { GiPublicSpeaker } from "react-icons/gi"
 import { FiActivity } from "react-icons/fi"
 import { TiGroup } from "react-icons/ti"
-import {FiLogOut} from "react-icons/fi"
+import { FiLogOut } from "react-icons/fi"
 import { RiBroadcastLine } from "react-icons/ri"
 import { GiHamburgerMenu } from "react-icons/gi"
-import {getChurch,logout} from "store/System/actions"
+import { getChurch, logout } from "store/System/actions"
 import useToast from "utils/Toast"
 import useParams from "utils/Params"
 import { AppState } from 'store';
@@ -51,8 +53,8 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: ".5rem",
       "& a": {
         textDecoration: "none",
-        "& > div":{
-          transition:".3s all linear"
+        "& > div": {
+          transition: ".3s all linear"
         }
       },
       "& p": {
@@ -83,8 +85,23 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     content: {
       flexGrow: 1,
-      backgroundColor:"#F9F5F9",
-      minHeight:"100vh"
+      backgroundColor: "#F9F5F9",
+      minHeight: "100vh",
+      "&::-webkit-scrollbar": {
+        width: "6px",
+        overflow: "scroll",
+        position: "absolute"
+      },
+      "&::-webkit-scrollbar-track": {
+        boxShadow: "inset 0 0 6px rgb(215, 218, 221)",
+        // background:primary,
+        borderRadius: "3px"
+      },
+      "&::-webkit-scrollbar-thumb": {
+        borderRadius: "10px",
+        background: "rgba(116, 125, 131, 0.61)",
+        boxShadow: "inset 0 0 6px rgba(215, 218, 221, 0.726)"
+      }
     },
     link: {
       color: "#383838",
@@ -92,8 +109,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     activeLink: {
       color: "#B603C9",
-      transform:"scale(1.1)",
-      marginLeft:".7rem",
+      transform: "scale(1.1)",
+      marginLeft: ".7rem",
       opacity: "1 !important"
     }
   }),
@@ -121,7 +138,7 @@ const dashboardMenu = [
 
 
 
-const DashboardLayout:React.FC<IProps> = (props) => {
+const DashboardLayout: React.FC<IProps> = (props) => {
   const location = useLocation()
   const activeLink = location.pathname
   const dispatch = useDispatch()
@@ -130,39 +147,35 @@ const DashboardLayout:React.FC<IProps> = (props) => {
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [desktopOpen,setDesktopOpen] = React.useState(true)
-  const currentUser = useSelector((state:AppState) => state.system.currentUser)
-  const currentChurch = useSelector((state:AppState) => state.system.currentChurch)
+  const [desktopOpen, setDesktopOpen] = React.useState(true)
+  const currentUser = useSelector((state: AppState) => state.system.currentUser)
+  const currentChurch = useSelector((state: AppState) => state.system.currentChurch)
 
   const atProfile = location.pathname.includes("/profile")
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-  // const handleDesktopToggle = () => {
-  //   setDesktopOpen(!desktopOpen)
-  // };
-
   React.useEffect(() => {
     dispatch(getChurch(toast))
-    dispatch(LoadActivitiesForChurch(params.churchId,toast))
-    dispatch(LoadEventsForChurch(params.churchId,toast))
+    dispatch(LoadActivitiesForChurch(params.churchId, toast))
+    dispatch(LoadEventsForChurch(params.churchId, toast))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
-  
+  },[currentUser])
+
   React.useEffect(() => {
     const cancelToken = axios.CancelToken.source()
-    if(currentChurch.churchID){
-      dispatch(getPendingStream("upComing",toast,cancelToken))
-      dispatch(getPendingStream("isLive",toast,cancelToken))
+    if (currentChurch.churchID) {
+      dispatch(getPendingStream("upComing", toast, cancelToken))
+      dispatch(getPendingStream("isLive", toast, cancelToken))
     }
 
-  },[currentChurch])
+  }, [currentChurch])
   const signOut = () => {
     logout()
   }
 
 
-  
+
   const drawer = (
     <>
       <div className={classes.toolbar} />
@@ -179,7 +192,7 @@ const DashboardLayout:React.FC<IProps> = (props) => {
       </Stack>
     </>
   );
-  
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -206,17 +219,17 @@ const DashboardLayout:React.FC<IProps> = (props) => {
           <Flex mr={["auto", "10"]} align="center" justifyContent="space-around"
             flex={2} >
             <Icon as={CgBell} boxSize="1.82rem" color="black" />
-              <Menu>
+            <Menu>
               <MenuButton>
-              <Avatar border="2px solid #B603C9"
-                size="sm" name="Temitope Emmanuel"
-                src={currentUser.picture_url || "https://bit.ly/ryan-florence"} />
+                <Avatar border="2px solid #B603C9"
+                  size="sm" name="Temitope Emmanuel"
+                  src={currentUser.picture_url || "https://bit.ly/ryan-florence"} />
               </MenuButton>
               <MenuList>
                 {
-                  !atProfile && 
+                  !atProfile &&
                   <MenuItem as={Link} to={`/church/${params.churchId}/profile`} color="rgba(0,0,0,.6)">
-                    <Icon as={CgProfile}/>
+                    <Icon as={CgProfile} />
                     Profile
                   </MenuItem>
                 }
@@ -262,9 +275,9 @@ const DashboardLayout:React.FC<IProps> = (props) => {
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-          <AdvertLayout>
-            {props.children}
-          </AdvertLayout>
+        <AdvertLayout>
+          {props.children}
+        </AdvertLayout>
       </main>
     </div>
   );

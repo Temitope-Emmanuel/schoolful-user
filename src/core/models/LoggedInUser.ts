@@ -9,5 +9,8 @@ export interface LoggedInUser {
     picture_url:string;
     callingCode:number;
     churchId: number;
-    role:string[]
+    role:string[];
+    churchMemberID:string;
+    personId:string;
+    
 }

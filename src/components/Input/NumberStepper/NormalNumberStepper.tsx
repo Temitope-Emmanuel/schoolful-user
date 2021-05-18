@@ -12,6 +12,7 @@ interface NormalStepperProps {
   defaultValue?: number;
   minValue: number;
   maxValue: number;
+  disabled?:boolean;
   value: number;
   label: string
   onChange: (value: string | number) => any
@@ -20,7 +21,7 @@ interface NormalStepperProps {
 
 const SliderInput: React.FC<NormalStepperProps> = ({
   defaultValue, maxValue, minValue,
-  onChange, value, label
+  onChange, value, label, disabled
 }) => {
   // const [value, setValue] = React.useState(0)
   // const handleChange = (value:string | number) => setValue(Number(value))
@@ -33,14 +34,14 @@ const SliderInput: React.FC<NormalStepperProps> = ({
       <NumberInput maxW="100px" defaultValue={defaultValue}
         max={maxValue} min={minValue}
         mr="2rem" value={value} onChange={onChange}>
-        <NumberInputField />
+        <NumberInputField disabled={disabled} />
         <NumberInputStepper>
           <NumberIncrementStepper />
           <NumberDecrementStepper />
         </NumberInputStepper>
       </NumberInput>
       <Slider flex="1" focusThumbOnChange={false}
-        min={minValue} max={maxValue}
+        min={minValue} max={maxValue} isDisabled={disabled}
         value={value} onChange={onChange}>
         <SliderTrack>
           <SliderFilledTrack />
