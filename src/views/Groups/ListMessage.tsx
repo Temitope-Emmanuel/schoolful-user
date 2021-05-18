@@ -19,9 +19,9 @@ const useStyles = makeStyles((theme) => createStyles({
         // filter:"blur(1px)",
         touchAction:"none",
         maxHeight: "70vh",
-        overflowY: "scroll",
         marginBottom: theme.spacing(2),
         padding: theme.spacing(0, 3),
+        overflowY: "scroll",
         overscrollBehavior:"contain",
         "&::-webkit-scrollbar": {
             width: "6px",
