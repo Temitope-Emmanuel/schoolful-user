@@ -36,17 +36,18 @@ export function loadChurchPrayer({
 export function loadChurchPrayerRequest({
     cancelToken,churchId,toast
 }:{
-    churchId:number;
+churchId:number;
     cancelToken:CancelTokenSource;
     toast:ToastFunc
 }){
+
     return async (dispatch:Dispatch,getState:() => AppState) => {
         prayerService.getPrayerRequest(churchId, cancelToken).then(payload => {
             const state = getState()
             const prayerRequest = payload.data.map(item => ({
                 ...item,
                 dateEntered:formatDistanceToNow(new Date(item.dateEntered)),
-                hasPrayed: Boolean(item.prayedPrayerRequests!.find(item => item.fullName === state.system.currentUser.fullname))
+                hasPrayed: Boolean(item.prayedPrayerRequests!.find(item => item.personPrayedId === state.system.currentUser.personId))
             }))
             dispatch<LoadPrayerRequestAction>({
                 type:ActionTypes.LOAD_PRAYER_REQUEST,

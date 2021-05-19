@@ -81,9 +81,10 @@ const AddPrayerRequest: React.FC<IAddPrayerRequest> = ({handleClose}) => {
     }
     const submitAddPrayerForm = (values: IAddPrayerRequestForm, { ...actions }: any) => {
         actions.setSubmitting(true)
+        const dateEntered =  (new Date()).toJSON();
         const newPrayer: IPrayerRequest = {
             churchId: Number(params.churchId),
-            dateEntered: (new Date()).toJSON(),
+            dateEntered,
             personId: currentUser.id,
             prayerDetail: values.request,
             prayerTitle: values.title,
@@ -510,31 +511,6 @@ const PrayerWall = () => {
                                         </HStack>
                                     </DetailCard>
                                 ))}
-                                {/* {prayerRequest.map((item, idx) => (
-                                    <DetailCard isLoaded={Boolean(item.prayerRequestID)}
-                                     title={item.prayerTitle}
-                                        key={idx}
-                                         subtitle={""}
-                                        image="https://bit.ly/ryan-florence" timing="2d"
-                                        body={item.prayerDetail}
-                                    >
-                                        <HStack width="100%" justify="space-between">
-                                            <AvatarGroup size="sm" max={3}>
-                                                <Avatar name="Ryan Florence" src="https://bit.ly/ryan-florence" />
-                                                <Avatar name="Segun Adebayo" src="https://bit.ly/sage-adebayo" />
-                                                <Avatar name="Kent Dodds" src="https://bit.ly/kent-c-dodds" />
-                                                <Avatar name="Prosper Otemuyiwa" src="https://bit.ly/prosper-baba" />
-                                                <Avatar name="Christian Nwamba" src="https://bit.ly/code-beast" />
-                                            </AvatarGroup>
-                                            <Text mr="auto">
-                                                <Text as="b">14 People</Text> Prayed
-                                            </Text>
-                                            <IconButton aria-label="add-to-prayed"
-                                             onClick={addToPrayed(item.prayerRequestID as number)}
-                                              icon={<Icon  boxSize="1rem" as={FaPrayingHands} />} />
-                                        </HStack>
-                                    </DetailCard>
-                                ))} */}
                             </VStack>
                         </TabPanel>
                         <TabPanel>
@@ -572,19 +548,6 @@ const PrayerWall = () => {
                                         image={currentChurch.churchLogo}
                                         body={item.prayerdetail}
                                     >
-                                        {/* <HStack width="100%" justify="space-between">
-                                            <AvatarGroup size="sm" max={3}>
-                                                <Avatar name="Ryan Florence" src="https://bit.ly/ryan-florence" />
-                                                <Avatar name="Segun Adebayo" src="https://bit.ly/sage-adebayo" />
-                                                <Avatar name="Kent Dodds" src="https://bit.ly/kent-c-dodds" />
-                                                <Avatar name="Prosper Otemuyiwa" src="https://bit.ly/prosper-baba" />
-                                                <Avatar name="Christian Nwamba" src="https://bit.ly/code-beast" />
-                                            </AvatarGroup>
-                                            <Text mr="auto">
-                                                <Text as="b">14 People</Text> Prayed
-                                                    </Text>
-                                            <Icon boxSize="1rem" as={FaPrayingHands} />
-                                        </HStack> */}
                                     </DetailCard>
                                 ))}
                             </VStack>

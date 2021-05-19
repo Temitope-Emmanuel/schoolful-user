@@ -257,7 +257,6 @@ const Home = () => {
                         </Link>
                     </Box>
                 }
-
                 <VStack>
                     <HStack display={{ base: "none", lg: "flex" }}>
                         {

@@ -44,6 +44,9 @@ import * as authManager from "utils/auth"
 import { AppState } from "store"
 import {RedirectType,SearchChurch} from 'components/Header/FindChurch'
 import { useHistory } from "react-router"
+import {firebaseMessaging} from "utils/Firebase/webPush"
+import { useFirebaseService } from "utils/Firebase/context"
+
 
 const CHURCH_MEMBER_STORAGE_KEY = "CHURCH_MEMBER_STORAGE_KEY"
 const SELECTED_CHURCH_KEY = "SELECTED_CHURCH_KEY"
@@ -619,9 +622,11 @@ const ChurchMemberBirthdayForm: React.FC<{
     handleShowSuccess:() => void
     navigate: (arg: formStageEnum) => void
 }> = ({ currentChurch, navigate,handleShowSuccess }) => {
-    const classes = churchMemberStyles()
     const toast = useToast()
     const dispatch = useDispatch()
+    const firebase = useFirebaseService()
+    const classes = churchMemberStyles()
+    const getUserPermission = new firebaseMessaging(toast,firebase)
     const { handleImageTransformation, image, resetImage } = useImageState()
     const [churchMemberDetail, setChurchMemberDetail] = React.useState<IChurchMember>()
 
@@ -639,11 +644,20 @@ const ChurchMemberBirthdayForm: React.FC<{
         })
     }, [])
 
+
+
     const handleSubmit = async (values: birthdayFormType, { ...actions }: any) => {
             actions.setSubmitting(true)
+            let fcmToken = ""
+            const response = await getUserPermission.getToken()
+            if(response){
+                fcmToken = response
+            }
             const {birthday} = values
+
             const { firstname, password, phoneNumber, email, lastname,genderID } = churchMemberDetail as IChurchMember
             const newUser: IChurchMember = {
+                fcmToken,
                 firstname,
                 lastname,
                 username: String(phoneNumber),
@@ -682,7 +696,7 @@ const ChurchMemberBirthdayForm: React.FC<{
                     subtitle: `Error:${err}`,
                     messageType: MessageType.ERROR
                 })
-                actions.setSubmittiong(false)
+                actions.setSubmitting(false)
             })
     }
 

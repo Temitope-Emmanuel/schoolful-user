@@ -138,7 +138,7 @@ const Groups = () => {
         getGroupsByChurch()
         const setUpConnection = async () => {
             const connect = new HubConnectionBuilder()
-            .withUrl(`http://api.thefaithfuls.com/chathub` as string ).build()
+            .withUrl(`https://api.thefaithfuls.com/chathub` as string ).build()
             await connect.start().catch(err => {
                 toast({
                     messageType:"error",
@@ -148,15 +148,12 @@ const Groups = () => {
             })
             connection.current = connect
         }
-        // if(!connection.current){
-            setUpConnection()
-        // }
-        // return () => {
-        //     connection.current?.stop().then(() => {console.log('success')})
-        // }
+        setUpConnection()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
-
+    // if(connection?.current){
+    //     return <div>loading</div>
+    // }
 
     return(
         <Stack direction={["column","row"]} className={classes.root}>

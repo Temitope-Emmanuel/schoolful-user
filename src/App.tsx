@@ -8,7 +8,7 @@ import {logout,setCurrentUser,hideAuthLoading} from "store/System/actions"
 import * as userService from "core/services/user.service"
 import * as authManager from "utils/auth"
 import useToast from "utils/Toast"
-
+import {useFirebaseService} from "utils/Firebase/context"
 
 const App = () => {
   const dispatch = useDispatch();
@@ -16,11 +16,18 @@ const App = () => {
   const token = authManager.getToken();
   const userDetail = JSON.parse(authManager.getUserDetail() as string)
   const windowsLocation = window.location.href
-  
+  const firebase = useFirebaseService()
 
   React.useEffect(() => {
+    firebase?.messaging.onMessage(data => {
+      toast({
+        messageType:"info",
+        title:data.title,
+        subtitle:data.body
+      })
+    })
+
     if(!token || !userDetail){
-      dispatch(hideAuthLoading())
       logout(windowsLocation.includes("church"))
     }else{
       userService.verifyToken(token).then(payload => {
@@ -33,7 +40,7 @@ const App = () => {
         }
         authManager.saveUserDetail(JSON.stringify(newUserDetail))
         const savedUserDetail = JSON.parse(authManager.getUserDetail() as string)
-        setCurrentUser(savedUserDetail,toast,() => {dispatch(hideAuthLoading())})
+        dispatch(setCurrentUser(savedUserDetail,toast))
       }).catch((err) => {
         dispatch(hideAuthLoading())
         toast({
@@ -48,9 +55,9 @@ const App = () => {
   },[])
   
   return (
-    <Router history={history}>
-      <MainRouter/>
-    </Router>
+      <Router history={history}>
+        <MainRouter/>
+      </Router>
   );
 }
 

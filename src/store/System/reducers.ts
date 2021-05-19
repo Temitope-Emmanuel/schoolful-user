@@ -42,6 +42,7 @@ const initialState: SystemState = {
 
 
 export function systemReducer(state = initialState, action: Action): SystemState {
+    console.log({action})
     switch (action.type) {
         case ActionTypes.SET_ADVERT_LAYOUT:
             return {

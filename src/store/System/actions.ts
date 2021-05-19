@@ -95,6 +95,7 @@ export function setCurrentUser(user:LoggedInUser,toast:ToastFunc,func?:any) {
                     })
                     dispatch(hideAuthLoading())
                     if(func){
+                        console.log("calling this function",{func})
                         func()
                     }
                 }
@@ -140,6 +141,7 @@ export function showAuthLoading(){
     }
 }
 export function hideAuthLoading(){
+    console.log("callling this func")
     return{
         type:ActionTypes.HIDE_AUTH_SPINNER
     }

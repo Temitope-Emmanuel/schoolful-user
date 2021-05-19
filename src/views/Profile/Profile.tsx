@@ -13,6 +13,7 @@ import { IoMdExit } from "react-icons/io"
 import { IconInput } from "components/Input"
 import { Formik, FormikProps } from "formik"
 import * as Yup from "yup"
+import * as authManager from "utils/auth"
 import useToast from "utils/Toast"
 import { getUserChurchInfo } from "core/services/account.service"
 import { updateChurchMember } from "core/services/userSetting.service"
@@ -23,7 +24,10 @@ import { IChurch } from "core/models/Church"
 import { DatePicker } from 'components/Input'
 import { Dialog } from "components/Dialog"
 import {SearchChurch} from "components/Header/FindChurch"
-
+import { setCurrentUser } from "store/System/actions"
+import { useHistory } from "react-router"
+import useParams from "utils/Params"
+import { useImageState } from "utils/useImageState"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -92,13 +96,12 @@ const Profile = () => {
         dateOfBirth: new Date()
     }
     const classes = useStyles()
+    const params = useParams()
     const [currentUserChurch,setCurrentChurch] = React.useState<IChurch>()
     const [open, setOpen] = React.useState(false)
     const dispatch = useDispatch()
-    const [image, setImage] = React.useState({
-        name: "",
-        base64: ""
-    })
+    const history = useHistory()
+    const {handleImageTransformation,image,resetImage} = useImageState()
 
     const currentUser = useSelector((state: AppState) => state.system.currentUser)
     const currentChurch = useSelector((state: AppState) => state.system.currentChurch)
@@ -147,16 +150,6 @@ const Profile = () => {
             church: Yup.string().required()
         })
     )
-    const handleImageTransformation = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files![0]
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = function () {
-                setImage({ ...image, base64: (reader.result as string), name: file.name })
-            }
-            reader.readAsDataURL(file)
-        }
-    }
 
     const handleToggle = () => {
         setOpen(!open)
@@ -167,17 +160,29 @@ const Profile = () => {
         const updateChurchMemberDetail = {
             ...newProfile,
             ...values,
-            // churchMemberID:currentUser
-            imageUrl: image.base64 || profile.picture_url
+            imageUrl: image.base64 || profile.picture_url,
+            churchID:currentChurch.churchID,
+            churchMemberID: currentUser.churchMemberID,
+            personId: currentUser.personId,
+            ...(image.base64 && { picture_url: image.base64 })
         }
 
         updateChurchMember((updateChurchMemberDetail as any)).then(payload => {
             actions.setSubmitting(false)
+            const savedUserDetail = JSON.parse(authManager.getUserDetail() as string)
+            dispatch(
+                setCurrentUser({
+                    ...savedUserDetail,
+                    churchId:currentChurch.churchID as number
+                },toast)
+            )
             toast({
                 title: "User detail Updated",
                 subtitle: "",
                 messageType: "success"
             })
+            history.push(`/church/${params.churchId}/home`)
+            resetImage()
         }).catch(err => {
             actions.setSubmitting(false)
             toast({
@@ -193,7 +198,6 @@ const Profile = () => {
         <>
             <Dialog open={open} close={handleToggle}>
                 <SearchChurch handleClose={handleToggle} />
-                {/* <SelectNewChurch handleClose={handleToggle} setNewChurch={setCurrentChurch} /> */}
             </Dialog>
             <VStack className={classes.root}>
                 <VStack spacing={10}>
@@ -235,12 +239,6 @@ const Profile = () => {
                                         align="flex-end"
                                         divider={<StackDivider my={10} borderColor="gray.200" />}>
                                         <VStack>
-                                            {/* <IconInput name="dateOfbirth" placeholder="2000-00-00" label="Birthday"
-                                        children={<DatePicker name="deteofbirth" value={formikProps.values.dateofbirth}
-                                         onChange={onChange("dateofbirth")}                    
-                                        />}
-                                        primaryIcon={FaBirthdayCake}
-                                    /> */}
                                             <HStack className={classes.dateContainer}>
                                                 <Icon as={FaBirthdayCake} />
                                                 <DatePicker name="dateOfbirth" value={formikProps.values.dateOfbirth}
@@ -257,18 +255,12 @@ const Profile = () => {
                                         </VStack>
                                         <VStack>
                                             <HStack my={7} alignSelf="flex-start">
-                                                {/* <Text color="primary">
-                                            Groups
-                                        </Text> */}
                                                 <Button onClick={(formikProps.handleSubmit as any)}
                                                     isLoading={formikProps.isSubmitting} loadingText={`Updating User ${formikProps.values.firstname}`}
                                                     disabled={formikProps.isSubmitting || !formikProps.isValid}
                                                 >
                                                     Submit
-                                        </Button>
-                                                {/* <Button>
-                                            Join Group
-                                        </Button> */}
+                                                </Button>
                                             </HStack>
                                             <IconInput name="member" placeholder="Member" label="Choir Group"
                                                 secondaryIcon={IoMdExit}

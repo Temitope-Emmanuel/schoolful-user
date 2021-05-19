@@ -103,15 +103,14 @@ const ListMessage: React.FC<IProps> = ({ connection, currentGroup }) => {
             refresher.classList.remove('done');
         }
       }
-      
-
-
 
     React.useEffect(() => {
         connection.on("ReceiveMessageApi", (message) => {
+            console.log("received message")
             dispatch(addGroupMessage(message, toast))
         })
         connection.on("NewUser", data => {
+            console.log("a new user here")
             toast({
                 messageType: "info",
                 subtitle: `${data}`,

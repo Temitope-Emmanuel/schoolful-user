@@ -10,6 +10,7 @@ export interface IRole {
 
 export interface IChurchMember {
     id?:string;
+    fcmToken?:string;
     username: string;
     password: string;
     phoneNumber: number | null;

@@ -73,6 +73,7 @@ const SendMessage:React.FC<IProps> = ({connection,currentGroupDetail:{name,socie
                 text:values.message,
                 personId:currentUser.id
             }
+            console.log({newMessage})
             connection.send("SendGroupMessage",newMessage)
             actions.setSubmitting(false)
             actions.resetForm()

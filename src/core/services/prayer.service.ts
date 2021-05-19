@@ -206,7 +206,7 @@ export const GetBibleBookChapters = async (
   version:string,
   cancelToken:CancelTokenSource
 ): Promise<IResponse<IBibleChapter[]>> => {
-  const url = `${baseUrl}//GetBibleVerseChapterByBook?bookid=${bookid}&version=${version}`
+  const url = `${baseUrl}/GetBibleVerseChapterByBook?bookid=${bookid}&version=${version}`
   try{
     const response = await axios.get(url,{
       cancelToken:cancelToken.token
