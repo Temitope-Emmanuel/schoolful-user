@@ -16,10 +16,12 @@ interface IProps {
   showErrors?: boolean;
   readOnly?: boolean;
   ref?: React.RefObject<HTMLInputElement>
+
+  onKeyPress?:(e:React.KeyboardEvent<HTMLInputElement>) => void
 }
 
 const NormalInput: React.FC<IProps> = ({ 
-  placeholder, showErrors = true, icon, label,
+  placeholder, showErrors = true, icon, label,onKeyPress,
    name, type = "text", ref, readOnly, ...props }) => {
   const styles = useStyleConfig("Input", {})
   return (
@@ -31,7 +33,7 @@ const NormalInput: React.FC<IProps> = ({
             { label && <FormLabel fontWeight="500" color="primary">{label}</FormLabel>}
             {
                   <Input sx={styles} type={type || "text"} {...field} id={name}
-                    placeholder={placeholder} />
+                    placeholder={placeholder} onKeyPress={onKeyPress} />
             }
             { form.touched[name] &&
               form.errors[name] &&

@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
                 background: "rgba(116, 125, 131, 0.61)",
                 boxShadow: "inset 0 0 6px rgba(215, 218, 221, 0.726)"
             }
-        },
+        }
     },
     iconContainer:{
         [theme.breakpoints.up("md")]:{
@@ -151,9 +151,6 @@ const Groups = () => {
         setUpConnection()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
-    // if(connection?.current){
-    //     return <div>loading</div>
-    // }
 
     return(
         <Stack direction={["column","row"]} className={classes.root}>
@@ -163,8 +160,9 @@ const Groups = () => {
                         <VStack spacing={10} width={{base:"95%",md:"80%"}}>
                             {churchGroup.map((item,idx) => (
                                 <GroupCard isLoaded={Boolean(item.societyID)}
-                                imgSrc={item.imageUrl} name={item.name} onClick={handleSetCurrentGroup(item)}
-                                    active={currentGroup.societyID === item.societyID} member={item.memberCount} key={item.societyID || idx}
+                                    imgSrc={item.imageUrl} name={item.name} onClick={handleSetCurrentGroup(item)}
+                                    active={currentGroup.societyID === item.societyID} member={item.memberCount}
+                                    key={item.societyID || idx}
                                 />
                             ))}
                         </VStack>

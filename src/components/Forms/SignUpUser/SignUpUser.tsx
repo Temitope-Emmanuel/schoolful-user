@@ -213,7 +213,11 @@ const VerifyChurchDialog:React.FC<{
                 subtitle: "",
                 messageType: "success"
             })
-            history.push(`/church/${church.churchID}/profile`)
+            if(isAuthenticated){
+                history.push(`/church/${church.churchID}/profile`)
+            }else{
+                navigate(formStageEnum.CHURCH_BIRTHDAY)
+            }
         }).catch(err => {
             toast({
                 title: "Unable to Update User Detail",
@@ -654,7 +658,6 @@ const ChurchMemberBirthdayForm: React.FC<{
                 fcmToken = response
             }
             const {birthday} = values
-
             const { firstname, password, phoneNumber, email, lastname,genderID } = churchMemberDetail as IChurchMember
             const newUser: IChurchMember = {
                 fcmToken,

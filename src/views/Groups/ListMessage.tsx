@@ -105,11 +105,10 @@ const ListMessage: React.FC<IProps> = ({ connection, currentGroup }) => {
       }
 
     React.useEffect(() => {
-        connection.on("ReceiveMessageApi", (message) => {
-            console.log("received message")
+        connection.on("receivemessageapi", (message) => {
             dispatch(addGroupMessage(message, toast))
         })
-        connection.on("NewUser", data => {
+        connection.on("newuser", data => {
             console.log("a new user here")
             toast({
                 messageType: "info",
@@ -164,7 +163,7 @@ const ListMessage: React.FC<IProps> = ({ connection, currentGroup }) => {
     return (
         <>
         <Box className={classes.loadMessage}>
-            Load New Message
+            Load Old Message
         </Box>
         {/* <Box className="refresher">
             <Box className="loading-bar" />

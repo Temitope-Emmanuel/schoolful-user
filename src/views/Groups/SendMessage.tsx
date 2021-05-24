@@ -71,10 +71,14 @@ const SendMessage:React.FC<IProps> = ({connection,currentGroupDetail:{name,socie
                 groupName:name,
                 when:(new Date()).toJSON() as any,
                 text:values.message,
+                senderImagerUrl:currentUser.picture_url || "", 
                 personId:currentUser.id
             }
-            console.log({newMessage})
-            connection.send("SendGroupMessage",newMessage)
+            console.log({newMessage,connection})
+            connection.send("SendGroupMessage",newMessage).then((payload) => {
+            }).catch(err => {
+                console.log({err})
+            })
             actions.setSubmitting(false)
             actions.resetForm()
             // toast({
@@ -96,14 +100,21 @@ const SendMessage:React.FC<IProps> = ({connection,currentGroupDetail:{name,socie
         message:Yup.string().required()
     })
 
+    const handleKeyPress = (arg:any) => (e:any) => {
+        if(e.code === "Enter"){
+            arg()
+        }
+    }
+
     return(
         <Box className={classes.root}>
             <Formik initialValues={initialValues} validationSchema={validationScheme}
              onSubmit={handleSubmit}>
                 {(formikProps:FormikProps<messageForm>) => (
                     <>
-                        <GoPlus/>
+                        {/* <GoPlus/> */}
                         <TextInput name="message" placeholder="Write a message"
+                            onKeyPress={handleKeyPress(formikProps.handleSubmit)}
                         />
                         <TouchRipple 
                             disabled={formikProps.isSubmitting || !formikProps.dirty || !formikProps.isValid}
