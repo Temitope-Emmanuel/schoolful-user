@@ -2,8 +2,8 @@ import { GroupMessage } from "core/models/Chat";
 import { IGroup } from "core/models/Group";
 import { ToastFunc } from "utils/Toast";
 import {
-    ActionTypes,ClearGroupMessage,showLoading,hideLoading,
-    SetCurrentGroupAction,loadGroupMessageAction
+    ActionTypes,ClearGroupMessage,showLoading,hideLoading,IChatMessageInfo,
+    SetCurrentGroupAction,loadGroupMessageAction,setChatMessageInfoAction,getPreviousMessageAction
 } from "./types"
 import {getGroupChat} from "core/services/chat.service"
 import { Dispatch } from "redux";
@@ -35,7 +35,6 @@ export function hideChatLoading () : hideLoading{
 export function addGroupMessage(newMessage:GroupMessage,toast:ToastFunc){
     return async (dispatch:Dispatch,state:() => AppState) => {
         try{
-            // dispatch(showChatLoading())
             const newCheckedMessage:GroupMessage = {
                 ...newMessage,
                  ownerIsCurrentUser:state().system.currentUser.id === newMessage.personId
@@ -54,27 +53,45 @@ export function addGroupMessage(newMessage:GroupMessage,toast:ToastFunc){
     }
 }
 
-export function loadGroupChatMessage(toast:ToastFunc){
-    return async (dispatch:Dispatch,state:() => AppState) => {
+export function setChatMessageInfo(arg:IChatMessageInfo):setChatMessageInfoAction{
+    return({
+        type:ActionTypes.SET_CHAT_MESSAGE_INFO,
+        payload:arg
+    })
+}
+
+
+export function loadGroupChatMessage(toast:ToastFunc,{pageSize,currentPage}:Pick<IChatMessageInfo,"pageSize"|"currentPage">,prev = false){
+    return async (dispatch:Dispatch,getState:() => AppState) => {
         dispatch(showChatLoading())
+        const {chat:{currentGroup},system:{currentUser}} = getState()
         try{
-            // dispatch(clearGroupMessage())
             return getGroupChat({
-                groupName:state().chat.currentGroup.name,
-                page:1,
-                take:10
-            }).then(payload => {
-                const currentUserId = state().system.currentUser.id;
-                const checkOwner = payload.data.records!.map(item => ({
+                groupName:currentGroup.name,
+                page:currentPage,
+                take:pageSize
+            }).then(({data:{currentPage,pageSize,totalPages,totalRecords,records}}) => {
+                const currentUserId = currentUser.id;
+                const checkOwner = records!.map(item => ({
                     ...item,
                     ownerIsCurrentUser:currentUserId === item.personId
-                })).reverse()
+                }))
                 dispatch(hideChatLoading())
-                
-                dispatch<loadGroupMessageAction>({
-                    type:ActionTypes.LOAD_GROUP_MESSAGE,
-                    payload:checkOwner
-                })
+                dispatch(setChatMessageInfo({
+                    currentPage,totalRecords,
+                    totalPages,pageSize
+                }))
+                if(prev){
+                    dispatch<getPreviousMessageAction>({
+                        payload:checkOwner,
+                        type:ActionTypes.GET_PREVIOUS_MESSAGE
+                    })
+                }else{
+                    dispatch<loadGroupMessageAction>({
+                        type:ActionTypes.LOAD_GROUP_MESSAGE,
+                        payload:checkOwner
+                    })
+                }
             })
         }catch(err){
             dispatch(hideChatLoading())

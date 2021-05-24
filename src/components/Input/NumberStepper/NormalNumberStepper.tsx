@@ -41,7 +41,7 @@ const SliderInput: React.FC<NormalStepperProps> = ({
         </NumberInputStepper>
       </NumberInput>
       <Slider flex="1" focusThumbOnChange={false}
-        min={minValue} max={maxValue} isDisabled={disabled}
+        min={minValue} max={maxValue}
         value={value} onChange={onChange}>
         <SliderTrack>
           <SliderFilledTrack />

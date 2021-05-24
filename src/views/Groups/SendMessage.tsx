@@ -16,9 +16,12 @@ import * as Yup from "yup"
 
 const useStyles = makeStyles((theme) => createStyles({
     root:{
+        zIndex:theme.zIndex.modal,
         boxShadow:"0px 0px 6px #00000029",
         borderRadius:"2.5px",
         display:"flex",
+        position:"absolute",
+        bottom:0,
         backgroundColor:"white",
         alignItems:"center",
         width:"85%",
@@ -60,6 +63,7 @@ interface IProps {
 
 const SendMessage:React.FC<IProps> = ({connection,currentGroupDetail:{name,societyID}}) => {
     const classes = useStyles()
+    const chatLoading = useSelector((state:AppState) => state.chat.isLoading)
     const currentUser = useSelector((state:AppState) => state.system.currentUser)
     const toast = useToast()
 
@@ -113,11 +117,11 @@ const SendMessage:React.FC<IProps> = ({connection,currentGroupDetail:{name,socie
                 {(formikProps:FormikProps<messageForm>) => (
                     <>
                         {/* <GoPlus/> */}
-                        <TextInput name="message" placeholder="Write a message"
+                        <TextInput name="message" placeholder="Write a message" disabled={chatLoading}
                             onKeyPress={handleKeyPress(formikProps.handleSubmit)}
                         />
                         <TouchRipple 
-                            disabled={formikProps.isSubmitting || !formikProps.dirty || !formikProps.isValid}
+                            disabled={chatLoading || formikProps.isSubmitting || !formikProps.dirty || !formikProps.isValid}
                             onClick={formikProps.handleSubmit as any}>
                             {formikProps.isSubmitting ? <VscLoading className={classes.rotate} /> : <AiOutlineSend/>}
                         </TouchRipple>

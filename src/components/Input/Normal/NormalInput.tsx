@@ -16,13 +16,13 @@ interface IProps {
   showErrors?: boolean;
   readOnly?: boolean;
   ref?: React.RefObject<HTMLInputElement>
-
+  disabled?:boolean;
   onKeyPress?:(e:React.KeyboardEvent<HTMLInputElement>) => void
 }
 
 const NormalInput: React.FC<IProps> = ({ 
   placeholder, showErrors = true, icon, label,onKeyPress,
-   name, type = "text", ref, readOnly, ...props }) => {
+  name,disabled, type = "text", ref, readOnly, ...props }) => {
   const styles = useStyleConfig("Input", {})
   return (
     <Field name={name}>

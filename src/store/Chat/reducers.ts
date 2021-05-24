@@ -1,4 +1,4 @@
-import {ChatState,Action,ActionTypes} from "./types"
+import {ChatState,Action,IChatMessageInfo,ActionTypes} from "./types"
 
 const initialState:ChatState = {
     currentGroup:{
@@ -10,7 +10,13 @@ const initialState:ChatState = {
         name:""
     },
     currentGroupMessage:[],
-    isLoading:false
+    isLoading:false,
+    chatMessageInfo:{
+        currentPage:0,
+        pageSize:0,
+        totalPages:0,
+        totalRecords:0
+    }
 }
 
 export function chatReducer(state = initialState,action:Action):ChatState {
@@ -19,6 +25,19 @@ export function chatReducer(state = initialState,action:Action):ChatState {
             return {
                 ...state,
                 currentGroupMessage:[...state.currentGroupMessage,action.payload]
+            }
+        case ActionTypes.SET_CHAT_MESSAGE_INFO:
+            return {
+                ...state,
+                chatMessageInfo:action.payload
+            }
+        case ActionTypes.GET_PREVIOUS_MESSAGE:
+            return {
+                ...state,
+                currentGroupMessage:[
+                    ...action.payload,
+                    ...state.currentGroupMessage
+                ]
             }
         case ActionTypes.LOAD_GROUP_MESSAGE:
             return {

@@ -179,7 +179,7 @@ const Groups = () => {
                     }
                 </Box>
             </Box>
-            <VStack bgColor="#F9F5F9" flex={6}>
+            <VStack bgColor="#F9F5F9" flex={6} position="relative" >
                 {
                 !currentGroup.societyID && 
                 <Typography>

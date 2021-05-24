@@ -1,11 +1,14 @@
 import React from "react"
-import { Box } from "@material-ui/core"
+import {Button} from "components/Button"
 import { makeStyles, createStyles } from "@material-ui/core/styles"
 import { HubConnection } from "@aspnet/signalr"
 import { IGroup } from "core/models/Group"
 import Message from "./Message"
 import { useDispatch, useSelector } from "react-redux"
 import { addGroupMessage, loadGroupChatMessage } from "store/Chat/actions"
+import {} from "axios"
+import {setChatMessageInfo} from "store/Chat/actions"
+import {getGroupChat} from "core/services/chat.service"
 import {primary} from "theme/chakraTheme/palette"
 import { AppState } from "store"
 import useToast from "utils/Toast"
@@ -45,10 +48,11 @@ const useStyles = makeStyles((theme) => createStyles({
         backgroundColor:primary,
         color:"white",
         boxShadow:"0px 5px 10px #0000001A"
+    },
+    refBox:{
+        marginTop:theme.spacing(8)
     }
 }))
-
-
 
 
 interface IProps {
@@ -56,15 +60,16 @@ interface IProps {
     currentGroup: IGroup
 }
 
-
-
 const ListMessage: React.FC<IProps> = ({ connection, currentGroup }) => {
     const classes = useStyles()
     const inbox = React.useRef<HTMLDivElement | null>(null)
+    const preveMessage = React.useRef<HTMLDivElement | null>(null)
     const [startY,setStartY] = React.useState(0)
     const dispatch = useDispatch()
     const toast = useToast()
     const currentMessage = useSelector((state: AppState) => state.chat.currentGroupMessage)
+    const chatLoading = useSelector((state:AppState) => state.chat.isLoading)
+    const {currentPage,pageSize} = useSelector((state:AppState) => state.chat.chatMessageInfo)
     const [currentLocalGroup,setCurrentLocalGroup] = React.useState<IGroup>()
     const messageListViewRef = React.useRef<HTMLDivElement>(null)
 
@@ -102,7 +107,7 @@ const ListMessage: React.FC<IProps> = ({ connection, currentGroup }) => {
             await sleep(0); // let new styles settle.
             refresher.classList.remove('done');
         }
-      }
+    }
 
     React.useEffect(() => {
         connection.on("receivemessageapi", (message) => {
@@ -148,23 +153,45 @@ const ListMessage: React.FC<IProps> = ({ connection, currentGroup }) => {
     React.useEffect(() => {
         const addToGroup = () => {
             if(connection && currentGroup.societyID !== currentLocalGroup?.societyID){
-               connection.send("joinGroup",currentGroup.name)
-               dispatch(loadGroupChatMessage(toast))
+               connection.send("joinGroup",currentGroup.name).then(() => {
+                   getGroupChat({
+                       groupName:currentGroup.name,
+                       page:1,
+                       take:5
+                   }).then(({data:{totalPages,totalRecords,currentPage}}) => {
+                       dispatch(setChatMessageInfo({
+                           totalPages,
+                           totalRecords,
+                           currentPage,
+                           pageSize:5
+                       }))
+                       dispatch(loadGroupChatMessage(toast,{currentPage:totalPages,pageSize:5},false))
+                   }).catch(err => {
+                       toast({
+                           messageType:"error",
+                           subtitle:`Error:${err}`,
+                           title:"Unable to chat"
+                       })
+                   })
+               })
             }
         }
-        
         if(currentGroup.societyID !== currentLocalGroup?.societyID ){
             addToGroup()
             setCurrentLocalGroup(currentGroup)
         }
     },[currentGroup])
 
+    const getPreviousMessage = () => {
+        dispatch(loadGroupChatMessage(toast,{currentPage:currentPage-1,pageSize:5},true))
+    }
+
 
     return (
         <>
-        <Box className={classes.loadMessage}>
+        <Button disabled={currentPage <= 1 || chatLoading} onClick={getPreviousMessage} className={classes.loadMessage}>
             Load Old Message
-        </Box>
+        </Button>
         {/* <Box className="refresher">
             <Box className="loading-bar" />
             <Box className="loading-bar" />
@@ -172,12 +199,13 @@ const ListMessage: React.FC<IProps> = ({ connection, currentGroup }) => {
             <Box className="loading-bar" />
         </Box> */}
         <div id="inbox" className={classes.root} ref={inbox}>
+            <div ref={preveMessage} />
             {
                 currentMessage.map((item) => (
                     <Message key={item.id} chat={item} />
                 ))
             }
-            <div ref={messageListViewRef} />
+            <div ref={messageListViewRef} className={classes.refBox} />
         </div>
         </>
     )
