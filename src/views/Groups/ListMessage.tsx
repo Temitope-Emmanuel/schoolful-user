@@ -1,12 +1,12 @@
 import React from "react"
 import {Button} from "components/Button"
 import { makeStyles, createStyles } from "@material-ui/core/styles"
+import {Box} from "@material-ui/core"
 import { HubConnection } from "@aspnet/signalr"
 import { IGroup } from "core/models/Group"
 import Message from "./Message"
 import { useDispatch, useSelector } from "react-redux"
 import { addGroupMessage, loadGroupChatMessage } from "store/Chat/actions"
-import {} from "axios"
 import {setChatMessageInfo} from "store/Chat/actions"
 import {getGroupChat} from "core/services/chat.service"
 import {primary} from "theme/chakraTheme/palette"
@@ -192,12 +192,12 @@ const ListMessage: React.FC<IProps> = ({ connection, currentGroup }) => {
         <Button disabled={currentPage <= 1 || chatLoading} onClick={getPreviousMessage} className={classes.loadMessage}>
             Load Old Message
         </Button>
-        {/* <Box className="refresher">
+        <Box className="refresher">
             <Box className="loading-bar" />
             <Box className="loading-bar" />
             <Box className="loading-bar" />
             <Box className="loading-bar" />
-        </Box> */}
+        </Box>
         <div id="inbox" className={classes.root} ref={inbox}>
             <div ref={preveMessage} />
             {
