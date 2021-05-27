@@ -19,6 +19,7 @@ import {primary} from "theme/chakraTheme/palette"
 import {AppState} from "store"
 
 
+
 const useStyles = makeStyles((theme:Theme) => createStyles({
     root:{
         flex:6,
@@ -136,6 +137,7 @@ const Groups = () => {
             })
         }
         getGroupsByChurch()
+        const groupUrl = process.env.REACT_APP_SERVER_CHAT || ''
         const setUpConnection = async () => {
             const connect = new HubConnectionBuilder()
             .withUrl(`https://api.thefaithfuls.com/chathub` as string ).build()
