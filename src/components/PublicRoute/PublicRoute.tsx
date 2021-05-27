@@ -3,7 +3,6 @@ import {Route,Redirect} from "react-router-dom"
 import {useSelector} from "react-redux"
 import {AppState} from "store"
 
-
 const PublicRoute = ({component:Component,...rest}:any) => {
     const isAuthenticated = useSelector<AppState>((state) => state.system.isAuthenticated)
     const isLoading = useSelector<AppState>((state) => state.system.authLoading)
