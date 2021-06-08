@@ -14,7 +14,6 @@ import { IAdvert } from "core/models/Advert"
 import * as adsService from "core/services/ads.service"
 import {useSelector,useDispatch} from "react-redux"
 import {AppState} from "store"
-import { useMediaQuery } from "@material-ui/core"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -100,7 +99,6 @@ const AdvertLayout = ({ children }: any) => {
     const currentDate = new Date()
     // add the total amount of second the current date
     const weekEndDate = new Date(currentDate.getTime() + (604800000))
-    console.log({mediaQuery})
     React.useEffect(() => {
         const getChurchAd = async () => {
             await adsService.getAdverts(Number(params.churchId)).then(payload => {

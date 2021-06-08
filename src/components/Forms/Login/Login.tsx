@@ -1,7 +1,7 @@
 import React from "react"
 import {useHistory} from "react-router-dom"
 import {useDispatch} from "react-redux"
-import {Box,Heading,FormHelperText,FormControl,Text} from "@chakra-ui/react"
+import {Box,FormHelperText,FormControl,Text} from "@chakra-ui/react"
 import {Button} from "components/Button"
 import {useSelector} from "react-redux"
 // import {AppState} from "store"
@@ -23,8 +23,6 @@ interface IForm {
 const Signup = () => {
     const dispatch = useDispatch()
     const history = useHistory()
-    const isAuthenticated = useSelector((state:AppState) => state.system.isAuthenticated)
-    const currentUser = useSelector((state:AppState) => state.system.currentUser)
     const toast = useToast()
     const moveToChangePassword = () => {
         history.push("/reset?password")
@@ -35,7 +33,6 @@ const Signup = () => {
         password: Yup.string().min(5, "Password is too short").required(),
     })
 
-    
     const handleSubmit = (values: IForm, actions : any) => {
         actions.setSubmitting(true)
         const loginPromise = Promise.resolve(dispatch(login(values.phoneNumber as number,values.password,toast)))

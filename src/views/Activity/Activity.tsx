@@ -299,7 +299,7 @@ const Activity = () => {
 
   // Search For Activity on the current Date
   React.useEffect(() => {
-    if ( churchActivity[0] && churchActivity[0].activityID) {
+    if (churchActivity[0] && churchActivity[0].activityID) {
       // Find the next Day value add the amount of seconds in a day to the current active day
       const nextDay = new Date(activeIndex.getTime() + 86400000)
       const currentChurchActivity: ICurrentActivity[] = []

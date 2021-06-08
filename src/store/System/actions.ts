@@ -31,6 +31,7 @@ export function getChurch(toast:ToastFunc) {
     }
 }
 
+
 export function setAdvertLayout(arg:boolean):SetAdvertLayoutAction{
     return {
         type:ActionTypes.SET_ADVERT_LAYOUT,
