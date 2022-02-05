@@ -15,7 +15,7 @@ export async function getBroadcastByStatus ({
     cancelToken?:CancelTokenSource
 }):Promise<IResponse<LiveStreamChurchResponse[]>> {
     try{
-        const url = `${baseUrl}/GetBroadcastByStatus?churchId=${churchId}&status=${status}`
+        const url = `${baseUrl}/GetBroadcastByStatus/${churchId}`
         const response = await axios.get(url,{
             ...(cancelToken && {cancelToken:cancelToken.token})
         })

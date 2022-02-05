@@ -46,7 +46,7 @@ churchId:number;
             const state = getState()
             const prayerRequest = payload.data.map(item => ({
                 ...item,
-                dateEntered:formatDistanceToNow(new Date(item.dateEntered)),
+                dateEntered:formatDistanceToNow(new Date(item.createdAt)),
                 hasPrayed: Boolean(item.prayedPrayerRequests!.find(item => item.personPrayedId === state.system.currentUser.personId))
             }))
             dispatch<LoadPrayerRequestAction>({

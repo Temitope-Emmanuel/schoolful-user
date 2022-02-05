@@ -18,41 +18,42 @@ const App = () => {
   const windowsLocation = window.location.href
   const firebase = useFirebaseService()
 
-  React.useEffect(() => {
-    firebase?.messaging.onMessage(data => {
-      toast({
-        messageType:"info",
-        title:data.title,
-        subtitle:data.body
-      })
-    })
+  // unComment to add verification
+  // React.useEffect(() => {
+  //   firebase?.messaging.onMessage(data => {
+  //     toast({
+  //       messageType:"info",
+  //       title:data.title,
+  //       subtitle:data.body
+  //     })
+  //   })
 
-    if(!token || !userDetail){
-      logout(windowsLocation.includes("church"))
-    }else{
-      userService.verifyToken(token).then(payload => {
-        if(!payload) dispatch(logout());
-        const {auth_token,refreshToken} = payload.data;
-        authManager.saveToken(refreshToken)
-        const newUserDetail = {
-          ...userDetail,
-          auth_token
-        }
-        authManager.saveUserDetail(JSON.stringify(newUserDetail))
-        const savedUserDetail = JSON.parse(authManager.getUserDetail() as string)
-        dispatch(setCurrentUser(savedUserDetail,toast))
-      }).catch((err) => {
-        dispatch(hideAuthLoading())
-        toast({
-          title:"Please Login Again",
-          subtitle:`Error: ${err}`,
-          messageType:"info"
-        })
-        logout(windowsLocation.includes("church"));
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
+  //   if(!token || !userDetail){
+  //     logout(windowsLocation.includes("church"))
+  //   }else{
+  //     userService.verifyToken(token).then(payload => {
+  //       if(!payload) dispatch(logout());
+  //       const {auth_token,refreshToken} = payload.data;
+  //       authManager.saveToken(refreshToken)
+  //       const newUserDetail = {
+  //         ...userDetail,
+  //         auth_token
+  //       }
+  //       authManager.saveUserDetail(JSON.stringify(newUserDetail))
+  //       const savedUserDetail = JSON.parse(authManager.getUserDetail() as string)
+  //       dispatch(setCurrentUser(savedUserDetail,toast))
+  //     }).catch((err) => {
+  //       dispatch(hideAuthLoading())
+  //       toast({
+  //         title:"Please Login Again",
+  //         subtitle:`Error: ${err}`,
+  //         messageType:"info"
+  //       })
+  //       logout(windowsLocation.includes("church"));
+  //     })
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // },[])
   
   return (
       <Router history={history}>

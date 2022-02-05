@@ -2,9 +2,7 @@
 export interface IPrayer {
     prayerID?:number;
     prayerName:string;
-    prayerdetail:string;
-    denominationID:number;
-    denomination?:string
+    prayerDetail:string;
 }
 export interface IUserPrayer {
     fullName:string;
@@ -14,17 +12,15 @@ export interface IUserPrayer {
     prayedPrayerRequestID:number;
     prayerRequestID:number
 }
-
 export interface IPrayerRequest {
     prayerRequestID?:number;
     fullName:string;
     pictureUrl:string;
-    prayerTile?:string;
-    prayerTitle:string
+    prayerTitle:string;
     prayerDetail:string;
-    personId:string;
-    churchId:number;
-    dateEntered:Date | string;
+    personID:string;
+    churchID:number;
+    createdAt:Date | string;
     hasPrayed?:boolean;
     timeLapsed?:string;
     prayedPrayerRequests?:IUserPrayer[]

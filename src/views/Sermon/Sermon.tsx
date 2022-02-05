@@ -73,13 +73,14 @@ const Sermon = () => {
     const mediaStorageToken = "Thefaithful-mediaStorage-token"
     const defaultSermon:ISermon = {
         author:"",
-        authorDesignation:"",
-        churchId:0,
+        churchID:0,
         featureDateFrom:new Date(),
         featureDateTo:new Date(), 
         sermonContent:"",
-        title:""
+        title:"",
+        mediaType: 'text',
     }
+
     const defaultMediaSermon:IMediaSermon = {
         ...defaultSermon,
         previous:false,
@@ -151,15 +152,15 @@ const Sermon = () => {
 
     React.useEffect(() => {
         if(churchSermon[0]?.sermonID){
-            const textSermon = churchSermon.filter((item) => item.featureVidAudio === null).map(item => ({
+            const textSermon = churchSermon.filter((item) => item.mediaType === 'text').map(item => ({
                 ...item,
                 mediaType:MediaType.TEXT
             }))
-            const audioSermon = churchSermon.filter(item => item.featureVidAudio && item.featureVidAudio.indexOf("mp3") > 0).map(item => ({
+            const audioSermon = churchSermon.filter(item => item.mediaType === 'audio').map(item => ({
                 ...item,
                 mediaType:MediaType.AUDIO
             }))
-            const videoSermon = churchSermon.filter(item => item.featureVidAudio && item.featureVidAudio.indexOf("mp4") > 0).map(item => ({
+            const videoSermon = churchSermon.filter(item => item.mediaType === 'video').map(item => ({
                 ...item,
                 mediaType:MediaType.VIDEO
             }))

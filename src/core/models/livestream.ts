@@ -19,16 +19,15 @@ export interface LiveStreamChurchResponse {
     title: string;
     description: string;
     url: null | string;
-    liveChatId: string;
-    channelId: null | string;
+    liveChatID: string;
+    channelID: null | string;
     publishedOn: Date | string;
     scheduledStartTime: Date | string;
     scheduledEndTime: Date | string;
     privacyStatus: string;
     status: "Upcoming" | "IsLive" | "Complete" | "NotCompleted" | "Testing";
-    churchId: number;
-    eventId:number;
-    // liveStream: StreamChurch
+    churchID: number;
+    eventID:number;
   }
   
   export type StatusType = "upComing" | "isLive" | "completed"

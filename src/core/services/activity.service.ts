@@ -18,7 +18,7 @@ export const createActivity = async (arg:IActivity):Promise<IResponse<IActivity>
 
 
 export const getChurchActivity = async (churchId:string):Promise<IResponse<IActivity[]>> => {
-    const url = `${baseUrl}/Activity/GetChurchActivity?churchId=${churchId}`
+    const url = `${baseUrl}/Activity/GetChurchActivity/${churchId}`
     try{
         const config:AxiosRequestConfig = {headers:{Accept:"text/plain"}}
         const response = await axios.get(url,config)
@@ -50,7 +50,7 @@ export const updateEvent = async (arg:IEvent):Promise<IResponse<IEvent>> => {
 }
 
 export const getChurchEvent = async (churchId:string):Promise<IResponse<IEvent[]>> => {
-    const url = `${baseUrl}/Activity/GetChurchEvent?churchId=${churchId}`
+    const url = `${baseUrl}/Activity/GetChurchEvent/${churchId}`
     try{
         const config:AxiosRequestConfig = {headers:{Accept:"text/plain"}}
         const response = await axios.get(url,config)

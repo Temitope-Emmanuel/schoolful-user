@@ -21,7 +21,7 @@ const MainRouter = () => {
             <Route exact path="/Home" component={Home} />
             <Route exact path="/reset" component={ResetPassword} />
             <Route exact path="/signup/member" component={SignUpUser} />
-            <PublicRoute path="/church/:churchId" component={DashboardRoute} />
+            <Route path="/church/:churchId" component={DashboardRoute} />
             <Route render={() => <Redirect to="/login" />} />
         </Switch>
     )

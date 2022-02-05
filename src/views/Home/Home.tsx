@@ -24,7 +24,6 @@ import { ISermon } from "core/models/Sermon"
 import {loadChurchPrayerRequest,addUserToHasPrayed} from "store/Prayer/actions"
 import axios from "axios"
 
-
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         alignItems:"center !important",
@@ -200,7 +199,7 @@ const Home = () => {
         }
 
         getChurchSermonApi()
-        churchDailyReading()
+        // churchDailyReading()
         return () => {
             source.cancel()
         }
@@ -286,9 +285,9 @@ const Home = () => {
                         className={classes.prayerContainer}>
                         {prayerRequest.map((item, idx) => (
                             <DetailCard isLoaded={Boolean(item.prayerRequestID)}
-                                title={item.prayerTile as string} key={idx}
+                                title={item.prayerTitle} key={idx}
                                 subtitle={"Prayer For Help"}
-                                timing={item.dateEntered as string}
+                                timing={new Date(item.createdAt)}
                                 image="https://bit.ly/ryan-florence"
                                 body={item.prayerDetail}
                             >

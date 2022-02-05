@@ -16,7 +16,7 @@ export const getPrayer = async (
   cancelToken: CancelTokenSource
 ): Promise<IResponse<IPrayer[]>> => {
   try {
-    const url = `${baseUrl}/GetPrayer?denomination=${denominationId}`;
+    const url = `${baseUrl}/GetPrayer/${denominationId}`;
     const response = await axios.get(url, {
       cancelToken: cancelToken.token,
     });
@@ -62,7 +62,7 @@ export const getPrayerRequest = async (
   churchId: number,
   cancelToken: CancelTokenSource
 ): Promise<IResponse<IPrayerRequest[]>> => {
-  const url = `${baseUrl}/GetPrayerRequest?churchId=${churchId}`;
+  const url = `${baseUrl}/GetPrayerRequest/${churchId}`;
   try {
     const response = await axios.get(url, {
       cancelToken: cancelToken.token,
@@ -76,9 +76,9 @@ export const prayerForPrayerRequest = async (
   prayerRequestId: number,
   personId: string
 ): Promise<IResponse<null>> => {
-  const url = `${baseUrl}/PrayPrayerRequest?prayerRequetId=${prayerRequestId}&personId=${personId}`;
+  const url = `${baseUrl}/PrayPrayerRequest/${prayerRequestId}`;
   try {
-    const response = await axios.get(url);
+    const response = await axios.post(url);
     return response.data;
   } catch (err) {
     throw err;
@@ -160,7 +160,7 @@ export const getTestimony = async (
   arg: IGetTestimony,
   cancelToken: CancelTokenSource
 ): Promise<IResponse<ITestimony[]>> => {
-  const url = `${baseUrl}/GetTestimony?churchId=${arg.churchId}&testimonyType=${arg.testimonyType}`;
+  const url = `${baseUrl}/GetTestimony/${arg.testimonyType}`;
   try {
     const response = await axios.get(url, {
       cancelToken: cancelToken.token,
@@ -174,9 +174,7 @@ export const getTestimony = async (
 export const CommentOnTestimony = async (
   arg: ICommentTestimony
 ): Promise<IResponse<ITestimony>> => {
-  const url = `${baseUrl}/CommentOnTestimony?testimonyId=${
-    arg.testimonyId
-  }&comment=${JSON.stringify(arg.comment)}&personId=${arg.personId}`;
+  const url = `${baseUrl}/CommentOnTestimony/${arg.testimonyId}`;
   try {
     const response = await axios.post(url);
     return response.data;

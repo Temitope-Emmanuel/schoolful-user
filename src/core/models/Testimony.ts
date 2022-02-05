@@ -1,5 +1,3 @@
-import {Testimony} from "core/enums/Testimony"
-
 export interface ICommentTestimony {
     testimonyId: number;
     comment:string; 
@@ -12,11 +10,11 @@ export interface ICommentTestimony {
   
 
 export interface ITestimony {
-    testimonyID?:number;
-    testimonyTile:string;
-    testimonyDetail:string;
-    personId:string;
-    testimonyType:Testimony;
-    churchId:number;
-    dateEntered:Date;
+  testimonyID?:number;
+  testimonyTitle:string;
+  testimonyDetail:string
+  personID:string;
+  churchID:number;
+  dateEntered:Date;
+  timeLapsed?:string;
 }

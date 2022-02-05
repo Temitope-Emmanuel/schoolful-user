@@ -45,15 +45,17 @@ export function login(phoneNumber:number,password:string,toast:ToastFunc){
         try{
             return await userService.login(phoneNumber,password).then(payload => {
                 dispatch(hideLoading())
-                const {refreshToken,...userDetail} = payload.data;
-                auth.saveUserDetail(JSON.stringify(userDetail))
-                auth.saveToken(refreshToken)
-                return dispatch(
-                    setCurrentUser(JSON.parse(auth.getUserDetail() as string),
-                    toast,() => {history.push(`/church/${payload.data.churchId}/home`)})
-                    )
+                // const {refreshToken,...userDetail} = payload.data;
+                // auth.saveUserDetail(JSON.stringify(userDetail))
+                // auth.saveToken(refreshToken)
+                // return dispatch(
+                //     setCurrentUser(JSON.parse(auth.getUserDetail() as string),
+                //     toast,() => {history.push(`/church/${payload.data.churchId}/home`)})
+                //     )
+                history.push(`/church/1/home`)
             })
         }catch(err){
+            console.log('this si the err',{err})
             dispatch(hideLoading())
             toast({
                 title:"Error",

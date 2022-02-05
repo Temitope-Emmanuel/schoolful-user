@@ -12,13 +12,21 @@ export const churchMock = (mock: MockAdapter) => {
         message:'',
         data:denomination,
     })
-    const getChurchByDenominationUrl = `${baseUrl}/getchurchbydenomination`;
 
+    const getChurchByDenominationUrl = `${baseUrl}/getchurchbydenomination`;
     mock.onGet(new RegExp(`${getChurchByDenominationUrl}/*`)).reply(200, {
         status:200,
         isSuccessful:true,
         message:'',
         data:church,
+    })
+
+    const getChurchByIDUrl = `${baseUrl}/getchurchbyID`;
+    mock.onGet(new RegExp(`${getChurchByIDUrl}/*`)).reply(200, {
+        status:200,
+        isSuccessful:true,
+        message:'',
+        data:church[0],
     })
 }
 

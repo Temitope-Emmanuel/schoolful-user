@@ -81,11 +81,11 @@ const AddPrayerRequest: React.FC<IAddPrayerRequest> = ({handleClose}) => {
     }
     const submitAddPrayerForm = (values: IAddPrayerRequestForm, { ...actions }: any) => {
         actions.setSubmitting(true)
-        const dateEntered =  (new Date()).toJSON();
+        const createdAt =  (new Date()).toJSON();
         const newPrayer: IPrayerRequest = {
-            churchId: Number(params.churchId),
-            dateEntered,
-            personId: currentUser.id,
+            churchID: Number(params.churchId),
+            createdAt,
+            personID: currentUser.id,
             prayerDetail: values.request,
             prayerTitle: values.title,
             fullName: currentUser.fullname,
@@ -199,7 +199,7 @@ const AddTestimonyComment: React.FC<IAddTestimonyComment> = ({ addTestimonyComme
             justifyContent="center" alignItems="center" bgColor="bgColor2">
             <ModalHeader color="primary" mt={10}
                 fontWeight={600} fontSize="1.8rem" >
-                {`Add Comment to ${testimony.testimonyTile}`}
+                {`Add Comment to ${testimony.testimonyTitle}`}
             </ModalHeader>
             <ModalCloseButton border="2px solid rgba(0,0,0,.5)"
                 outline="none" borderRadius="50%" opacity={.5} />
@@ -220,7 +220,7 @@ const AddTestimonyComment: React.FC<IAddTestimonyComment> = ({ addTestimonyComme
                             <ModalFooter display="flex" flexDirection="column"
                                 alignItems="center" px={6} >
                                 <Button disabled={formikProps.isSubmitting || !formikProps.dirty || !formikProps.isValid}
-                                    isLoading={formikProps.isSubmitting} loadingText={`Adding Comment to ${testimony.testimonyTile}`}
+                                    isLoading={formikProps.isSubmitting} loadingText={`Adding Comment to ${testimony.testimonyTitle}`}
                                     onClick={(formikProps.handleSubmit as any)} px="10" fontSize="1rem"
                                 >
                                     Add
@@ -254,12 +254,11 @@ const AddTestimony: React.FC<IAddTestimonyProps> = ({ addTestimony }) => {
     const submitAddTestimonyForm = (values: AddTestimonyForm, { ...actions }: any) => {
         actions.setSubmitting(true)
         const newTestimony: ITestimony = {
-            churchId: Number(params.churchId),
+            churchID: Number(params.churchId),
             dateEntered: new Date(),
-            personId: currentUser.id,
+            personID: currentUser.id,
             testimonyDetail: values.testimony,
-            testimonyTile: values.title,
-            testimonyType: Testimony.GENERAL
+            testimonyTitle: values.title
         }
         addTestimonyChurch(newTestimony).then(payload => {
             toast({
@@ -333,12 +332,11 @@ const AddTestimony: React.FC<IAddTestimonyProps> = ({ addTestimony }) => {
 
 const PrayerWall = () => {
     const defaultTestimony: ITestimony = {
-        churchId: 0,
+        churchID: 0,
         dateEntered: new Date(),
-        personId: "",
+        personID: "",
         testimonyDetail: "",
-        testimonyTile: "",
-        testimonyType: Testimony.GENERAL
+        testimonyTitle: ""
     }
     const classes = useStyles()
     const toast = useToast()
@@ -487,9 +485,9 @@ const PrayerWall = () => {
                                 className={classes.prayerContainer}>
                                 {prayerRequest.map((item, idx) => (
                                     <DetailCard key={item.prayerRequestID} isLoaded={Boolean(item.prayerRequestID)}
-                                        title={item.prayerTile as string}
+                                        title={item.prayerTitle}
                                         subtitle={""}
-                                        timing={item.dateEntered as string}
+                                        timing={new Date(item.createdAt)}
                                         image="https://bit.ly/ryan-florence"
                                         body={item.prayerDetail}
                                     >
@@ -503,7 +501,7 @@ const PrayerWall = () => {
                                                     </AvatarGroup>
                                                     <Text mr="auto">
                                                         <Text as="b">{`${item.prayedPrayerRequests.length} ${item.prayedPrayerRequests.length === 1 ? "Person has" : "People"}`}</Text> Prayed
-                                        </Text>
+                                                    </Text>
                                                 </>
                                             }
                                             <Icon ml="auto" boxSize="1rem" cursor="pointer" display={item.hasPrayed ? "none" :"initial"}
@@ -521,7 +519,7 @@ const PrayerWall = () => {
                                 className={classes.prayerContainer}>
                                 {churchTestimony.map((item, idx) => (
                                     <DetailCard isLoaded={Boolean(item.testimonyID)}
-                                        title={item.testimonyTile} key={idx} subtitle="Prayer For Help"
+                                        title={item.testimonyTitle} key={idx} subtitle="Prayer For Help"
                                         image="https://bit.ly/ryan-florence"
                                         body={item.testimonyDetail}
                                     >
@@ -546,7 +544,7 @@ const PrayerWall = () => {
                                     <DetailCard isLoaded={Boolean(item.prayerID)} title={item.prayerName}
                                         key={idx} subtitle=""
                                         image={currentChurch.churchLogo}
-                                        body={item.prayerdetail}
+                                        body={item.prayerDetail}
                                     >
                                     </DetailCard>
                                 ))}

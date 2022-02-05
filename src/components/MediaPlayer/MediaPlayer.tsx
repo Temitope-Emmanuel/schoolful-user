@@ -138,7 +138,7 @@ const MediaPlayer: React.FC<IProps> = ({ currentMedia,nextAudio,nextVideo,prevAu
                 {(media:IMedia) => {
                     return(
                         <VStack justifyContent="space-evenly" width="100%" >
-                        <Player autoPlay vendor={currentMedia.mediaType} src={currentMedia.featureVidAudio} />
+                        <Player autoPlay vendor={currentMedia.mediaType} src={currentMedia.mediaUrl} />
                         <Progress media={media} />
                         <ShowTime media={media} />
                         <HStack className={classes.controlContainer} w="100%">

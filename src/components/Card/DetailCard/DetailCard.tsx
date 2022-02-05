@@ -1,12 +1,13 @@
 import React from "react"
 import { VStack, Skeleton, HStack, Avatar, Text, Heading } from "@chakra-ui/react"
+import {formatDistanceToNow} from 'date-fns'
 
 interface IDetailProps {
     image?: string;
     title: string;
     smallText?: string;
     subtitle?: string;
-    timing?: string
+    timing?: Date;
     body?: string;
     isLoaded: boolean
 }
@@ -34,7 +35,7 @@ const DetailCard: React.FC<IDetailProps> = ({ image, isLoaded = true, title, chi
                 </VStack>
                 {timing &&
                     <Text whiteSpace="nowrap" opacity={.5}>
-                        {`${timing} ago`}
+                        {`${formatDistanceToNow(timing as any)} ago`}
                     </Text>
                 }
             </HStack>
