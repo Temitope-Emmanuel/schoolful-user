@@ -11,12 +11,12 @@ const PublicRoute = ({component:Component,...rest}:any) => {
         <Route
         {...rest}
         render={(props) => 
-        isLoading ? <div>loading...</div> :
-        isAuthenticated ? (
+        // isLoading ? <div>loading...</div> :
+        // isAuthenticated ? (
             <Component {...props} />
-        ):(
-            <Redirect to={{pathname:"/login"}} />
-        )
+        // ):(
+        //     <Redirect to={{pathname:"/login"}} />
+        // )
     }
         />
     )

@@ -1,16 +1,13 @@
 import { IChurch } from "./Church";
-// import { IDataCaptureSetting } from "./DataCaptureSetting";
 
 export interface IState {
-    stateID:number;
-    name:string;
-    countryID:number;
+    state:string;
     city:ICity[];
     church:IChurch;
-    country:ICountry;
-    // dataCaptureSetting:IDataCaptureSetting;
+    country:string;
+    name: string;
+    capital: string;
 }
-
 export interface ICity {
     cityID:number;
     name:string;

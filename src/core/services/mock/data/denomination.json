@@ -1,0 +1,14 @@
+[
+    {
+        "denominationID":1,
+        "denominationName":"Methodist",
+        "activated":false,
+        "church":4
+    },
+    {
+        "denominationID":1,
+        "denominationName":"Presbyterian",
+        "activated":false,
+        "church":4
+    }
+]

@@ -28,8 +28,7 @@ export const getChurchDenomination = async ():Promise<IResponse<IDenomination[]>
 }
 export const getChurchByDenomination = async (denominationId:number,stateId:number) => {
     try{
-        // const url = `${baseUrl}/getchurchbydenomination?denominationId=${denomationId}&stateId=${stateId}`
-        const url = `${baseUrl}/getchurchbydenomination?denominationId=${denominationId}&stateId=${stateId}`
+        const url = `${baseUrl}/getchurchbydenomination/${denominationId}`
         const response = await axios.get(url)
         return response.data
     }catch(err){

@@ -15,8 +15,7 @@ import { Formik, FormikProps } from "formik"
 import * as Yup from "yup"
 import * as authManager from "utils/auth"
 import useToast from "utils/Toast"
-import { getUserChurchInfo } from "core/services/account.service"
-import { updateChurchMember } from "core/services/userSetting.service"
+import { getUserChurchInfo, updateChurchMember } from "core/services/account.service"
 import { useSelector, useDispatch } from "react-redux"
 import { AppState } from "store"
 import { IChurchMember } from "core/models/ChurchMember"
@@ -56,7 +55,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }))
 
-
 interface IProfileDetail extends IChurchMember {
     church: IChurch
 }
@@ -69,21 +67,13 @@ interface IProfileForm {
     dateOfbirth: Date;
 }
 
-const initialValues = {
-    denomination: "",
-    state: "",
-    search: ""
-}
-
-
 const Profile = () => {
     const defaultChurch: IChurch = {
         address: "",
-        cityID: 0,
-        countryID: 0,
-        denominationId: 0,
+        cityName: "",
+        denomination: "",
         name: "",
-        stateID: 0
+        stateName: ""
     }
     const defaultProfileDetail: IProfileDetail = {
         church: defaultChurch,
@@ -93,7 +83,10 @@ const Profile = () => {
         firstname: "",
         lastname: "",
         password: "",
-        dateOfBirth: new Date()
+        dateOfBirth: new Date(),
+        genderID: 0,
+        stateName: '',
+        role: 'ChurchMember'
     }
     const classes = useStyles()
     const params = useParams()

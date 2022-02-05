@@ -7,7 +7,7 @@ import { PaystackConsumer } from "react-paystack"
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles"
 import { LandingImage } from "assets/images"
 import { NormalNumberStepper } from "components/Input"
-import { VStack, Icon, Text, Skeleton, Heading, HStack, AspectRatio, Image, Button, ModalBody, ModalContent, ModalFooter, Collapse } from "@chakra-ui/react"
+import { VStack, Icon, Text, Skeleton, Heading, HStack, AspectRatio, Image, ModalBody, ModalContent} from "@chakra-ui/react"
 import { FaHandHoldingHeart } from "react-icons/fa";
 import * as donationService from 'core/services/donation.service'
 import * as paymentService from "core/services/payment.service"
@@ -265,7 +265,7 @@ const Giving = () => {
                                     disabled={confirmation}
                                      onChange={setValue} label="Input Amount to send (NGN)" minValue={1000} />
                                     
-                                    <PaystackConsumer {...componentProps}>
+                                    {/* <PaystackConsumer {...componentProps}>
                                         {({initializePayment}: any) => (
                                             <>
                                                 <Collapse in={!confirmation}>
@@ -285,7 +285,7 @@ const Giving = () => {
                                                 </Collapse>
                                             </>
                                         )}
-                                    </PaystackConsumer>
+                                    </PaystackConsumer> */}
                                 </VStack>
                             )}
                         </Formik>

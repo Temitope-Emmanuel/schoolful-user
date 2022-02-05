@@ -1,16 +1,15 @@
 import { SystemState, Action, ActionTypes } from "./types"
 import isEmpty from "lodash/isEmpty"
+import { IChurch } from "core/models/Church"
 
-const defaultChurch = {
+const defaultChurch: IChurch = {
     churchID: 0,
     name: "",
     address: "",
     churchLogo:"",
-    denominationId: 0,
-    countryID: 0,
-    country:"",
-    stateID:0,
-    cityID: 0,
+    denomination: "",
+    stateName:"",
+    cityName:"",
     churchStatus: ""
 }
 

@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from "."
 import {IResponse} from "core/models/Response"
 import {ICity,ICountry,IState} from "core/models/Location"
 
@@ -19,7 +19,7 @@ export const getCountry = async ():Promise<IResponse<ICountry[]>> => {
 
 export const getState = async (countryId:number):Promise<IResponse<IState[]>> => {
     try{
-        const url = `${baseUrl}/state/${countryId}`
+        const url = `${baseUrl}/state`
         const response = await axios.get(url)
         return response.data
     }catch(err){

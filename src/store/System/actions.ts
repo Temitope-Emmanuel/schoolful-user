@@ -44,22 +44,14 @@ export function login(phoneNumber:number,password:string,toast:ToastFunc){
         dispatch(showLoading())
         try{
             return await userService.login(phoneNumber,password).then(payload => {
-                if(payload.data.role[0] === "churchMember"){
-                    dispatch(hideLoading())
-                    const {refreshToken,...userDetail} = payload.data;
-                    auth.saveUserDetail(JSON.stringify(userDetail))
-                    auth.saveToken(refreshToken)
-                    return dispatch(
-                        setCurrentUser(JSON.parse(auth.getUserDetail() as string),
-                        toast,() => {history.push(`/church/${payload.data.churchId}/home`)})
-                        )
-                }else{
-                    toast({
-                        messageType:"info",
-                        subtitle:`This app is meant for church members only`,
-                        title:"Unable to complete request"
-                    })
-                }
+                dispatch(hideLoading())
+                const {refreshToken,...userDetail} = payload.data;
+                auth.saveUserDetail(JSON.stringify(userDetail))
+                auth.saveToken(refreshToken)
+                return dispatch(
+                    setCurrentUser(JSON.parse(auth.getUserDetail() as string),
+                    toast,() => {history.push(`/church/${payload.data.churchId}/home`)})
+                    )
             })
         }catch(err){
             dispatch(hideLoading())
@@ -81,6 +73,7 @@ export function logout(redirect = true) {
             history.push("/login")
         }
 }
+
 export function setCurrentUser(user:LoggedInUser,toast:ToastFunc,func?:any) {
     return async function (dispatch:Dispatch){
         try{
@@ -110,6 +103,7 @@ export function setCurrentUser(user:LoggedInUser,toast:ToastFunc,func?:any) {
         }
     }
 }
+
 export function clearCurrentUser () {
     return{
         type:ActionTypes.CLEAR_CURRENT_USER

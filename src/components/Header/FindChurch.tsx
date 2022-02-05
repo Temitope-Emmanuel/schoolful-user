@@ -133,7 +133,7 @@ export const SearchChurch: React.FC<{
                     </Select>
                     <Select name="state" placeholder="Select State" >
                       {location.state.map((item, idx) => (
-                        <option value={item.stateID} key={item.stateID || idx} >
+                        <option value={item.state} key={item.state || idx} >
                           {item.name}
                         </option>
                       ))}
