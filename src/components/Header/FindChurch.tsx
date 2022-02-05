@@ -60,24 +60,6 @@ export const SearchChurch: React.FC<{
   }
 
   React.useEffect(() => {
-    const getCountry = async (toast: ToastFunc) => {
-      try {
-        return await utilityService.getCountry().then(payload => {
-          const foundCountry = payload.data.find(item => item.countryID === 160)
-          setLocation({
-            ...location, country:
-              [foundCountry as ICountry, ...payload.data.filter(item => item.countryID !== 160)]
-          })
-        }).then(() => {
-          getState(160)
-        })
-      } catch (err) {
-        toast({
-          messageType: MessageType.WARNING,
-          subtitle: "Unable to get Country"
-        })
-      }
-    }
     const getDenomination = async (toast: ToastFunc) => {
       try {
         return await churchService.getChurchDenomination().then(data => {
@@ -90,8 +72,8 @@ export const SearchChurch: React.FC<{
         })
       }
     }
-    getCountry(toast)
     getDenomination(toast)
+    getState(160)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

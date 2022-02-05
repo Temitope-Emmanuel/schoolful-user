@@ -1,6 +1,7 @@
 import MockAdapter from "axios-mock-adapter/types";
 import {accountMock} from "./account.mock";
 import {activityMock} from "./activity.mock";
+import {announcementMock} from "./announcement.mock";
 import {churchMock} from "./church.mock";
 import {livestreamMock} from "./livestream.mock";
 import {prayerMock} from "./prayer.mock";
@@ -17,4 +18,5 @@ export const initFunction = (mock:MockAdapter) => {
     sermonMock(mock);
     activityMock(mock);
     livestreamMock(mock);
+    announcementMock(mock);
 }

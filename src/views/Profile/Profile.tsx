@@ -107,8 +107,7 @@ const Profile = () => {
         const getUserProfile = async () => {
             getUserChurchInfo(currentUser.id).then(payload => {
                 const newProfileDetail = {
-                    ...payload.data[0],
-                    dateOfBirth: payload.data[0].dateOfbirth
+                    ...payload.data
                 }
                 setProfile(newProfileDetail)
                 setSubmitting(false)

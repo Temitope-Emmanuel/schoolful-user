@@ -5,7 +5,7 @@ import {IAnnouncement} from "core/models/Announcement"
 const baseUrl = `${process.env.REACT_APP_SERVER_URL}/Infomation`
 
 export const getAnnouncementByChurch = async (churchId:string,cancelToken:CancelTokenSource):Promise<IResponse<IAnnouncement[]>> => {
-    const url = `${baseUrl}/GetAnnouncementByChurch?churchId=${churchId}`
+    const url = `${baseUrl}/GetAnnouncementByChurch/${churchId}`
     try{
         const config:AxiosRequestConfig = {headers:{
             "Accept":"text/plain"

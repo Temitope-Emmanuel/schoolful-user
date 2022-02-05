@@ -1,0 +1,72 @@
+[
+    {
+        "announcementID": 1,
+        "title": "dictumst aliquam augue quam sollicitudin vitae consectetuer eget rutrum at lorem integer tincidunt",
+        "description": "In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl. Aenean lectus.",
+        "churchID": 3896,
+        "createdAt": "7/12/2021"
+    },
+    {
+        "announcementID": 2,
+        "title": "in lectus pellentesque at nulla suspendisse potenti cras in purus",
+        "description": "Etiam pretium iaculis justo. In hac habitasse platea dictumst.",
+        "churchID": 8095,
+        "createdAt": "11/19/2021"
+    },
+    {
+        "announcementID": 3,
+        "title": "in sapien iaculis congue vivamus metus arcu adipiscing molestie hendrerit at vulputate vitae nisl aenean lectus pellentesque eget nunc",
+        "description": "In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl. Aenean lectus. Pellentesque eget nunc.",
+        "churchID": 1189,
+        "createdAt": "6/17/2021"
+    },
+    {
+        "announcementID": 4,
+        "title": "nulla neque libero convallis eget eleifend luctus ultricies eu nibh quisque id",
+        "description": "Etiam pretium iaculis justo. In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus. Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi. Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit.",
+        "churchID": 2394,
+        "createdAt": "5/10/2021"
+    },
+    {
+        "announcementID": 5,
+        "title": "nulla ut erat id mauris vulputate elementum nullam varius nulla facilisi cras non velit",
+        "description": "Nulla tellus. In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus. Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.",
+        "churchID": 5634,
+        "createdAt": "11/21/2021"
+    },
+    {
+        "announcementID": 6,
+        "title": "tincidunt in leo maecenas pulvinar lobortis est phasellus sit amet erat",
+        "description": "Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis. Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem. Sed sagittis.",
+        "churchID": 1386,
+        "createdAt": "1/25/2022"
+    },
+    {
+        "announcementID": 7,
+        "title": "iaculis justo in hac habitasse platea dictumst etiam faucibus cursus urna",
+        "description": "In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem. Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat. Praesent blandit. Nam nulla.",
+        "churchID": 5164,
+        "createdAt": "10/19/2021"
+    },
+    {
+        "announcementID": 8,
+        "title": "vestibulum eget vulputate ut ultrices vel augue vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae",
+        "description": "Phasellus in felis. Donec semper sapien a libero. Nam dui. Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.",
+        "churchID": 5912,
+        "createdAt": "2/23/2021"
+    },
+    {
+        "announcementID": 9,
+        "title": "cras in purus eu magna vulputate luctus cum sociis natoque",
+        "description": "Vivamus tortor. Duis mattis egestas metus.",
+        "churchID": 3760,
+        "createdAt": "7/4/2021"
+    },
+    {
+        "announcementID": 10,
+        "title": "dui proin leo odio porttitor id consequat in consequat ut nulla sed accumsan felis ut at",
+        "description": "Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus. Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst. Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat. Curabitur gravida nisi at nibh.",
+        "churchID": 6211,
+        "createdAt": "11/11/2021"
+    }
+]

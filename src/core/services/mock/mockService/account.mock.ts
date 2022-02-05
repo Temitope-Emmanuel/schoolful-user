@@ -1,5 +1,6 @@
 import MockAdapter from "axios-mock-adapter/types"
 import churchMember from '../data/churchMember.json'
+import church from '../data/church.json'
 
 const baseUrl = new URL(`${process.env.REACT_APP_SERVER_URL}/Account`)
 
@@ -24,7 +25,19 @@ export const accountMock = (mock: MockAdapter) => {
         status:200,
         isSuccessful:true,
         message:'',
-        data:churchMember[0]
+        data:{
+            church: church[0],
+            email: churchMember[0].email,
+            username: churchMember[0].username,
+            phoneNumber: churchMember[0].phoneNumber,
+            firstname: churchMember[0].firstName,
+            lastname: churchMember[0].lastName,
+            password: churchMember[0].phoneNumber,
+            dateOfBirth: churchMember[0].dateOfBirth,
+            genderID: churchMember[0].genderID,
+            stateName: churchMember[0].stateName,
+            role: churchMember[0].role
+        }
     })
 }
 
