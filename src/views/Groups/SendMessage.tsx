@@ -58,10 +58,10 @@ type messageForm = typeof initialValues
 
 interface IProps {
     connection:HubConnection;
-    currentGroupDetail:Required<Pick<IGroup,"name"|"societyID">>
+    currentGroupDetail:Required<Pick<IGroup,"name"|"groupID">>
 }
 
-const SendMessage:React.FC<IProps> = ({connection,currentGroupDetail:{name,societyID}}) => {
+const SendMessage:React.FC<IProps> = ({connection,currentGroupDetail:{name,groupID}}) => {
     const classes = useStyles()
     const chatLoading = useSelector((state:AppState) => state.chat.isLoading)
     const currentUser = useSelector((state:AppState) => state.system.currentUser)
@@ -71,7 +71,7 @@ const SendMessage:React.FC<IProps> = ({connection,currentGroupDetail:{name,socie
         try{
             actions.setSubmitting(true)
             const newMessage = {
-                groupId:societyID,
+                groupId:groupID,
                 groupName:name,
                 when:(new Date()).toJSON() as any,
                 text:values.message,

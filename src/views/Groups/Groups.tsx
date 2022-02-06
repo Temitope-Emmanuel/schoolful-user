@@ -101,12 +101,11 @@ const Groups = () => {
     const smallScreen = breakpoints === "base" || breakpoints === "sm"
     const [showGroup,setShowGroup] = React.useState(true)
     const defaultGroup:IGroup = {
-        churchId:0,
-        denominationId:0,
+        churchID:0,
         description:"",
-        isDeleted:false,
-        memberCount:0,
-        name:""
+        name:"",
+        groupID:0,
+        groupMember: []
     }
     const classes = useStyles()
     const dispatch = useDispatch()
@@ -150,7 +149,8 @@ const Groups = () => {
             })
             connection.current = connect
         }
-        setUpConnection()
+        // Uncomment to activate chat bot
+        // setUpConnection()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
@@ -161,15 +161,16 @@ const Groups = () => {
                     <VStack maxW="md" bgColor="bgColor2" className={classes.groupClassContainer}>
                         <VStack spacing={10} width={{base:"95%",md:"80%"}}>
                             {churchGroup.map((item,idx) => (
-                                <GroupCard isLoaded={Boolean(item.societyID)}
+                                <GroupCard isLoaded={Boolean(item.groupID)}
                                     imgSrc={item.imageUrl} name={item.name} onClick={handleSetCurrentGroup(item)}
-                                    active={currentGroup.societyID === item.societyID} member={item.memberCount}
-                                    key={item.societyID || idx}
+                                    active={currentGroup.groupID === item.groupID} member={item.groupMember ? item.groupMember.length : 0}
+                                    key={item.groupID || idx}
                                 />
                             ))}
                         </VStack>
                     </VStack>
                 </Slide>
+
                 <Box className={classes.iconContainer}>
                     {
                         smallScreen ? 
@@ -183,18 +184,18 @@ const Groups = () => {
             </Box>
             <VStack bgColor="#F9F5F9" flex={6} position="relative" >
                 {
-                !currentGroup.societyID && 
+                !currentGroup.groupID && 
                 <Typography>
                     Please Select Chat to join
                 </Typography>
                 }
                 {
-                    currentGroup.societyID && connection.current && 
+                    currentGroup.groupID && connection.current && 
                     <>
                         <ListMessage currentGroup={currentGroup} connection={connection.current} />
                         <SendMessage currentGroupDetail={{
                             name:currentGroup.name,
-                            societyID:currentGroup.societyID as number
+                            groupID:currentGroup.groupID as number
                         }} connection={connection.current} />
                     </>
                 }

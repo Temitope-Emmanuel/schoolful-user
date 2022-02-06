@@ -2,12 +2,11 @@ import {ChatState,Action,IChatMessageInfo,ActionTypes} from "./types"
 
 const initialState:ChatState = {
     currentGroup:{
-        churchId:0,
-        denominationId:0,
+        churchID:0,
         description:"",
-        isDeleted:false,
-        memberCount:0,
-        name:""
+        name:"",
+        groupID:0,
+        groupMember: []
     },
     currentGroupMessage:[],
     isLoading:false,

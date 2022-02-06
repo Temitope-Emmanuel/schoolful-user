@@ -152,7 +152,7 @@ const ListMessage: React.FC<IProps> = ({ connection, currentGroup }) => {
 
     React.useEffect(() => {
         const addToGroup = () => {
-            if(connection && currentGroup.societyID !== currentLocalGroup?.societyID){
+            if(connection && currentGroup.groupID !== currentLocalGroup?.groupID){
                connection.send("joinGroup",currentGroup.name).then(() => {
                    getGroupChat({
                        groupName:currentGroup.name,
@@ -176,7 +176,7 @@ const ListMessage: React.FC<IProps> = ({ connection, currentGroup }) => {
                })
             }
         }
-        if(currentGroup.societyID !== currentLocalGroup?.societyID ){
+        if(currentGroup.groupID !== currentLocalGroup?.groupID ){
             addToGroup()
             setCurrentLocalGroup(currentGroup)
         }

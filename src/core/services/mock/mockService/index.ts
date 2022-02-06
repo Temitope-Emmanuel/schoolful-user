@@ -3,6 +3,7 @@ import {accountMock} from "./account.mock";
 import {activityMock} from "./activity.mock";
 import {announcementMock} from "./announcement.mock";
 import {churchMock} from "./church.mock";
+import {groupMock} from "./group.mock";
 import {livestreamMock} from "./livestream.mock";
 import {prayerMock} from "./prayer.mock";
 import {sermonMock} from "./sermon.mock";
@@ -19,4 +20,5 @@ export const initFunction = (mock:MockAdapter) => {
     activityMock(mock);
     livestreamMock(mock);
     announcementMock(mock);
+    groupMock(mock)
 }

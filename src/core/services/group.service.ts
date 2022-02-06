@@ -7,7 +7,7 @@ const baseUrl = `${process.env.REACT_APP_SERVER_URL}/Church`
 
 export const getGroupByChurch = async (churchId:string):Promise<IResponse<IGroup[]>> => {
     try{
-        const url = `${baseUrl}/getSocietyByChurch?churchId=${churchId}`
+        const url = `${baseUrl}/getSocietyByChurch/${churchId}`
         const response = await axios.get(url)
         return response.data
     }catch(err){

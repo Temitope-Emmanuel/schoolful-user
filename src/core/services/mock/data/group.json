@@ -1,0 +1,72 @@
+[
+    {
+        "groupID": 1,
+        "name": "Yoveo",
+        "description": "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque. Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.",
+        "imageUrl": "http://dummyimage.com/164x100.png/5fa2dd/ffffff",
+        "churchID": "9164"
+    },
+    {
+        "groupID": 2,
+        "name": "Vitz",
+        "description": "Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat. Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem. Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.",
+        "imageUrl": "http://dummyimage.com/121x100.png/ff4444/ffffff",
+        "churchID": "13"
+    },
+    {
+        "groupID": 3,
+        "name": "Thoughtblab",
+        "description": "Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus. Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+        "imageUrl": "http://dummyimage.com/141x100.png/dddddd/000000",
+        "churchID": "7643"
+    },
+    {
+        "groupID": 4,
+        "name": "Oyope",
+        "description": "Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem. Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus. Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.",
+        "imageUrl": "http://dummyimage.com/147x100.png/5fa2dd/ffffff",
+        "churchID": "712"
+    },
+    {
+        "groupID": 5,
+        "name": "Gevee",
+        "description": "Mauris lacinia sapien quis libero. Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh. In quis justo. Maecenas rhoncus aliquam lacus.",
+        "imageUrl": "http://dummyimage.com/165x100.png/dddddd/000000",
+        "churchID": "3579"
+    },
+    {
+        "groupID": 6,
+        "name": "Eare",
+        "description": "In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus. Nulla ut erat id mauris vulputate elementum.",
+        "imageUrl": "http://dummyimage.com/104x100.png/dddddd/000000",
+        "churchID": "5"
+    },
+    {
+        "groupID": 7,
+        "name": "Bubblebox",
+        "description": "Mauris sit amet eros. Suspendisse accumsan tortor quis turpis. Sed ante. Vivamus tortor. Duis mattis egestas metus. Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.",
+        "imageUrl": "http://dummyimage.com/131x100.png/5fa2dd/ffffff",
+        "churchID": "820"
+    },
+    {
+        "groupID": 8,
+        "name": "Roodel",
+        "description": "Aenean sit amet justo. Morbi ut odio. Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl. Aenean lectus.",
+        "imageUrl": "http://dummyimage.com/152x100.png/cc0000/ffffff",
+        "churchID": "3093"
+    },
+    {
+        "groupID": 9,
+        "name": "Jayo",
+        "description": "Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus. Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+        "imageUrl": "http://dummyimage.com/249x100.png/5fa2dd/ffffff",
+        "churchID": "75236"
+    },
+    {
+        "groupID": 10,
+        "name": "Einti",
+        "description": "Donec dapibus. Duis at velit eu est congue elementum. In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo. Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros.",
+        "imageUrl": "http://dummyimage.com/152x100.png/5fa2dd/ffffff",
+        "churchID": "78674"
+    }
+]
