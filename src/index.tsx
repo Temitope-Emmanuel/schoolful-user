@@ -9,7 +9,7 @@ import {configureAxios} from "core/services/interceptor.service"
 import {ThemeProvider,CssBaseline} from "@material-ui/core"
 import {ChakraProvider} from "@chakra-ui/react"
 import {ChakraTheme,MaterialTheme} from "theme"
-import {FirebaseServiceProvider} from "utils/Firebase/context"
+// import {FirebaseServiceProvider} from "utils/Firebase/context"
 
 
 const store = configureStore()
@@ -28,10 +28,10 @@ const Root = () => (
   </React.StrictMode>
 )
 
-const FirebaseWithRoot = FirebaseServiceProvider(Root)
+// const FirebaseWithRoot = FirebaseServiceProvider(Root)
 
 ReactDOM.render(
-  <FirebaseWithRoot/>,
+  <Root/>,
   document.getElementById('root'),
 );
 

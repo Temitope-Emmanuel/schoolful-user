@@ -8,7 +8,7 @@ import {logout,setCurrentUser,hideAuthLoading} from "store/System/actions"
 import * as userService from "core/services/user.service"
 import * as authManager from "utils/auth"
 import useToast from "utils/Toast"
-import {useFirebaseService} from "utils/Firebase/context"
+// import {useFirebaseService} from "utils/Firebase/context"
 
 const App = () => {
   const dispatch = useDispatch();
@@ -16,7 +16,7 @@ const App = () => {
   const token = authManager.getToken();
   const userDetail = JSON.parse(authManager.getUserDetail() as string)
   const windowsLocation = window.location.href
-  const firebase = useFirebaseService()
+  // const firebase = useFirebaseService()
 
   // unComment to add verification
   // React.useEffect(() => {

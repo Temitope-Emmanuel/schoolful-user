@@ -62,8 +62,8 @@ import * as authManager from "utils/auth";
 import { AppState } from "store";
 import { RedirectType, SearchChurch } from "components/Header/FindChurch";
 import { useHistory } from "react-router";
-import { firebaseMessaging } from "utils/Firebase/webPush";
-import { useFirebaseService } from "utils/Firebase/context";
+// import { firebaseMessaging } from "utils/Firebase/webPush";
+// import { useFirebaseService } from "utils/Firebase/context";
 
 const CHURCH_MEMBER_STORAGE_KEY = "CHURCH_MEMBER_STORAGE_KEY";
 const SELECTED_CHURCH_KEY = "SELECTED_CHURCH_KEY";
@@ -809,9 +809,9 @@ const ChurchMemberBirthdayForm: React.FC<{
 }> = ({ currentChurch, navigate, handleShowSuccess }) => {
   const toast = useToast();
   const dispatch = useDispatch();
-  const firebase = useFirebaseService();
+  // const firebase = useFirebaseService();
   const classes = churchMemberStyles();
-  const getUserPermission = new firebaseMessaging(toast, firebase);
+  // const getUserPermission = new firebaseMessaging(toast, firebase);
   const { handleImageTransformation, image, resetImage } = useImageState();
   const [
     churchMemberDetail,
