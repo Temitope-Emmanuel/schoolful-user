@@ -1,5 +1,5 @@
 REACT_APP_SERVER_URL=https://api.thefaithfuls.com/api
-REACT_APP_ADMIN=https://thefaithfuls.com
+REACT_APP_ADMIN=http://schoolful-admin.herokuapp.com
 REACT_APP_API_KEY=AIzaSyA7vCfMVherTQvTgH-KEYkRsj1ly7cKp7I
 REACT_APP_AUTH_DOMAIN=faithfuls.firebaseapp.com
 REACT_APP_PROJECT_ID=faithfuls
