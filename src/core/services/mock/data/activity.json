@@ -1,1 +1,39 @@
-[]
+[
+    {
+        "bannerUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAT0",
+        "churchId": 1,
+        "activityID": 1,
+        "description": "This is the detail for the speaker here",
+        "recuring": "DAILY",
+        "schedule": "{\"time\":{\"startDate\":\"2022-02-14T04:21:06.007Z\",\"endDate\":\"2022-02-14T04:23:06.007Z\"},\"attendee\":[],\"recurrence\":\"DTSTART:20220213T041106Z\\n\"}",
+        "speaker": "First Speaker",
+        "title": "First Title"
+    },
+    {
+        "churchId": 1,
+        "activityID": 2,
+        "description": "This is the new description for the second activity",
+        "recuring": "WEEKLY",
+        "schedule": "{\"time\":{\"startDate\":\"2022-02-12T23:00:00.000Z\",\"endDate\":\"2022-02-13T23:00:00.000Z\"},\"attendee\":[],\"recurrence\":\"DTSTART:20220212T230000Z\\nRRULE:FREQ=WEEKLY;WKST=SU;BYWEEKDAY=SU\"}",
+        "speaker": "Adding a new title",
+        "title": "Second activity"
+    },
+    {
+        "churchId": 1,
+        "description": "This is the detail for the third speaker here with us",
+        "activityID": 3,
+        "recuring": "WEEKDAY",
+        "schedule": "{\"time\":{\"startDate\":\"2022-02-12T23:00:00.000Z\",\"endDate\":\"2022-02-13T23:00:00.000Z\"},\"attendee\":[],\"recurrence\":\"DTSTART:20220212T230000Z\\nRRULE:FREQ=WEEKLY;WKST=SU;BYWEEKDAY=MO,TU,WE,TH,FR\"}",
+        "speaker": "Third Speaker",
+        "title": "Third title"
+    },
+    {
+        "churchId": 1,
+        "activityID": 4,
+        "description": "This is the first speaker",
+        "recuring": "YEARLY",
+        "schedule": "{\"time\":{\"startDate\":\"20220213T044341Z\",\"endDate\":\"2022-02-14T04:44:11.759Z\"},\"attendee\":[],\"recurrence\":\"DTSTART:20220213T044341Z\\nRRULE:FREQ=YEARLY\"}",
+        "speaker": "First Speaker",
+        "title": "Fourth Actrivity"
+    }
+]

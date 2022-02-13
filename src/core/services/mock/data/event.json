@@ -1,1 +1,12 @@
-[]
+[
+    {
+        "churchId": 1,
+        "eventId": 1,
+        "description": "This is the first event",
+        "endDateTime": "2022-02-14T04:45:09.475Z",
+        "schedule": "{\"attendee\":[]}",
+        "speaker": "First Event",
+        "startDateTime": "2022-02-13T04:45:09.464Z",
+        "title": "First Event"
+    }
+]
