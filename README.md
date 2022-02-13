@@ -12,7 +12,7 @@ https://www.loom.com/share/9bfd414ce0cb4cea90c9512e4c41b05d
 
 **Step 3:** Copy the env file and write your own env secret.
 
-https://www.loom.com/share/76ae094687714d53a5575f8b2cfbcf23
+https://www.loom.com/share/7f8e4bc2976e43edb095895caf53c7ec
 
 ## Features
 
