@@ -5,7 +5,7 @@
   "engines": {
     "node": "14.17.0",
     "npm": "6.14.13",
-    "yarn": "1.22.5"
+    "yarn": "1.22.19"
   },
   "dependencies": {
     "@aspnet/signalr": "^1.0.26",
